@@ -28,7 +28,7 @@ Then run the app:
 
 * Update changelog
 
-* `git tag` <my [semver](http://semver.org/)>
+* `git tag` [some semver](http://semver.org/)
 
 * `git push --tags`
 

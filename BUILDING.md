@@ -14,6 +14,7 @@ Then run the app:
 
 * `gulp`
 
+
 ### Add a js dependency:
 
 * `bower install --save my-awesome-dep`
@@ -21,4 +22,13 @@ Then run the app:
 * `gulp bower`
 
 * commit the changed index.html, bower.json and karma.conf.js
+
+
+### Release an update:
+
+* Update changelog
+
+* `git tag <my [semver](http://semver.org/)>`
+
+* `git push --tags`
 

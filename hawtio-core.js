@@ -478,8 +478,10 @@ var HawtioCore;
 
     // bootstrap the app
     window.addEventListener('HTMLImportsLoaded', function () {
-      HawtioCore.injector = angular.bootstrap(window.wrap(document), hawtioPluginLoader.getModules());
-      log.debug("Bootstrapped application");
+      hawtioPluginLoader.loadPlugins(function() {
+        HawtioCore.injector = angular.bootstrap(window.wrap(document), hawtioPluginLoader.getModules());
+        log.debug("Bootstrapped application");
+      });
     });
 })(HawtioCore || (HawtioCore = {}));
 

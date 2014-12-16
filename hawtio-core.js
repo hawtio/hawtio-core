@@ -466,7 +466,7 @@ var HawtioCore;
 
     var _module = angular.module(HawtioCore.pluginName, []);
     _module.config(["$locationProvider", function ($locationProvider) {
-      $locationProvider.html5Mode(true);
+      // $locationProvider.html5Mode(true);
     }]);
     _module.run(function () {
       log.debug("loaded");

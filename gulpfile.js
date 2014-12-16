@@ -30,7 +30,9 @@ gulp.task('bower', function() {
     }))
     .pipe(gulp.dest('.'));
   gulp.src('karma.conf.js')
-    .pipe(wiredep({}))
+    .pipe(wiredep({
+      exclude: 'libs/webcomponentsjs/webcomponents.js'
+    }))
     .pipe(gulp.dest('.'));
 });
 

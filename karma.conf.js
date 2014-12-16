@@ -21,7 +21,6 @@ module.exports = function(config) {
       'libs/angular-route/angular-route.js',
       'libs/angular-sanitize/angular-sanitize.js',
       'libs/js-logger/src/logger.js',
-      'libs/webcomponentsjs/webcomponents.js',
       // endbower
       'hawtio-core.js',
       'tests/**/*.js'

@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 2.0.4
+* Removed angular-route
+
 #### 2.0.3
 * Load scripts before bootstrapping
 * Exclude webcomponents polyfill from karma.conf.js

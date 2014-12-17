@@ -473,7 +473,6 @@ var HawtioCore;
     });
     hawtioPluginLoader.addModule("ng");
     hawtioPluginLoader.addModule("ngSanitize");
-    hawtioPluginLoader.addModule("ngRoute");
     hawtioPluginLoader.addModule(HawtioCore.pluginName);
 
     // bootstrap the app

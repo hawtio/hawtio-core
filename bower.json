@@ -1,7 +1,9 @@
 {
   "name": "hawtio-core",
   "version": "2.0.3",
-  "keywords": ["hawtio"],
+  "keywords": [
+    "hawtio"
+  ],
   "main": [
     "hawtio-core.js"
   ],
@@ -20,7 +22,6 @@
     "es5-dom-shim": "*",
     "jquery": "~2.1.1",
     "angular": "~1.3.5",
-    "angular-route": "~1.3.5",
     "angular-sanitize": "~1.3.5",
     "js-logger": "~0.9.14",
     "webcomponentsjs": "~0.5.2"

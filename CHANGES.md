@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 2.0.5
+* re-enable html 5 mode 
+
 #### 2.0.4
 * Removed angular-route
 

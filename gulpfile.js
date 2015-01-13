@@ -59,4 +59,4 @@ gulp.task('reload', function() {
     .pipe(plugins.connect.reload());
 });
 
-gulp.task('default', ['test', 'connect']);
+gulp.task('default', ['connect']);

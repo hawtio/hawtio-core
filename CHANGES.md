@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 2.0.6
+* Stub out some core services
+
 #### 2.0.5
 * re-enable html 5 mode 
 

@@ -468,9 +468,45 @@ var HawtioCore;
     _module.config(["$locationProvider", function ($locationProvider) {
       $locationProvider.html5Mode(true);
     }]);
+
     _module.run(function () {
       log.debug("loaded");
     });
+
+    var dummyLocalStorage = {
+      length: 0,
+      key: function(index) { return undefined; },
+      getItem: function (key) { return dummyStorage[key]; },
+      setItem: function (key, data) { dummyStorage[key] = data; },
+      removeItem: function(key) {
+        var removed = dummyStorage[key];
+        delete dummyStorage[key];
+        return removed;
+      },
+      clear: function() {
+
+      }
+    };
+    HawtioCore.dummyLocalStorage = dummyLocalStorage;
+
+    /**
+     * services, mostly stubs
+     */
+    // localStorage service, returns a dummy impl
+    // if for some reason it's not in the window
+    // object
+    _module.factory('localStorage', function() {
+      return window.localStorage || dummyLocalStorage;
+    });
+
+
+    // Holds a mapping of plugins to layouts, plugins use 
+    // this to specify a full width view, tree view or their 
+    // own custom view
+    _module.factory('viewRegistry', function() {
+      return {};
+    });
+
     hawtioPluginLoader.addModule("ng");
     hawtioPluginLoader.addModule("ngSanitize");
     hawtioPluginLoader.addModule(HawtioCore.pluginName);

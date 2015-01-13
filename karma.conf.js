@@ -18,7 +18,6 @@ module.exports = function(config) {
       // bower:js
       'libs/jquery/dist/jquery.js',
       'libs/angular/angular.js',
-      'libs/angular-route/angular-route.js',
       'libs/angular-sanitize/angular-sanitize.js',
       'libs/js-logger/src/logger.js',
       // endbower

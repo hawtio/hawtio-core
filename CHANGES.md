@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 2.0.7
+* Comment out console hijacking
+
 #### 2.0.6
 * Stub out some core services
 

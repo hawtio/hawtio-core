@@ -235,12 +235,13 @@ window.onerror = function(msg, url, line, column, errorObject) {
 */
 
 // sneaky hack to redirect console.log !
-window.console = {
+/* window.console = {
   log: Logger.debug,
   warn: Logger.warn,
   error: Logger.error,
   info: Logger.info
 };
+*/
 
 /*
  * Plugin loader and discovery mechanism for hawtio

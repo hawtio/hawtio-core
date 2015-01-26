@@ -572,8 +572,12 @@ var HawtioCore;
     // bootstrap the app
     $(function () {
       hawtioPluginLoader.loadPlugins(function() {
-        HawtioCore.injector = angular.bootstrap(document, hawtioPluginLoader.getModules());
-        log.debug("Bootstrapped application");
+        if (!HawtioCore.injector) {
+          HawtioCore.injector = angular.bootstrap(document, hawtioPluginLoader.getModules());
+          log.debug("Bootstrapped application");
+        } else {
+          log.debug("Application already bootstrapped");
+        }
       });
     });
 })(HawtioCore || (HawtioCore = {}));

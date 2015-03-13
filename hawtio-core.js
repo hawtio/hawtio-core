@@ -275,8 +275,12 @@ var hawtioPluginLoader = (function(self, window, undefined) {
    */
   self.tasks = [];
 
-  self.registerPreBootstrapTask = function(task) {
-    self.tasks.push(task);
+  self.registerPreBootstrapTask = function(task, front) {
+    if (!front) {
+      self.tasks.push(task);
+    } else {
+      self.tasks.unshift(task);
+    }
   };
 
   self.addModule = function(module) {

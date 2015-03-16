@@ -565,9 +565,12 @@ var HawtioCore;
 
     // Placeholder user details service
     _module.factory('userDetails', function() {
-      return {};
+      return {
+        logout: function() {
+          log.debug("Dummy userDetails.logout()");
+        }
+      };
     });
-
 
     hawtioPluginLoader.addModule("ng");
     hawtioPluginLoader.addModule("ngSanitize");

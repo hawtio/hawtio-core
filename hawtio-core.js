@@ -558,6 +558,12 @@ var HawtioCore;
       return answer;
     }]);
 
+    _module.factory('HawtioDashboard', function() {
+      return {
+        inDashboard: false
+      }; 
+    });
+
     // Placeholder service for branding
     _module.factory('branding', function() {
       return {};

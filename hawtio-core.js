@@ -560,7 +560,10 @@ var HawtioCore;
 
     _module.factory('HawtioDashboard', function() {
       return {
-        inDashboard: false
+        inDashboard: false,
+        getAddLink: function() {
+          return '';
+        }
       }; 
     });
 

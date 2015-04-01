@@ -560,6 +560,7 @@ var HawtioCore;
 
     _module.factory('HawtioDashboard', function() {
       return {
+        hasDashboard: false,
         inDashboard: false,
         getAddLink: function() {
           return '';

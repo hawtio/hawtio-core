@@ -3,18 +3,30 @@
 Logger.setLevel(Logger.INFO);
 Logger.storagePrefix = 'hawtio';
 
+Logger.oldGet = Logger.get;
+Logger.loggers = {};
+Logger.get = function(name) {
+  var answer = Logger.oldGet(name);
+  Logger.loggers[name] = answer;
+  return answer;
+};
+
 // we'll default to 100 statements I guess...
 window['LogBuffer'] = 100;
 
 if ('localStorage' in window) {
-  if ('logLevel' in window.localStorage) {
-    var logLevel = JSON.parse(window.localStorage['logLevel']);
-    // console.log("Using log level: ", logLevel);
-    Logger.setLevel(logLevel);
-  } else {
+  if (!('logLevel' in window.localStorage)) {
     var logLevel = JSON.stringify(Logger.INFO);
     window.localStorage['logLevel'] = logLevel;
   }
+  var logLevel = Logger.DEBUG;
+  try {
+    logLevel = JSON.parse(window.localStorage['logLevel']);
+  } catch (e) {
+    console.error("Failed to parse log level setting: ", e);
+  }
+  // console.log("Using log level: ", logLevel);
+  Logger.setLevel(logLevel);
   if ('showLog' in window.localStorage) {
     var showLog = window.localStorage['showLog'];
     // console.log("showLog: ", showLog);
@@ -30,6 +42,17 @@ if ('localStorage' in window) {
     window['LogBuffer'] = parseInt(logBuffer);
   } else {
     window.localStorage['logBuffer'] = window['LogBuffer'];
+  }
+  if ('childLoggers' in window.localStorage) {
+    var childLoggers = [];
+    try {
+      childLoggers = JSON.parse(localStorage['childLoggers']);
+    } catch (e) {
+
+    }
+    childLoggers.forEach(function(child) {
+      Logger.get(child.logger).setLevel(Logger[child.level]);
+    });
   }
 }
 

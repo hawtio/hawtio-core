@@ -1,5 +1,7 @@
 
 // hawtio log initialization
+/* globals Logger window console document localStorage $ angular jQuery navigator Jolokia */
+
 Logger.setLevel(Logger.INFO);
 Logger.storagePrefix = 'hawtio';
 
@@ -16,8 +18,7 @@ window['LogBuffer'] = 100;
 
 if ('localStorage' in window) {
   if (!('logLevel' in window.localStorage)) {
-    var logLevel = JSON.stringify(Logger.INFO);
-    window.localStorage['logLevel'] = logLevel;
+    window.localStorage['logLevel'] = JSON.stringify(Logger.INFO);
   }
   var logLevel = Logger.DEBUG;
   try {
@@ -39,7 +40,7 @@ if ('localStorage' in window) {
   }
   if ('logBuffer' in window.localStorage) {
     var logBuffer = window.localStorage['logBuffer'];
-    window['LogBuffer'] = parseInt(logBuffer);
+    window['LogBuffer'] = parseInt(logBuffer, 10);
   } else {
     window.localStorage['logBuffer'] = window['LogBuffer'];
   }
@@ -209,7 +210,7 @@ Logger.setHandler(function(messages, context) {
     node.innerHTML = text;
     node.className = context.level.name;
     if (container) {
-      if (container.scrollHeight = 0) {
+      if (container.scrollHeight === 0) {
         scroll = true;
       }
       if (panel.scrollTop > (panel.scrollHeight - container.scrollHeight - 200)) {
@@ -269,7 +270,7 @@ window.onerror = function(msg, url, line, column, errorObject) {
 /*
  * Plugin loader and discovery mechanism for hawtio
  */
-var hawtioPluginLoader = (function(self, window, undefined) {
+var hawtioPluginLoader = (function(self) {
 
   var log = Logger.get('hawtio-loader');
 
@@ -504,11 +505,11 @@ var HawtioCore;
     var dummyLocalStorage = {
       length: 0,
       key: function(index) { return undefined; },
-      getItem: function (key) { return dummyStorage[key]; },
-      setItem: function (key, data) { dummyStorage[key] = data; },
+      getItem: function (key) { return dummyLocalStorage[key]; },
+      setItem: function (key, data) { dummyLocalStorage[key] = data; },
       removeItem: function(key) {
-        var removed = dummyStorage[key];
-        delete dummyStorage[key];
+        var removed = dummyLocalStorage[key];
+        delete dummyLocalStorage[key];
         return removed;
       },
       clear: function() {
@@ -630,8 +631,8 @@ var HawtioCore;
 
       // Don't clobber any existing jQuery.browser in case it's different
       if ( !jQuery.browser ) {
-        matched = jQuery.uaMatch( navigator.userAgent );
-        browser = {};
+        var matched = jQuery.uaMatch( navigator.userAgent );
+        var browser = {};
 
         if ( matched.browser ) {
           browser[ matched.browser ] = true;

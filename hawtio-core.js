@@ -498,9 +498,9 @@ var HawtioCore;
       $locationProvider.html5Mode(true);
     }]);
 
-    _module.run(function () {
+    _module.run(['documentBase', function (documentBase) {
       log.debug("loaded");
-    });
+    }]);
 
     var dummyLocalStorage = {
       length: 0,
@@ -527,6 +527,20 @@ var HawtioCore;
     _module.factory('localStorage', function() {
       return window.localStorage || dummyLocalStorage;
     });
+
+    // Holds the document base so plugins can easily
+    // figure out absolute URLs when needed
+    _module.factory('documentBase', ['$document', function($document) {
+      var base = $document.find('base');
+      var answer = '/'
+      if (base && base.length > 0) {
+        answer = base.attr('href');
+      } else {
+        log.warn("Document is missing a 'base' tag, defaulting to '/'");
+      }
+      log.debug("Document base: ", answer);
+      return answer;
+    }]);
 
 
     // Holds a mapping of plugins to layouts, plugins use 

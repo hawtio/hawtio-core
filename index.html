@@ -27,5 +27,59 @@
 
   <body>
     <script type="text/javascript" src="hawtio-core.js"></script>
+
+    <script>
+      var log = Logger.get('test-code');
+      log.setLevel(Logger.DEBUG);
+      hawtioPluginLoader.registerPreBootstrapTask(function(next) {
+        next();
+      });
+      hawtioPluginLoader.registerPreBootstrapTask(function(next) {
+        next();
+      }, true);
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: 'other-child',
+        depends: ['child-task', 'unnamed-task-2'],
+        task: function(next) {
+          next();
+        }
+      });
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: "Bunk Task 1",
+        depends: ['pastry'],
+        task: function(next) {
+          next();
+        }
+      });
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: "child-task",
+        depends: ["ParentTask1"],
+        task: function(next) {
+          next();
+        }
+      });
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: "Named Task",
+        task: function(next) {
+          next();
+        }
+      });
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: "ParentTask1",
+        task: function(next) {
+          next();
+        }
+      });
+      // these won't get executed, they depend on tasks that
+      // haven't been registered
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: "Bunk Task 2",
+        depends: ['foo', 'bar'],
+        task: function(next) {
+          next();
+        }
+      });
+
+    </script>
   </body>
 </html>

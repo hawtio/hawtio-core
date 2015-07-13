@@ -300,10 +300,25 @@ var hawtioPluginLoader = (function(self) {
   self.tasks = [];
 
   self.registerPreBootstrapTask = function(task, front) {
+    var tObj = task;
+    var unnamed = 'unnamed-task-' + (self.tasks.length + 1)
+    if (angular.isFunction(task)) {
+      log.debug("Adding legacy task");
+      tObj = {
+        name: unnamed,
+        task: task
+      }
+    }
+    if (!task.name) {
+      task.name = unnamed;
+    }
+    if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
+      task.depends = [task.depends];
+    }
     if (!front) {
-      self.tasks.push(task);
+      self.tasks.push(tObj);
     } else {
-      self.tasks.unshift(task);
+      self.tasks.unshift(tObj);
     }
   };
 
@@ -328,6 +343,23 @@ var hawtioPluginLoader = (function(self) {
     // log.debug("Setting callback to : ", self.loaderCallback);
   };
 
+  function intersection(search, needle) {
+    if (!angular.isArray(needle)) {
+      needle = [needle];
+    }
+    //self.log.debug("Search: ", search);
+    //self.log.debug("Needle: ", needle);
+    var answer = [];
+    needle.forEach(function(n) {
+      search.forEach(function(s) {
+        if (n === s) {
+          answer.push(s);
+        }
+      });
+    });
+    return answer;
+  }
+
 
   self.loadPlugins = function(callback) {
 
@@ -339,14 +371,85 @@ var hawtioPluginLoader = (function(self) {
     var totalUrls = urlsToLoad;
 
     var bootstrap = function() {
-      self.tasks.push(callback);
-      var numTasks = self.tasks.length;
+      var executedTasks = [];
+      var deferredTasks = [];
+
+      self.registerPreBootstrapTask({
+        name: 'Hawtio Bootstrap',
+        depends: '*',
+        task: function() {
+          if (deferredTasks.length > 0) {
+            self.log.debug("Orphaned tasks: ");
+            deferredTasks.forEach(function(task) {
+              self.log.debug("  name: " + task.name + " depends: ", task.depends);
+            });
+          }
+          self.log.debug("Executed tasks: ", executedTasks);
+          callback(); 
+        }
+      });
 
       var executeTask = function() {
-        var task = self.tasks.shift();
-        if (task) {
-          self.log.debug("Executing task ", numTasks - self.tasks.length);
-          task(executeTask);
+        var tObj = null;
+        var tmp = [];
+        // if we've executed all of the tasks, let's drain any deferred tasks
+        // into the regular task queue
+        if (self.tasks.length === 0) {
+          tObj = deferredTasks.shift();
+        }
+        // first check and see what tasks have executed and see if we can pull a task
+        // from the deferred queue
+        while(!tObj && deferredTasks.length > 0) {
+          var task = deferredTasks.shift();
+          if (task.depends === '*') {
+            if (self.tasks.length > 0) {
+              tmp.push(task);
+            } else {
+              tObj = task;
+            }
+          } else {
+            var intersect = intersection(executedTasks, task.depends);
+            if (intersect.length === task.depends.length) {
+              tObj = task;
+            } else {
+              tmp.push(task);
+            }
+          }
+        }
+        if (tmp.length > 0) {
+          tmp.forEach(function(task) {
+            deferredTasks.push(task);
+          });
+        }
+        // no deferred tasks to execute, let's get a new task
+        if (!tObj) {
+          tObj = self.tasks.shift();
+        }
+        // check if task has dependencies
+        if (tObj && tObj.depends && self.tasks.length > 0) {
+          self.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
+          if (tObj.depends === '*') {
+            if (self.tasks.length > 0) {
+              self.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
+              deferredTasks.push(tObj);
+              executeTask();
+              return;
+            }
+          } else {
+            var intersect = intersection(executedTasks, tObj.depends);
+            if (intersect.length != tObj.depends.length) {
+              self.log.debug("Deferring task: '" + tObj.name + "'");
+              deferredTasks.push(tObj);
+              executeTask();
+              return;
+            }
+          }
+        }
+        if (tObj) {
+          self.log.debug("Executing task: '" + tObj.name + "'");
+          executedTasks.push(tObj.name);
+          //self.log.debug("ExecutedTasks: ", executedTasks);
+          tObj.task(executeTask);
         } else {
           self.log.debug("All tasks executed");
         }

@@ -768,7 +768,13 @@ var HawtioCore;
       
       hawtioPluginLoader.loadPlugins(function() {
         if (!HawtioCore.injector) {
-          HawtioCore.injector = angular.bootstrap(document, hawtioPluginLoader.getModules());
+          var strictDi = localStorage['hawtioCoreStrictDi'] || false;
+          if (strictDi) {
+            log.debug("Using strict dependency injection");
+          }
+          HawtioCore.injector = angular.bootstrap(document, hawtioPluginLoader.getModules(), {
+            strictDi: strictDi
+          });
           log.debug("Bootstrapped application");
         } else {
           log.debug("Application already bootstrapped");

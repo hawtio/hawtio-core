@@ -447,9 +447,11 @@ var hawtioPluginLoader = (function(self) {
         }
         if (tObj) {
           self.log.debug("Executing task: '" + tObj.name + "'");
-          executedTasks.push(tObj.name);
           //self.log.debug("ExecutedTasks: ", executedTasks);
-          tObj.task(function() { setTimeout(executeTask, 1); });
+          tObj.task(function() { 
+            executedTasks.push(tObj.name);
+            setTimeout(executeTask, 1); 
+          });
         } else {
           self.log.debug("All tasks executed");
         }

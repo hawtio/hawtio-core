@@ -432,7 +432,7 @@ var hawtioPluginLoader = (function(self) {
             if (self.tasks.length > 0) {
               self.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
               deferredTasks.push(tObj);
-              setTimeout(executeTask, 1);
+              executeTask();
               return;
             }
           } else {
@@ -440,7 +440,7 @@ var hawtioPluginLoader = (function(self) {
             if (intersect.length != tObj.depends.length) {
               self.log.debug("Deferring task: '" + tObj.name + "'");
               deferredTasks.push(tObj);
-              setTimeout(executeTask, 1);
+              executeTask();
               return;
             }
           }

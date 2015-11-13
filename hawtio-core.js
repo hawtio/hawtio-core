@@ -623,6 +623,18 @@ var HawtioCore;
     };
     HawtioCore.dummyLocalStorage = dummyLocalStorage;
 
+    HawtioCore.documentBase = function() {
+      var base = $('head').find('base');
+      var answer = '/'
+      if (base && base.length > 0) {
+        answer = base.attr('href');
+      } else {
+        log.warn("Document is missing a 'base' tag, defaulting to '/'");
+      }
+      log.debug("Document base: ", answer);
+      return answer;
+    }
+
     /**
      * services, mostly stubs
      */
@@ -635,17 +647,9 @@ var HawtioCore;
 
     // Holds the document base so plugins can easily
     // figure out absolute URLs when needed
-    _module.factory('documentBase', ['$document', function($document) {
-      var base = $document.find('base');
-      var answer = '/'
-      if (base && base.length > 0) {
-        answer = base.attr('href');
-      } else {
-        log.warn("Document is missing a 'base' tag, defaulting to '/'");
-      }
-      log.debug("Document base: ", answer);
-      return answer;
-    }]);
+    _module.factory('documentBase', function() {
+      return HawtioCore.documentBase();
+    });
 
 
     // Holds a mapping of plugins to layouts, plugins use 

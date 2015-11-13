@@ -432,7 +432,7 @@ var hawtioPluginLoader = (function(self) {
             if (self.tasks.length > 0) {
               self.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
               deferredTasks.push(tObj);
-              executeTask();
+              setTimeout(executeTask, 1);
               return;
             }
           } else {
@@ -440,7 +440,7 @@ var hawtioPluginLoader = (function(self) {
             if (intersect.length != tObj.depends.length) {
               self.log.debug("Deferring task: '" + tObj.name + "'");
               deferredTasks.push(tObj);
-              executeTask();
+              setTimeout(executeTask, 1);
               return;
             }
           }
@@ -449,12 +449,12 @@ var hawtioPluginLoader = (function(self) {
           self.log.debug("Executing task: '" + tObj.name + "'");
           executedTasks.push(tObj.name);
           //self.log.debug("ExecutedTasks: ", executedTasks);
-          tObj.task(executeTask);
+          tObj.task(function() { setTimeout(executeTask, 1); });
         } else {
           self.log.debug("All tasks executed");
         }
       };
-      executeTask();
+      setTimeout(executeTask, 1);
     };
 
     var loadScripts = function() {

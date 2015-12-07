@@ -377,15 +377,16 @@ var hawtioPluginLoader = (function(self) {
       self.registerPreBootstrapTask({
         name: 'Hawtio Bootstrap',
         depends: '*',
-        task: function() {
+        task: function(next) {
           if (deferredTasks.length > 0) {
-            self.log.debug("Orphaned tasks: ");
+            self.log.info("Orphaned tasks: ");
             deferredTasks.forEach(function(task) {
-              self.log.debug("  name: " + task.name + " depends: ", task.depends);
+              self.log.info("  name: " + task.name + " depends: ", task.depends);
             });
           }
           self.log.debug("Executed tasks: ", executedTasks);
-          callback(); 
+          deferredTasks.length = 0;
+          next();
         }
       });
 
@@ -454,6 +455,7 @@ var hawtioPluginLoader = (function(self) {
           });
         } else {
           self.log.debug("All tasks executed");
+          setTimeout(callback, 1);
         }
       };
       setTimeout(executeTask, 1);
@@ -631,7 +633,7 @@ var HawtioCore;
       } else {
         log.warn("Document is missing a 'base' tag, defaulting to '/'");
       }
-      log.debug("Document base: ", answer);
+      //log.debug("Document base: ", answer);
       return answer;
     }
 

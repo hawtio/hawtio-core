@@ -374,21 +374,35 @@ var hawtioPluginLoader = (function(self) {
       var executedTasks = [];
       var deferredTasks = [];
 
-      self.registerPreBootstrapTask({
+      var bootstrapTask = {
         name: 'Hawtio Bootstrap',
         depends: '*',
+        runs: 0,
         task: function(next) {
-          if (deferredTasks.length > 0) {
-            self.log.info("Orphaned tasks: ");
+          function listTasks() {
             deferredTasks.forEach(function(task) {
               self.log.info("  name: " + task.name + " depends: ", task.depends);
             });
           }
+          if (deferredTasks.length > 0) {
+            self.log.info("tasks yet to run: ");
+            listTasks();
+            bootstrapTask.runs = bootstrapTask.runs + 1;
+            self.log.info("Task list restarted : ", bootstrapTask.runs, " times");
+            if (bootstrapTask.runs === 5) {
+              self.log.info("Orphaned tasks: ");
+              listTasks();
+              deferredTasks.length = 0;
+            } else {
+              deferredTasks.push(bootstrapTask);
+            }
+          }
           self.log.debug("Executed tasks: ", executedTasks);
-          deferredTasks.length = 0;
           next();
         }
-      });
+      }
+
+      self.registerPreBootstrapTask(bootstrapTask);
 
       var executeTask = function() {
         var tObj = null;

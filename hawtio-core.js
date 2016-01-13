@@ -789,18 +789,29 @@ var HawtioCore;
       }
       
       hawtioPluginLoader.loadPlugins(function() {
-        if (!HawtioCore.injector) {
-          var strictDi = localStorage['hawtioCoreStrictDi'] || false;
-          if (strictDi) {
-            log.debug("Using strict dependency injection");
-          }
-          HawtioCore.injector = angular.bootstrap(document, hawtioPluginLoader.getModules(), {
+
+        if (HawtioCore.injector || HawtioCore.UpgradeAdapter) {
+          log.debug("Application already bootstrapped");
+          return;
+        }
+
+        var strictDi = localStorage['hawtioCoreStrictDi'] || false;
+        if (strictDi) {
+          log.debug("Using strict dependency injection");
+        }
+
+        // bootstrap in hybrid mode if angular2 is detected
+        if (window.ng && window.ng.upgrade) {
+          log.info("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
+          HawtioCore.UpgradeAdapter = new ng.upgrade.UpgradeAdapter();
+          HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(document.body, hawtioPluginLoader.getModules(), { strictDi: strictDi });
+          HawtioCore.injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
+        } else {
+          HawtioCore.injector = angular.bootstrap(document.body, hawtioPluginLoader.getModules(), {
             strictDi: strictDi
           });
-          log.debug("Bootstrapped application");
-        } else {
-          log.debug("Application already bootstrapped");
         }
+        log.debug("Bootstrapped application");
       });
     });
 })(HawtioCore || (HawtioCore = {}));

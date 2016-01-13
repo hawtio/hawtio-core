@@ -787,10 +787,16 @@ var HawtioCore;
 
         jQuery.browser = browser;
       }
+
+      if (window.ng && window.ng.upgrade) {
+        // Create this here so that plugins can use pre-bootstrap tasks
+        // to add providers
+        HawtioCore.UpgradeAdapter = new ng.upgrade.UpgradeAdapter();
+      }
       
       hawtioPluginLoader.loadPlugins(function() {
 
-        if (HawtioCore.injector || HawtioCore.UpgradeAdapter) {
+        if (HawtioCore.injector || HawtioCore.UpgradeAdapterRef) {
           log.debug("Application already bootstrapped");
           return;
         }
@@ -801,9 +807,8 @@ var HawtioCore;
         }
 
         // bootstrap in hybrid mode if angular2 is detected
-        if (window.ng && window.ng.upgrade) {
+        if (HawtioCore.UpgradeAdapter) {
           log.info("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
-          HawtioCore.UpgradeAdapter = new ng.upgrade.UpgradeAdapter();
           HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(document.body, hawtioPluginLoader.getModules(), { strictDi: strictDi });
           HawtioCore.injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
         } else {

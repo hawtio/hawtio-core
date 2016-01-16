@@ -607,16 +607,17 @@ var hawtioPluginLoader = (function(self) {
 // Hawtio core plugin responsible for bootstrapping a hawtio app
 var HawtioCore = (function () {
 
-    function HawtioCore() {
+    function HawtioCoreClass() {
 
     }
+
     /**
      * The app's injector, set once bootstrap is completed
      */
-    Object.defineProperty(HawtioCore.prototype, "injector", {
+    Object.defineProperty(HawtioCoreClass.prototype, "injector", {
       get: function() {
         if (HawtioCore.UpgradeAdapter) {
-          return HAwtioCore.UpgradeAdapter.ng1Injector;
+          return HawtioCore.UpgradeAdapter.ng1Injector;
         }
         return HawtioCore._injector;
       },
@@ -624,7 +625,8 @@ var HawtioCore = (function () {
       configurable: true
     });
 
-    HawtioCore._injector = null;
+    var HawtioCore = new HawtioCoreClass();
+
     /**
      * This plugin's name and angular module
      */

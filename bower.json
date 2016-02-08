@@ -5,7 +5,7 @@
     "hawtio"
   ],
   "main": [
-    "hawtio-core.js"
+    "dist/hawtio-core.js"
   ],
   "ignore": [
     ".bowerrc",

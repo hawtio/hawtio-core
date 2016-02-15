@@ -274,6 +274,8 @@ var hawtioPluginLoader = (function(self) {
 
   var log = Logger.get('hawtio-loader');
 
+  var bootstrapEl = document.documentElement;
+
   self.log = log;
 
   /**
@@ -298,6 +300,15 @@ var hawtioPluginLoader = (function(self) {
    * @type {Array}
    */
   self.tasks = [];
+
+  self.setBootstrapElement = function(el) {
+    log.debug("Setting bootstrap element to: ", el);
+    bootstrapEl = el; 
+  }
+
+  self.getBootstrapElement = function() {
+    return bootstrapEl;
+  }
 
   self.registerPreBootstrapTask = function(task, front) {
     var tObj = task;
@@ -828,7 +839,8 @@ var HawtioCore = (function () {
           log.debug("Using strict dependency injection");
         }
 
-        var bootstrapEl = document.documentElement;
+        var bootstrapEl = hawtioPluginLoader.getBootstrapElement();
+        log.debug("Using bootstrap element: ", bootstrapEl);
 
         // bootstrap in hybrid mode if angular2 is detected
         if (HawtioCore.UpgradeAdapter) {

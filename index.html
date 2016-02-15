@@ -36,6 +36,13 @@
           next();
         }
       });
+      hawtioPluginLoader.registerPreBootstrapTask({
+        name: "ChangeBootstrapEl",
+        task: function(next) {
+          hawtioPluginLoader.setBootstrapElement(document.body);
+          next();
+        }
+      });
       hawtioPluginLoader.registerPreBootstrapTask(function(next) {
         next();
       }, true);

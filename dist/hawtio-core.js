@@ -316,25 +316,25 @@ var hawtioPluginLoader = (function(self) {
   }
 
   self.registerPreBootstrapTask = function(task, front) {
-    var tObj = task;
-    var unnamed = 'unnamed-task-' + (self.tasks.length + 1)
     if (angular.isFunction(task)) {
       log.debug("Adding legacy task");
-      tObj = {
-        name: unnamed,
+      task = {
         task: task
-      }
+      };
     }
+
     if (!task.name) {
-      task.name = unnamed;
+      task.name = 'unnamed-task-' + (self.tasks.length + 1);
     }
+
     if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
       task.depends = [task.depends];
     }
+
     if (!front) {
-      self.tasks.push(tObj);
+      self.tasks.push(task);
     } else {
-      self.tasks.unshift(tObj);
+      self.tasks.unshift(task);
     }
   };
 

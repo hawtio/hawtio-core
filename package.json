@@ -24,7 +24,5 @@
   "scripts": {
     "start": "gulp"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "private": false
 }

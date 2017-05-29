@@ -1,9 +1,9 @@
 ## hawtio-core
 
-The core plugin loading and bootstrapping mechanism for the **[hawtio](http://hawt.io)** web console, now available in a handy bower package.
+The core plugin loading and bootstrapping mechanism for the **[hawtio](http://hawt.io)** web console.
 
 ### Basic usage
-* `bower install --save hawtio-core`
+* `yarn add @hawtio/core`
 
 * Remove any ng-app annotation from your HTML template, hawtio-core manually bootstraps Angular
 

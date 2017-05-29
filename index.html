@@ -1,27 +1,17 @@
-
 <!DOCTYPE html>
 <html>
-
   <head>
     <title>hawtio-core test</title>
     <base href='/'></base>
 
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="node_modules/js-logger/src/logger.min.js"></script>
 
-    <!-- bower:css -->
-    <!-- endbower -->
-
-    <!-- bower:js -->
-    <script src="libs/jquery/dist/jquery.js"></script>
-    <script src="libs/angular/angular.js"></script>
-    <script src="libs/angular-sanitize/angular-sanitize.js"></script>
-    <script src="libs/js-logger/src/logger.js"></script>
-    <!-- endbower -->
-
+    <script src="dist/hawtio-core.js"></script>
   </head>
-
   <body>
-    <script type="text/javascript" src="dist/hawtio-core.js"></script>
-
     <script>
       var log = Logger.get('test-code');
       log.setLevel(Logger.DEBUG);
@@ -105,6 +95,7 @@
           next();
         }
       });
+
       // these won't get executed, they depend on tasks that
       // haven't been registered
       hawtioPluginLoader.registerPreBootstrapTask({
@@ -114,7 +105,6 @@
           next();
         }
       });
-
     </script>
   </body>
 </html>

@@ -1,7 +1,8 @@
 {
   "name": "@hawtio/core",
   "version": "3.0.8",
-  "main": "dist/hawtio-core.js",
+  "main": "./dist/hawtio-core.js",
+  "types": "./dist/hawtio-core.d.ts",
   "scripts": {
     "start": "gulp"
   },

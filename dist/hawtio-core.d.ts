@@ -1,6 +1,4 @@
 /// <reference types="angular"/>
-/// <reference types="angular-route"/>
-/// <reference types="js-logger"/>
 
 declare module Hawtio {
 

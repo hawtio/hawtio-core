@@ -1,6 +1,6 @@
 {
   "name": "@hawtio/core",
-  "version": "3.0.4",
+  "version": "3.0.6",
   "main": "dist/hawtio-core.js",
   "files": [
     "./dist"

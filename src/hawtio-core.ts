@@ -5,13 +5,13 @@
   'use strict';
 
   Logger.setLevel(Logger.INFO);
-  Logger.storagePrefix = 'hawtio';
+  Logger['storagePrefix'] = 'hawtio';
 
-  Logger.oldGet = Logger.get;
-  Logger.loggers = {};
+  Logger['oldGet'] = Logger.get;
+  Logger['loggers'] = {};
   Logger.get = function(name) {
-    var answer = Logger.oldGet(name);
-    Logger.loggers[name] = answer;
+    var answer = Logger['oldGet'](name);
+    Logger['loggers'][name] = answer;
     return answer;
   };
 
@@ -89,24 +89,24 @@
   }
 
   // keep these hidden in the Logger object
-  Logger.getType = function(obj) {
+  Logger['getType'] = function(obj) {
     return Object.prototype.toString.call(obj).slice(8, -1);
   };
 
-  Logger.isError = function(obj) {
-    return obj && Logger.getType(obj) === 'Error';
+  Logger['isError'] = function(obj) {
+    return obj && Logger['getType'](obj) === 'Error';
   };
 
-  Logger.isArray = function (obj) {
-    return obj && Logger.getType(obj) === 'Array';
+  Logger['isArray'] = function (obj) {
+    return obj && Logger['getType'](obj) === 'Array';
   };
 
-  Logger.isObject = function (obj) {
-    return obj && Logger.getType(obj) === 'Object';
+  Logger['isObject'] = function (obj) {
+    return obj && Logger['getType'](obj) === 'Object';
   };
 
-  Logger.isString = function(obj) {
-    return obj && Logger.getType(obj) === 'String';
+  Logger['isString'] = function(obj) {
+    return obj && Logger['getType'](obj) === 'String';
   };
 
   window['logInterceptors'] = [];
@@ -147,7 +147,7 @@
     var postLog = [];
     // try and catch errors logged via console.error(e.toString) and reformat
     if (context['level'].name === 'ERROR' && messages.length === 1) {
-      if (Logger.isString(messages[0])) {
+      if (Logger['isString'](messages[0])) {
         var message = messages[0];
         var messageSplit = message.split(/\n/);
         if (messageSplit.length > 1) {
@@ -179,7 +179,7 @@
     if (node) {
       for (var i = 0; i < messages.length; i++) {
         var message = messages[i];
-        if (Logger.isArray(message) || Logger.isObject(message)) {
+        if (Logger['isArray'](message) || Logger['isObject'](message)) {
           var obj = "" ;
           try {
             obj = '<pre data-language="javascript">' + JSON.stringify(message, null, 2) + '</pre>';
@@ -188,7 +188,7 @@
             // silently ignore, could be a circular object...
           }
           text = text + obj;
-        } else if (Logger.isError(message)) {
+        } else if (Logger['isError'](message)) {
           if ('message' in message) {
             text = text + message['message'];
           }

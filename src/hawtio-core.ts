@@ -810,11 +810,6 @@ var HawtioCore = (function () {
           return;
         }
 
-        var strictDi = localStorage['hawtioCoreStrictDi'] || false;
-        if (strictDi) {
-          log.debug("Using strict dependency injection");
-        }
-
         var bootstrapEl = hawtioPluginLoader.getBootstrapElement();
         log.debug("Using bootstrap element: ", bootstrapEl);
 
@@ -824,11 +819,11 @@ var HawtioCore = (function () {
           HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), { strictDi: strictDi });
           HawtioCore._injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
         } else {
-
           HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), {
-            strictDi: strictDi
+            strictDi: true
           });
         }
+
         log.debug("Bootstrapped application");
       });
     });

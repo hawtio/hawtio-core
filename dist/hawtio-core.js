@@ -734,10 +734,6 @@ var HawtioCore = (function () {
                 log.debug("Application already bootstrapped");
                 return;
             }
-            var strictDi = localStorage['hawtioCoreStrictDi'] || false;
-            if (strictDi) {
-                log.debug("Using strict dependency injection");
-            }
             var bootstrapEl = hawtioPluginLoader.getBootstrapElement();
             log.debug("Using bootstrap element: ", bootstrapEl);
             // bootstrap in hybrid mode if angular2 is detected
@@ -748,7 +744,7 @@ var HawtioCore = (function () {
             }
             else {
                 HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), {
-                    strictDi: strictDi
+                    strictDi: true
                 });
             }
             log.debug("Bootstrapped application");

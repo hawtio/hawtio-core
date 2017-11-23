@@ -2,10 +2,6 @@
 
 The core plugin loading and bootstrapping mechanism for the **[hawtio](http://hawt.io)** web console.
 
-## Installation
-
-    `yarn add @hawtio/core`
-
 ## Usage
 
 ### Registering inline plugins

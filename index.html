@@ -1,19 +1,50 @@
-
 <!DOCTYPE html>
-<html>
+<html class="layout-pf layout-pf-fixed">
 
   <head>
-    <title>hawtio-core test</title>
-    <base href='/'></base>
+    <base href='/'>
+    <meta charset="UTF8">
 
+    <!-- CSS -->
+    <!-- patternfly -->
+    <link rel="stylesheet" href="node_modules/patternfly/dist/css/patternfly.min.css">
+    <link rel="stylesheet" href="node_modules/patternfly/dist/css/patternfly-additions.min.css">
+
+    <!-- JAVASCRIPT -->
+    <!-- jquery -->
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="node_modules/angular/angular.min.js"></script>
-    <script src="node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+    <!-- bootstrap -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- patternfly -->
+    <script src="node_modules/patternfly/dist/js/patternfly.min.js"></script>
+    <!-- angular -->
+    <script src="node_modules/angular/angular.js"></script>
+    <!-- angular-sanitize -->
+    <script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
+    <!-- angular-route -->
+    <script src="node_modules/angular-route/angular-route.min.js"></script>
+    <!-- lodash -->
+    <script src="node_modules/lodash/lodash.min.js"></script>
+    <!-- urijs -->
+    <script src="node_modules/urijs/src/URI.min.js"></script>
+    <!-- js-logger -->
     <script src="node_modules/js-logger/src/logger.min.js"></script>
+    <!-- @hawtio/core -->
+    <script src="dist/hawtio-core.js"></script>
+    <!-- navigation example -->
+    <script src="example/navigation-example.js"></script>
   </head>
 
   <body>
-    <script type="text/javascript" src="dist/hawtio-core.js"></script>
+    <nav class="navbar navbar-pf-vertical" style="height: 60px">
+    </nav>
+
+    <hawtio-vertical-nav></hawtio-vertical-nav>
+
+    <div class="container-fluid container-pf-nav-pf-vertical ng-cloak" 
+        ng-controller="HawtioNav.ViewController">
+      <div ng-include src="viewPartial"></div>
+    </div>
 
     <script>
       var log = Logger.get('test-code');

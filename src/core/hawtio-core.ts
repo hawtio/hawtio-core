@@ -816,7 +816,8 @@ var HawtioCore = (function () {
         // bootstrap in hybrid mode if angular2 is detected
         if (HawtioCore.UpgradeAdapter) {
           log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
-          HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), { strictDi: strictDi });
+          HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(bootstrapEl,
+            hawtioPluginLoader.getModules(), { strictDi: true });
           HawtioCore._injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
         } else {
           HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), {

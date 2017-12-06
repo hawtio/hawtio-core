@@ -9,6 +9,7 @@ var Test;
     var tab = null;
     var tab2 = null;
     var tabs = [];
+    
     Test._module.config(['$routeProvider', 'HawtioNavBuilderProvider', '$locationProvider', function ($routeProvider, builder, $locationProvider) {
         $locationProvider.html5Mode(true);
         tab = builder.create()
@@ -59,7 +60,9 @@ var Test;
         $routeProvider.when('/foo/bar', { templateUrl: builder.join(Test.templatePath, 'page1.html') });
         $routeProvider.when('/foo/barBaz', { templateUrl: builder.join(Test.templatePath, 'page2.html') });
     }]);
-    Test._module.run(["viewRegistry", "HawtioNav", "$interval", function (viewRegistry, HawtioNav, $interval) {
+
+    Test._module.run(["viewRegistry", "HawtioNav", "$interval", '$templateCache', function (
+      viewRegistry, HawtioNav, $interval, $templateCache) {
 
       viewRegistry['foo'] = 'templates/main-nav/layoutTest.html';
       Test.log.debug('loaded');
@@ -136,6 +139,11 @@ var Test;
                              'target': '_blank' 
                            }).build());
                            */
+
+    $templateCache.put('example/html/page1.html', '<h1>Page 1</h1>');
+    $templateCache.put('example/html/page2.html', '<h1>Page 2</h1>');
+    $templateCache.put('example/html/page3.html', '<h1>Page 3</h1>');
+    
     }]);
     hawtioPluginLoader.addModule(Test.pluginName);
 })(Test || (Test = {}));

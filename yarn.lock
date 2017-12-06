@@ -14,7 +14,7 @@
   dependencies:
     "@types/angular" "*"
 
-"@types/angular@*", "@types/angular@~1.6.18":
+"@types/angular@*", "@types/angular@~1.6.0":
   version "1.6.39"
   resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.39.tgz#0c34938fc546f360c14817686f2e453ebf22312f"
 
@@ -68,17 +68,17 @@ alter@~0.2.0:
   dependencies:
     stable "~0.1.3"
 
-angular-route@~1.6.6:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.6.6.tgz#8c11748aa195c717b1b615a7e746442bfc7c61f4"
+angular-route@~1.6.0:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.6.7.tgz#020970d93d8b2ce4ca6aff0e0d7922579543cbcf"
 
-angular-sanitize@~1.6.4:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.6.tgz#0fd065a19931517fbece66596d325d72b6e06041"
+angular-sanitize@~1.6.0:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.7.tgz#5a3d61ad7b8b699923329635d99248bcfce26408"
 
-angular@~1.6.4:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.6.tgz#fd5a3cfb437ce382d854ee01120797978527cb64"
+angular@~1.6.0:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.7.tgz#0f89837dae1776b01ccb1fa2096db0d9373d9897"
 
 ansi-regex@2.1.1, ansi-regex@^2.0.0, ansi-regex@^3.0.0:
   version "2.1.1"

@@ -1,3 +1,485 @@
+var Config;
+(function (Config) {
+    var ConfigService = /** @class */ (function () {
+        function ConfigService(config) {
+            if (angular.isObject(config)) {
+                this.config = config;
+            }
+            else {
+                throw Error('Invalid configuration: ' + config);
+            }
+        }
+        ConfigService.prototype.getBrandLogoUrl = function () {
+            return this.getProperty('brand', 'logoUrl');
+        };
+        ConfigService.prototype.getBrandNameUrl = function () {
+            return this.getProperty('brand', 'nameUrl');
+        };
+        ConfigService.prototype.getBrandNameText = function () {
+            return this.getProperty('brand', 'nameText');
+        };
+        ConfigService.prototype.getProperty = function (group, name) {
+            if (this.config && this.config[group] && this.config[group][name]) {
+                return this.config[group][name];
+            }
+            else {
+                Config.log.warn("Configuration property \"" + group + "." + name + "\" not found");
+                return null;
+            }
+        };
+        return ConfigService;
+    }());
+    Config.ConfigService = ConfigService;
+})(Config || (Config = {}));
+/// <reference path="../config/config-service.ts"/>
+var Branding;
+(function (Branding) {
+    var BrandLogoController = /** @class */ (function () {
+        BrandLogoController.$inject = ["$rootScope"];
+        function BrandLogoController($rootScope) {
+            'ngInject';
+            var _this = this;
+            $rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
+                _this.src = configService.getBrandLogoUrl();
+            });
+        }
+        return BrandLogoController;
+    }());
+    Branding.BrandLogoController = BrandLogoController;
+    Branding.brandLogoComponent = {
+        template: "<img class=\"navbar-brand-icon\" src=\"{{$ctrl.src}}\" alt=\"\"/>",
+        controller: BrandLogoController
+    };
+})(Branding || (Branding = {}));
+/// <reference path="../config/config-service.ts"/>
+var Branding;
+(function (Branding) {
+    var BrandNameController = /** @class */ (function () {
+        BrandNameController.$inject = ["$rootScope"];
+        function BrandNameController($rootScope) {
+            'ngInject';
+            var _this = this;
+            $rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
+                _this.src = configService.getBrandNameUrl();
+                _this.alt = configService.getBrandNameText();
+            });
+        }
+        return BrandNameController;
+    }());
+    Branding.BrandNameController = BrandNameController;
+    Branding.brandNameComponent = {
+        template: "<img class=\"navbar-brand-name\" src=\"{{$ctrl.src}}\" alt=\"{{$ctrl.alt}}\" />",
+        controller: BrandNameController
+    };
+})(Branding || (Branding = {}));
+/// <reference path="brand-logo.component.ts"/>
+/// <reference path="brand-name.component.ts"/>
+var Branding;
+(function (Branding) {
+    Branding.log = Logger.get('hawtio-branding');
+    Branding.brandingModule = angular
+        .module('hawtio-branding', [])
+        .component('hawtioBrandLogo', Branding.brandLogoComponent)
+        .component('hawtioBrandName', Branding.brandNameComponent)
+        .name;
+})(Branding || (Branding = {}));
+/// <reference path="config-service.ts"/>
+var Config;
+(function (Config) {
+    configLoader.$inject = ["$rootScope", "$http"];
+    function configLoader($rootScope, $http) {
+        'ngInject';
+        Config.log.info('Loading configuration...');
+        $http.get('hawtconfig.json')
+            .then(function (response) {
+            try {
+                Config.log.info('Configuration loaded');
+                var configService = new Config.ConfigService(response.data);
+                $rootScope.$broadcast(Config.EVENT_LOADED, configService);
+            }
+            catch (error) {
+                Config.log.error(error);
+            }
+        })
+            .catch(function (response) {
+            Config.log.error('Failed to load configuration');
+        });
+    }
+    Config.configLoader = configLoader;
+})(Config || (Config = {}));
+/// <reference path="config-loader.ts"/>
+var Config;
+(function (Config) {
+    Config.log = Logger.get('hawtio-config');
+    Config.EVENT_LOADED = 'hawtio-config-loaded';
+    Config.configModule = angular
+        .module('hawtio-config', [])
+        .run(Config.configLoader)
+        .name;
+})(Config || (Config = {}));
+var Hawtio;
+(function (Hawtio) {
+    /*
+    * Plugin loader and discovery mechanism for hawtio
+    */
+    var PluginLoader = /** @class */ (function () {
+        function PluginLoader() {
+            this.log = Logger.get('hawtio-loader');
+            this.bootstrapEl = document.documentElement;
+            this.loaderCallback = null;
+            /**
+             * List of URLs that the plugin loader will try and discover
+             * plugins from
+             * @type {Array}
+             */
+            this.urls = [];
+            /**
+             * Holds all of the angular modules that need to be bootstrapped
+             * @type {Array}
+             */
+            this.modules = [];
+            /**
+             * Tasks to be run before bootstrapping, tasks can be async.
+             * Supply a function that takes the next task to be
+             * executed as an argument and be sure to call the passed
+             * in function.
+             *
+             * @type {Array}
+             */
+            this.tasks = [];
+            this.setLoaderCallback({
+                scriptLoaderCallback: function (self, total, remaining) {
+                    this.log.debug("Total scripts: ", total, " Remaining: ", remaining);
+                },
+                urlLoaderCallback: function (self, total, remaining) {
+                    this.log.debug("Total URLs: ", total, " Remaining: ", remaining);
+                }
+            });
+        }
+        /**
+         * Set the HTML element that the plugin loader will pass to angular.bootstrap
+         */
+        PluginLoader.prototype.setBootstrapElement = function (el) {
+            this.log.debug("Setting bootstrap element to: ", el);
+            this.bootstrapEl = el;
+        };
+        /**
+         * Get the HTML element used for angular.bootstrap
+         */
+        PluginLoader.prototype.getBootstrapElement = function () {
+            return this.bootstrapEl;
+        };
+        /**
+         * Register a function to be executed after scripts are loaded but
+         * before the app is bootstrapped.
+         *
+         * 'task' can either be a simple function or an object with the
+         * following attributes:
+         *
+         * name: the task name
+         * depends: an array of task names this task needs to have executed first
+         * task: the function to be executed with 1 argument, which is a function
+         *       that will execute the next task in the queue
+         */
+        PluginLoader.prototype.registerPreBootstrapTask = function (task, front) {
+            if (angular.isFunction(task)) {
+                this.log.debug("Adding legacy task");
+                task = {
+                    task: task
+                };
+            }
+            if (!task.name) {
+                task.name = 'unnamed-task-' + (this.tasks.length + 1);
+            }
+            if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
+                task.depends = [task.depends];
+            }
+            if (!front) {
+                this.tasks.push(task);
+            }
+            else {
+                this.tasks.unshift(task);
+            }
+        };
+        ;
+        /**
+         * Add an angular module to the list of modules to bootstrap
+         */
+        PluginLoader.prototype.addModule = function (module) {
+            this.log.debug("Adding module: " + module);
+            this.modules.push(module);
+        };
+        ;
+        /**
+         * Add a URL for discovering plugins.
+         */
+        PluginLoader.prototype.addUrl = function (url) {
+            this.log.debug("Adding URL: " + url);
+            this.urls.push(url);
+        };
+        ;
+        /**
+         * Return the current list of configured modules
+         */
+        PluginLoader.prototype.getModules = function () {
+            return this.modules;
+        };
+        ;
+        /**
+         * Set a callback to be notified as URLs are checked and plugin
+         * scripts are downloaded
+         */
+        PluginLoader.prototype.setLoaderCallback = function (cb) {
+            this.loaderCallback = cb;
+            // log.debug("Setting callback to : ", this.loaderCallback);
+        };
+        ;
+        PluginLoader.prototype.intersection = function (search, needle) {
+            if (!angular.isArray(needle)) {
+                needle = [needle];
+            }
+            //this.log.debug("Search: ", search);
+            //this.log.debug("Needle: ", needle);
+            var answer = [];
+            needle.forEach(function (n) {
+                search.forEach(function (s) {
+                    if (n === s) {
+                        answer.push(s);
+                    }
+                });
+            });
+            return answer;
+        };
+        /**
+         * Downloads plugins at any configured URLs and bootstraps the app
+         */
+        PluginLoader.prototype.loadPlugins = function (callback) {
+            var _this = this;
+            var lcb = this.loaderCallback;
+            var plugins = {};
+            var urlsToLoad = this.urls.length;
+            var totalUrls = urlsToLoad;
+            var bootstrap = function () {
+                var executedTasks = [];
+                var deferredTasks = [];
+                var bootstrapTask = {
+                    name: 'Hawtio Bootstrap',
+                    depends: '*',
+                    runs: 0,
+                    task: function (next) {
+                        function listTasks() {
+                            deferredTasks.forEach(function (task) {
+                                this.log.info("  name: " + task.name + " depends: ", task.depends);
+                            });
+                        }
+                        if (deferredTasks.length > 0) {
+                            _this.log.info("tasks yet to run: ");
+                            listTasks();
+                            bootstrapTask.runs = bootstrapTask.runs + 1;
+                            _this.log.info("Task list restarted : ", bootstrapTask.runs, " times");
+                            if (bootstrapTask.runs === 5) {
+                                _this.log.info("Orphaned tasks: ");
+                                listTasks();
+                                deferredTasks.length = 0;
+                            }
+                            else {
+                                deferredTasks.push(bootstrapTask);
+                            }
+                        }
+                        _this.log.debug("Executed tasks: ", executedTasks);
+                        next();
+                    }
+                };
+                _this.registerPreBootstrapTask(bootstrapTask);
+                var executeTask = function () {
+                    var tObj = null;
+                    var tmp = [];
+                    // if we've executed all of the tasks, let's drain any deferred tasks
+                    // into the regular task queue
+                    if (_this.tasks.length === 0) {
+                        tObj = deferredTasks.shift();
+                    }
+                    // first check and see what tasks have executed and see if we can pull a task
+                    // from the deferred queue
+                    while (!tObj && deferredTasks.length > 0) {
+                        var task = deferredTasks.shift();
+                        if (task.depends === '*') {
+                            if (_this.tasks.length > 0) {
+                                tmp.push(task);
+                            }
+                            else {
+                                tObj = task;
+                            }
+                        }
+                        else {
+                            var intersect = _this.intersection(executedTasks, task.depends);
+                            if (intersect.length === task.depends.length) {
+                                tObj = task;
+                            }
+                            else {
+                                tmp.push(task);
+                            }
+                        }
+                    }
+                    if (tmp.length > 0) {
+                        tmp.forEach(function (task) {
+                            deferredTasks.push(task);
+                        });
+                    }
+                    // no deferred tasks to execute, let's get a new task
+                    if (!tObj) {
+                        tObj = _this.tasks.shift();
+                    }
+                    // check if task has dependencies
+                    if (tObj && tObj.depends && _this.tasks.length > 0) {
+                        _this.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
+                        if (tObj.depends === '*') {
+                            if (_this.tasks.length > 0) {
+                                _this.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
+                                deferredTasks.push(tObj);
+                                executeTask();
+                                return;
+                            }
+                        }
+                        else {
+                            var intersect = _this.intersection(executedTasks, tObj.depends);
+                            if (intersect.length != tObj.depends.length) {
+                                _this.log.debug("Deferring task: '" + tObj.name + "'");
+                                deferredTasks.push(tObj);
+                                executeTask();
+                                return;
+                            }
+                        }
+                    }
+                    if (tObj) {
+                        _this.log.debug("Executing task: '" + tObj.name + "'");
+                        //this.log.debug("ExecutedTasks: ", executedTasks);
+                        var called = false;
+                        var next = function () {
+                            if (next['notFired']) {
+                                next['notFired'] = false;
+                                executedTasks.push(tObj.name);
+                                setTimeout(executeTask, 1);
+                            }
+                        };
+                        next['notFired'] = true;
+                        tObj.task(next);
+                    }
+                    else {
+                        _this.log.debug("All tasks executed");
+                        setTimeout(callback, 1);
+                    }
+                };
+                setTimeout(executeTask, 1);
+            };
+            var loadScripts = function () {
+                // keep track of when scripts are loaded so we can execute the callback
+                var loaded = 0;
+                $.each(plugins, function (key, data) {
+                    loaded = loaded + data.Scripts.length;
+                });
+                var totalScripts = loaded;
+                var scriptLoaded = function () {
+                    $.ajaxSetup({ async: true });
+                    loaded = loaded - 1;
+                    if (lcb) {
+                        lcb.scriptLoaderCallback(lcb, totalScripts, loaded + 1);
+                    }
+                    if (loaded === 0) {
+                        bootstrap();
+                    }
+                };
+                if (loaded > 0) {
+                    $.each(plugins, function (key, data) {
+                        data.Scripts.forEach(function (script) {
+                            // log.debug("Loading script: ", data.Name + " script: " + script);
+                            var scriptName = data.Context + "/" + script;
+                            this.log.debug("Fetching script: ", scriptName);
+                            $.ajaxSetup({ async: false });
+                            $.getScript(scriptName)
+                                .done(function (textStatus) {
+                                this.log.debug("Loaded script: ", scriptName);
+                            })
+                                .fail(function (jqxhr, settings, exception) {
+                                this.log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
+                            })
+                                .always(scriptLoaded);
+                        });
+                    });
+                }
+                else {
+                    // no scripts to load, so just do the callback
+                    $.ajaxSetup({ async: true });
+                    bootstrap();
+                }
+            };
+            if (urlsToLoad === 0) {
+                loadScripts();
+            }
+            else {
+                var urlLoaded = function () {
+                    urlsToLoad = urlsToLoad - 1;
+                    if (lcb) {
+                        lcb.urlLoaderCallback(lcb, totalUrls, urlsToLoad + 1);
+                    }
+                    if (urlsToLoad === 0) {
+                        loadScripts();
+                    }
+                };
+                var regex = new RegExp(/^jolokia:/);
+                $.each(this.urls, function (index, url) {
+                    if (regex.test(url)) {
+                        var parts = url.split(':');
+                        parts = parts.reverse();
+                        parts.pop();
+                        url = parts.pop();
+                        var attribute = parts.reverse().join(':');
+                        var jolokia = new Jolokia(url);
+                        try {
+                            var data = jolokia.getAttribute(attribute, null);
+                            $.extend(plugins, data);
+                        }
+                        catch (Exception) {
+                            // console.error("Error fetching data: " + Exception);
+                        }
+                        urlLoaded();
+                    }
+                    else {
+                        this.log.debug("Trying url: ", url);
+                        $.get(url, function (data) {
+                            if (angular.isString(data)) {
+                                try {
+                                    data = angular.fromJson(data);
+                                }
+                                catch (error) {
+                                    // ignore this source of plugins
+                                    return;
+                                }
+                            }
+                            // log.debug("got data: ", data);
+                            $.extend(plugins, data);
+                        }).always(function () {
+                            urlLoaded();
+                        });
+                    }
+                });
+            }
+        };
+        ;
+        /**
+         * Dumps the current list of configured modules and URLs to the console
+         */
+        PluginLoader.prototype.debug = function () {
+            this.log.debug("urls and modules");
+            this.log.debug(this.urls);
+            this.log.debug(this.modules);
+        };
+        ;
+        return PluginLoader;
+    }());
+    Hawtio.PluginLoader = PluginLoader;
+})(Hawtio || (Hawtio = {}));
+/// <reference path="plugin-loader.ts"/>
 // hawtio log initialization
 /* globals Logger window console document localStorage $ angular jQuery navigator Jolokia */
 (function () {
@@ -236,316 +718,7 @@
 /*
  * Plugin loader and discovery mechanism for hawtio
  */
-var hawtioPluginLoader = (function (self) {
-    'use strict';
-    var log = Logger.get('hawtio-loader');
-    var bootstrapEl = document.documentElement;
-    self.log = log;
-    /**
-     * List of URLs that the plugin loader will try and discover
-     * plugins from
-     * @type {Array}
-     */
-    self.urls = [];
-    /**
-     * Holds all of the angular modules that need to be bootstrapped
-     * @type {Array}
-     */
-    self.modules = [];
-    /**
-     * Tasks to be run before bootstrapping, tasks can be async.
-     * Supply a function that takes the next task to be
-     * executed as an argument and be sure to call the passed
-     * in function.
-     *
-     * @type {Array}
-     */
-    self.tasks = [];
-    self.setBootstrapElement = function (el) {
-        log.debug("Setting bootstrap element to: ", el);
-        bootstrapEl = el;
-    };
-    self.getBootstrapElement = function () {
-        return bootstrapEl;
-    };
-    self.registerPreBootstrapTask = function (task, front) {
-        if (angular.isFunction(task)) {
-            log.debug("Adding legacy task");
-            task = {
-                task: task
-            };
-        }
-        if (!task.name) {
-            task.name = 'unnamed-task-' + (self.tasks.length + 1);
-        }
-        if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
-            task.depends = [task.depends];
-        }
-        if (!front) {
-            self.tasks.push(task);
-        }
-        else {
-            self.tasks.unshift(task);
-        }
-    };
-    self.addModule = function (module) {
-        log.debug("Adding module: " + module);
-        self.modules.push(module);
-    };
-    self.addUrl = function (url) {
-        log.debug("Adding URL: " + url);
-        self.urls.push(url);
-    };
-    self.getModules = function () {
-        return self.modules;
-    };
-    self.loaderCallback = null;
-    self.setLoaderCallback = function (cb) {
-        self.loaderCallback = cb;
-        // log.debug("Setting callback to : ", self.loaderCallback);
-    };
-    function intersection(search, needle) {
-        if (!angular.isArray(needle)) {
-            needle = [needle];
-        }
-        //self.log.debug("Search: ", search);
-        //self.log.debug("Needle: ", needle);
-        var answer = [];
-        needle.forEach(function (n) {
-            search.forEach(function (s) {
-                if (n === s) {
-                    answer.push(s);
-                }
-            });
-        });
-        return answer;
-    }
-    self.loadPlugins = function (callback) {
-        var lcb = self.loaderCallback;
-        var plugins = {};
-        var urlsToLoad = self.urls.length;
-        var totalUrls = urlsToLoad;
-        var bootstrap = function () {
-            var executedTasks = [];
-            var deferredTasks = [];
-            var bootstrapTask = {
-                name: 'Hawtio Bootstrap',
-                depends: '*',
-                runs: 0,
-                task: function (next) {
-                    function listTasks() {
-                        deferredTasks.forEach(function (task) {
-                            self.log.info("  name: " + task.name + " depends: ", task.depends);
-                        });
-                    }
-                    if (deferredTasks.length > 0) {
-                        self.log.info("tasks yet to run: ");
-                        listTasks();
-                        bootstrapTask.runs = bootstrapTask.runs + 1;
-                        self.log.info("Task list restarted : ", bootstrapTask.runs, " times");
-                        if (bootstrapTask.runs === 5) {
-                            self.log.info("Orphaned tasks: ");
-                            listTasks();
-                            deferredTasks.length = 0;
-                        }
-                        else {
-                            deferredTasks.push(bootstrapTask);
-                        }
-                    }
-                    self.log.debug("Executed tasks: ", executedTasks);
-                    next();
-                }
-            };
-            self.registerPreBootstrapTask(bootstrapTask);
-            var executeTask = function () {
-                var tObj = null;
-                var tmp = [];
-                // if we've executed all of the tasks, let's drain any deferred tasks
-                // into the regular task queue
-                if (self.tasks.length === 0) {
-                    tObj = deferredTasks.shift();
-                }
-                // first check and see what tasks have executed and see if we can pull a task
-                // from the deferred queue
-                while (!tObj && deferredTasks.length > 0) {
-                    var task = deferredTasks.shift();
-                    if (task.depends === '*') {
-                        if (self.tasks.length > 0) {
-                            tmp.push(task);
-                        }
-                        else {
-                            tObj = task;
-                        }
-                    }
-                    else {
-                        var intersect = intersection(executedTasks, task.depends);
-                        if (intersect.length === task.depends.length) {
-                            tObj = task;
-                        }
-                        else {
-                            tmp.push(task);
-                        }
-                    }
-                }
-                if (tmp.length > 0) {
-                    tmp.forEach(function (task) {
-                        deferredTasks.push(task);
-                    });
-                }
-                // no deferred tasks to execute, let's get a new task
-                if (!tObj) {
-                    tObj = self.tasks.shift();
-                }
-                // check if task has dependencies
-                if (tObj && tObj.depends && self.tasks.length > 0) {
-                    self.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
-                    if (tObj.depends === '*') {
-                        if (self.tasks.length > 0) {
-                            self.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
-                            deferredTasks.push(tObj);
-                            executeTask();
-                            return;
-                        }
-                    }
-                    else {
-                        var intersect = intersection(executedTasks, tObj.depends);
-                        if (intersect.length != tObj.depends.length) {
-                            self.log.debug("Deferring task: '" + tObj.name + "'");
-                            deferredTasks.push(tObj);
-                            executeTask();
-                            return;
-                        }
-                    }
-                }
-                if (tObj) {
-                    self.log.debug("Executing task: '" + tObj.name + "'");
-                    //self.log.debug("ExecutedTasks: ", executedTasks);
-                    var called = false;
-                    var next = function () {
-                        if (next['notFired']) {
-                            next['notFired'] = false;
-                            executedTasks.push(tObj.name);
-                            setTimeout(executeTask, 1);
-                        }
-                    };
-                    next['notFired'] = true;
-                    tObj.task(next);
-                }
-                else {
-                    self.log.debug("All tasks executed");
-                    setTimeout(callback, 1);
-                }
-            };
-            setTimeout(executeTask, 1);
-        };
-        var loadScripts = function () {
-            // keep track of when scripts are loaded so we can execute the callback
-            var loaded = 0;
-            $.each(plugins, function (key, data) {
-                loaded = loaded + data.Scripts.length;
-            });
-            var totalScripts = loaded;
-            var scriptLoaded = function () {
-                $.ajaxSetup({ async: true });
-                loaded = loaded - 1;
-                if (lcb) {
-                    lcb.scriptLoaderCallback(lcb, totalScripts, loaded + 1);
-                }
-                if (loaded === 0) {
-                    bootstrap();
-                }
-            };
-            if (loaded > 0) {
-                $.each(plugins, function (key, data) {
-                    data.Scripts.forEach(function (script) {
-                        // log.debug("Loading script: ", data.Name + " script: " + script);
-                        var scriptName = data.Context + "/" + script;
-                        log.debug("Fetching script: ", scriptName);
-                        $.ajaxSetup({ async: false });
-                        $.getScript(scriptName)
-                            .done(function (textStatus) {
-                            log.debug("Loaded script: ", scriptName);
-                        })
-                            .fail(function (jqxhr, settings, exception) {
-                            log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
-                        })
-                            .always(scriptLoaded);
-                    });
-                });
-            }
-            else {
-                // no scripts to load, so just do the callback
-                $.ajaxSetup({ async: true });
-                bootstrap();
-            }
-        };
-        if (urlsToLoad === 0) {
-            loadScripts();
-        }
-        else {
-            var urlLoaded = function () {
-                urlsToLoad = urlsToLoad - 1;
-                if (lcb) {
-                    lcb.urlLoaderCallback(lcb, totalUrls, urlsToLoad + 1);
-                }
-                if (urlsToLoad === 0) {
-                    loadScripts();
-                }
-            };
-            var regex = new RegExp(/^jolokia:/);
-            $.each(self.urls, function (index, url) {
-                if (regex.test(url)) {
-                    var parts = url.split(':');
-                    parts = parts.reverse();
-                    parts.pop();
-                    url = parts.pop();
-                    var attribute = parts.reverse().join(':');
-                    var jolokia = new Jolokia(url);
-                    try {
-                        var data = jolokia.getAttribute(attribute, null);
-                        $.extend(plugins, data);
-                    }
-                    catch (Exception) {
-                        // console.error("Error fetching data: " + Exception);
-                    }
-                    urlLoaded();
-                }
-                else {
-                    log.debug("Trying url: ", url);
-                    $.get(url, function (data) {
-                        if (angular.isString(data)) {
-                            try {
-                                data = angular.fromJson(data);
-                            }
-                            catch (error) {
-                                // ignore this source of plugins
-                                return;
-                            }
-                        }
-                        // log.debug("got data: ", data);
-                        $.extend(plugins, data);
-                    }).always(function () {
-                        urlLoaded();
-                    });
-                }
-            });
-        }
-    };
-    self.debug = function () {
-        log.debug("urls and modules");
-        log.debug(self.urls);
-        log.debug(self.modules);
-    };
-    self.setLoaderCallback({
-        scriptLoaderCallback: function (self, total, remaining) {
-            log.debug("Total scripts: ", total, " Remaining: ", remaining);
-        },
-        urlLoaderCallback: function (self, total, remaining) {
-            log.debug("Total URLs: ", total, " Remaining: ", remaining);
-        }
-    });
-    return self;
-})(hawtioPluginLoader || {});
+var hawtioPluginLoader = new Hawtio.PluginLoader();
 // Hawtio core plugin responsible for bootstrapping a hawtio app
 var HawtioCore = (function () {
     'use strict';
@@ -677,10 +850,6 @@ var HawtioCore = (function () {
             }
         };
     });
-    // Placeholder service for branding
-    _module.factory('branding', function () {
-        return {};
-    });
     // Placeholder user details service
     _module.factory('userDetails', function () {
         return {
@@ -689,9 +858,6 @@ var HawtioCore = (function () {
             }
         };
     });
-    hawtioPluginLoader.addModule("ng");
-    hawtioPluginLoader.addModule("ngSanitize");
-    hawtioPluginLoader.addModule(HawtioCore.pluginName);
     // bootstrap the app
     $(function () {
         jQuery['uaMatch'] = function (ua) {
@@ -752,7 +918,6 @@ var HawtioCore = (function () {
     });
     return HawtioCore;
 })();
-/// <reference path="../core/hawtio-core.ts"/>
 var HawtioExtensionService;
 (function (HawtioExtensionService) {
     HawtioExtensionService.pluginName = 'hawtio-extension-service';
@@ -793,7 +958,6 @@ var HawtioExtensionService;
                 }
             };
         }]);
-    hawtioPluginLoader.addModule(HawtioExtensionService.pluginName);
 })(HawtioExtensionService || (HawtioExtensionService = {}));
 /// <reference path="../core/hawtio-core.ts"/>
 /* global _ */
@@ -831,57 +995,25 @@ var HawtioMainNav;
     HawtioMainNav.pluginName = 'hawtio-nav';
     var log = Logger.get(HawtioMainNav.pluginName);
     // Actions class with some pre-defined actions
-    var Actions = (function () {
-        function Actions() { }
-        Object.defineProperty(Actions, "ADD", {
-            get: function () {
-                return 'hawtio-main-nav-add';
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Actions, "REMOVE", {
-            get: function () {
-                return 'hawtio-main-nav-remove';
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Actions, "CHANGED", {
-            get: function () {
-                return 'hawtio-main-nav-change';
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Actions, "REDRAW", {
-            get: function () {
-                return 'hawtio-main-nav-redraw';
-            },
-            enumerable: true,
-            configurable: true
-        });
+    var Actions = /** @class */ (function () {
+        function Actions() {
+        }
+        Actions.ADD = 'hawtio-main-nav-add';
+        Actions.REMOVE = 'hawtio-main-nav-remove';
+        Actions.CHANGED = 'hawtio-main-nav-change';
+        Actions.REDRAW = 'hawtio-main-nav-redraw';
         return Actions;
-    })();
+    }());
     HawtioMainNav.Actions = Actions;
-    // Class RegistryImpl
-    var RegistryImpl = (function () {
-        function RegistryImpl(root) {
+    var Registry = /** @class */ (function () {
+        function Registry(root) {
             this.items = [];
             this.root = root;
-            /*
-               this.on(HawtioMainNav.Actions.ADD, 'log', function (item) {
-               console.log('Adding item with id: ', item.id);
-               });
-               this.on(HawtioMainNav.Actions.REMOVE, 'log', function (item) {
-               console.log('Removing item with id: ', item.id);
-               });
-               */
         }
-        RegistryImpl.prototype.builder = function () {
-            return new HawtioMainNav.NavItemBuilderImpl();
+        Registry.prototype.builder = function () {
+            return new NavItemBuilder();
         };
-        RegistryImpl.prototype.add = function (item) {
+        Registry.prototype.add = function (item) {
             var _this = this;
             var items = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -890,45 +1022,45 @@ var HawtioMainNav;
             var toAdd = _.union([item], items);
             this.items = _.union(this.items, toAdd);
             toAdd.forEach(function (item) {
-                _this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.ADD, {
+                _this.root.dispatchEvent(new CustomEvent(Actions.ADD, {
                     detail: {
                         item: item
                     }
                 }));
             });
-            this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.CHANGED, {
+            this.root.dispatchEvent(new CustomEvent(Actions.CHANGED, {
                 detail: {
                     items: this.items
                 }
             }));
-            this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.REDRAW, {
+            this.root.dispatchEvent(new CustomEvent(Actions.REDRAW, {
                 detail: {}
             }));
         };
-        RegistryImpl.prototype.remove = function (search) {
+        Registry.prototype.remove = function (search) {
             var _this = this;
             var removed = _.remove(this.items, search);
             removed.forEach(function (item) {
-                _this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.REMOVE, {
+                _this.root.dispatchEvent(new CustomEvent(Actions.REMOVE, {
                     detail: {
                         item: item
                     }
                 }));
             });
-            this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.CHANGED, {
+            this.root.dispatchEvent(new CustomEvent(Actions.CHANGED, {
                 detail: {
                     items: this.items
                 }
             }));
-            this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.REDRAW, {
+            this.root.dispatchEvent(new CustomEvent(Actions.REDRAW, {
                 detail: {}
             }));
             return removed;
         };
-        RegistryImpl.prototype.iterate = function (iterator) {
+        Registry.prototype.iterate = function (iterator) {
             this.items.forEach(iterator);
         };
-        RegistryImpl.prototype.selected = function () {
+        Registry.prototype.selected = function () {
             var valid = _.filter(this.items, function (item) {
                 if (!item['isValid']) {
                     return true;
@@ -943,17 +1075,17 @@ var HawtioMainNav;
             });
             return answer;
         };
-        RegistryImpl.prototype.on = function (action, key, fn) {
+        Registry.prototype.on = function (action, key, fn) {
             var _this = this;
             switch (action) {
-                case HawtioMainNav.Actions.ADD:
-                    this.root.addEventListener(HawtioMainNav.Actions.ADD, function (event) {
+                case Actions.ADD:
+                    this.root.addEventListener(Actions.ADD, function (event) {
                         //log.debug("event key: ", key, " event: ", event);
                         fn(event.detail.item);
                     });
                     if (this.items.length > 0) {
                         this.items.forEach(function (item) {
-                            _this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.ADD, {
+                            _this.root.dispatchEvent(new CustomEvent(Actions.ADD, {
                                 detail: {
                                     item: item
                                 }
@@ -961,31 +1093,31 @@ var HawtioMainNav;
                         });
                     }
                     break;
-                case HawtioMainNav.Actions.REMOVE:
-                    this.root.addEventListener(HawtioMainNav.Actions.REMOVE, function (event) {
+                case Actions.REMOVE:
+                    this.root.addEventListener(Actions.REMOVE, function (event) {
                         //log.debug("event key: ", key, " event: ", event);
                         fn(event.detail.item);
                     });
                     break;
-                case HawtioMainNav.Actions.CHANGED:
-                    this.root.addEventListener(HawtioMainNav.Actions.CHANGED, function (event) {
+                case Actions.CHANGED:
+                    this.root.addEventListener(Actions.CHANGED, function (event) {
                         //log.debug("event key: ", key, " event: ", event);
                         fn(event.detail.items);
                     });
                     if (this.items.length > 0) {
-                        this.root.dispatchEvent(new CustomEvent(HawtioMainNav.Actions.CHANGED, {
+                        this.root.dispatchEvent(new CustomEvent(Actions.CHANGED, {
                             detail: {
                                 items: _this.items
                             }
                         }));
                     }
                     break;
-                case HawtioMainNav.Actions.REDRAW:
-                    this.root.addEventListener(HawtioMainNav.Actions.REDRAW, function (event) {
+                case Actions.REDRAW:
+                    this.root.addEventListener(Actions.REDRAW, function (event) {
                         //log.debug("event key: ", key, " event: ", event);
                         fn(event);
                     });
-                    var event = new CustomEvent(HawtioMainNav.Actions.REDRAW, {
+                    var event = new CustomEvent(Actions.REDRAW, {
                         detail: {
                             text: ''
                         }
@@ -995,109 +1127,114 @@ var HawtioMainNav;
                 default:
             }
         };
-        return RegistryImpl;
-    })();
+        return Registry;
+    }());
+    HawtioMainNav.Registry = Registry;
     // Factory for registry, used to create angular service
     function createRegistry(root) {
-        return new RegistryImpl(root);
+        return new Registry(root);
     }
     HawtioMainNav.createRegistry = createRegistry;
+    function join() {
+        var args = [];
+        for (var _a = 0; _a < arguments.length; _a++) {
+            args[_a] = arguments[_a];
+        }
+        var paths = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            paths[_i - 0] = arguments[_i];
+        }
+        var tmp = [];
+        var length = paths.length - 1;
+        paths.forEach(function (path, index) {
+            if (!path || path === '') {
+                return;
+            }
+            if (index !== 0 && path.charAt(0) === '/') {
+                path = path.slice(1);
+            }
+            if (index !== length && path.charAt(path.length) === '/') {
+                path = path.slice(0, path.length - 1);
+            }
+            if (path && path !== '') {
+                tmp.push(path);
+            }
+        });
+        var rc = tmp.join('/');
+        return rc;
+    }
     // Class NavItemBuilderImpl
-    var NavItemBuilderImpl = (function () {
-        function NavItemBuilderImpl() {
+    var NavItemBuilder = /** @class */ (function () {
+        function NavItemBuilder() {
             this.self = {
                 id: ''
             };
         }
-        NavItemBuilderImpl['join'] = function () {
-            var paths = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                paths[_i - 0] = arguments[_i];
-            }
-            var tmp = [];
-            var length = paths.length - 1;
-            paths.forEach(function (path, index) {
-                if (!path || path === '') {
-                    return;
-                }
-                if (index !== 0 && path.charAt(0) === '/') {
-                    path = path.slice(1);
-                }
-                if (index !== length && path.charAt(path.length) === '/') {
-                    path = path.slice(0, path.length - 1);
-                }
-                if (path && path !== '') {
-                    tmp.push(path);
-                }
-            });
-            var rc = tmp.join('/');
-            return rc;
-        };
-        NavItemBuilderImpl.prototype.id = function (id) {
+        NavItemBuilder.prototype.id = function (id) {
             this.self.id = id;
             return this;
         };
-        NavItemBuilderImpl.prototype.rank = function (rank) {
+        NavItemBuilder.prototype.rank = function (rank) {
             this.self.rank = rank;
             return this;
         };
-        NavItemBuilderImpl.prototype.title = function (title) {
+        NavItemBuilder.prototype.title = function (title) {
             this.self.title = title;
             return this;
         };
-        NavItemBuilderImpl.prototype.tooltip = function (tooltip) {
+        NavItemBuilder.prototype.tooltip = function (tooltip) {
             this.self.tooltip = tooltip;
             return this;
         };
-        NavItemBuilderImpl.prototype.page = function (page) {
+        NavItemBuilder.prototype.page = function (page) {
             this.self.page = page;
             return this;
         };
-        NavItemBuilderImpl.prototype.reload = function (reload) {
+        NavItemBuilder.prototype.reload = function (reload) {
             this.self.reload = reload;
             return this;
         };
-        NavItemBuilderImpl.prototype.attributes = function (attributes) {
+        NavItemBuilder.prototype.attributes = function (attributes) {
             this.self.attributes = attributes;
             return this;
         };
-        NavItemBuilderImpl.prototype.linkAttributes = function (attributes) {
+        NavItemBuilder.prototype.linkAttributes = function (attributes) {
             this.self.linkAttributes = attributes;
             return this;
         };
-        NavItemBuilderImpl.prototype.context = function (context) {
+        NavItemBuilder.prototype.context = function (context) {
             this.self.context = context;
             return this;
         };
-        NavItemBuilderImpl.prototype.href = function (href) {
+        NavItemBuilder.prototype.href = function (href) {
             this.self.href = href;
             return this;
         };
-        NavItemBuilderImpl.prototype.click = function (click) {
+        NavItemBuilder.prototype.click = function (click) {
             this.self.click = click;
             return this;
         };
-        NavItemBuilderImpl.prototype.isSelected = function (isSelected) {
+        NavItemBuilder.prototype.isSelected = function (isSelected) {
             this.self.isSelected = isSelected;
             return this;
         };
-        NavItemBuilderImpl.prototype.isValid = function (isValid) {
+        NavItemBuilder.prototype.isValid = function (isValid) {
             this.self.isValid = isValid;
             return this;
         };
-        NavItemBuilderImpl.prototype.show = function (show) {
+        NavItemBuilder.prototype.show = function (show) {
             this.self.show = show;
             return this;
         };
-        NavItemBuilderImpl.prototype.template = function (template) {
+        NavItemBuilder.prototype.template = function (template) {
             this.self.template = template;
             return this;
         };
-        NavItemBuilderImpl.prototype.defaultPage = function (defaultPage) {
+        NavItemBuilder.prototype.defaultPage = function (defaultPage) {
             this.self.defaultPage = defaultPage;
             return this;
         };
-        NavItemBuilderImpl.prototype.tabs = function (item) {
+        NavItemBuilder.prototype.tabs = function (item) {
             var items = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 items[_i - 1] = arguments[_i];
@@ -1105,7 +1242,7 @@ var HawtioMainNav;
             this.self.tabs = _.union(this.self.tabs, [item], items);
             return this;
         };
-        NavItemBuilderImpl.prototype.subPath = function (title, path, page, rank, reload, isValid) {
+        NavItemBuilder.prototype.subPath = function (title, path, page, rank, reload, isValid) {
             var parent = this.self;
             if (!this.self.tabs) {
                 this.self.tabs = [];
@@ -1117,7 +1254,7 @@ var HawtioMainNav;
                 },
                 href: function () {
                     if (parent.href) {
-                        return NavItemBuilderImpl['join'](parent.href(), path);
+                        return join(parent.href(), path);
                     }
                     return path;
                 }
@@ -1139,32 +1276,34 @@ var HawtioMainNav;
             this.self.tabs.push(tab);
             return this;
         };
-        NavItemBuilderImpl.prototype.build = function () {
+        NavItemBuilder.prototype.build = function () {
             var answer = _.cloneDeep(this.self);
             this.self = {
                 id: ''
             };
             return answer;
         };
-        return NavItemBuilderImpl;
-    })();
-    HawtioMainNav.NavItemBuilderImpl = NavItemBuilderImpl;
+        ;
+        return NavItemBuilder;
+    }());
+    HawtioMainNav.NavItemBuilder = NavItemBuilder;
     // Factory functions
-    HawtioMainNav.createBuilder = function () {
-        return new HawtioMainNav.NavItemBuilderImpl();
-    };
+    function createBuilder() {
+        return new NavItemBuilder();
+    }
+    HawtioMainNav.createBuilder = createBuilder;
+    ;
     // Plugin initialization
-    var _module = angular.module(HawtioMainNav.pluginName, ['ngRoute']);
-    HawtioMainNav._module = _module;
-    _module.constant('layoutFull', 'templates/main-nav/layoutFull.html');
-    _module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
+    HawtioMainNav._module = angular.module(HawtioMainNav.pluginName, ['ngRoute']);
+    HawtioMainNav._module.constant('layoutFull', 'templates/main-nav/layoutFull.html');
+    HawtioMainNav._module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
             $locationProvider.html5Mode({
                 enabled: true,
                 requireBase: true
             });
             $routeProvider.otherwise({ templateUrl: 'templates/main-nav/welcome.html' });
         }]);
-    _module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
+    HawtioMainNav._module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
             function gotoNavItem(item) {
                 if (item && item.href) {
                     var href = trimLeading(item.href(), documentBase($document));
@@ -1278,7 +1417,7 @@ var HawtioMainNav;
                 evalCandidates(candidates);
             }, 500);
         }]);
-    _module.controller('HawtioNav.ViewController', ['$scope', '$route', '$location', 'layoutFull', 'viewRegistry', function ($scope, $route, $location, layoutFull, viewRegistry) {
+    HawtioMainNav._module.controller('HawtioNav.ViewController', ['$scope', '$route', '$location', 'layoutFull', 'viewRegistry', function ($scope, $route, $location, layoutFull, viewRegistry) {
             findViewPartial();
             $scope.$on("$routeChangeSuccess", function (event, current, previous) {
                 findViewPartial();
@@ -1358,8 +1497,8 @@ var HawtioMainNav;
                 return answer;
             }
         }]);
-    _module.run(['HawtioNav', '$rootScope', '$route', '$document', function (HawtioNav, $rootScope, $route, $document) {
-            HawtioNav.on(HawtioMainNav.Actions.CHANGED, "$apply", function (item) {
+    HawtioMainNav._module.run(['HawtioNav', '$rootScope', '$route', '$document', function (HawtioNav, $rootScope, $route, $document) {
+            HawtioNav.on(Actions.CHANGED, "$apply", function (item) {
                 if (!$rootScope.$$phase) {
                     $rootScope.$apply();
                 }
@@ -1380,13 +1519,13 @@ var HawtioMainNav;
                     };
                 }
             }
-            HawtioNav.on(HawtioMainNav.Actions.ADD, "htmlBaseRewriter", function (item) {
+            HawtioNav.on(Actions.ADD, "htmlBaseRewriter", function (item) {
                 if (item.href) {
                     applyBaseHref(item);
                     _.forEach(item.tabs, applyBaseHref);
                 }
             });
-            HawtioNav.on(HawtioMainNav.Actions.ADD, "$apply", function (item) {
+            HawtioNav.on(Actions.ADD, "$apply", function (item) {
                 var oldClick = item.click;
                 item.click = function ($event) {
                     if (!($event instanceof jQuery.Event)) {
@@ -1407,8 +1546,6 @@ var HawtioMainNav;
             $route.reload();
             log.debug("loaded");
         }]);
-    hawtioPluginLoader.addModule(HawtioMainNav.pluginName);
-    hawtioPluginLoader.addModule("ngRoute");
     // helper function for testing nav items
     function itemIsValid(item) {
         if (!('isValid' in item)) {
@@ -1551,7 +1688,7 @@ var HawtioMainNav;
                     config.numValid = config.numValid + 1;
                 }
             };
-            HawtioNav.on(HawtioMainNav.Actions.ADD, 'subTabEnricher', function (item) {
+            HawtioNav.on(Actions.ADD, 'subTabEnricher', function (item) {
                 if (item.tabs && item.tabs.length > 0) {
                     item.tabs.forEach(function (subItem) {
                         subItem.isSubTab = true;
@@ -1573,7 +1710,7 @@ var HawtioMainNav;
                     });
                 }
             });
-            HawtioNav.on(HawtioMainNav.Actions.ADD, 'hrefEnricher', function (item) {
+            HawtioNav.on(Actions.ADD, 'hrefEnricher', function (item) {
                 item.isSubTab = false;
                 if (item.href && !item.oldHref) {
                     item.oldHref = item.href;
@@ -1601,19 +1738,19 @@ var HawtioMainNav;
                     };
                 }
             });
-            HawtioNav.on(HawtioMainNav.Actions.ADD, 'isSelectedEnricher', function (item) {
+            HawtioNav.on(Actions.ADD, 'isSelectedEnricher', function (item) {
                 addIsSelected($location, item);
                 if (item.tabs) {
                     item.tabs.forEach(function (item) { addIsSelected($location, item); });
                 }
             });
-            HawtioNav.on(HawtioMainNav.Actions.ADD, 'PrimaryController', function (item) {
+            HawtioNav.on(Actions.ADD, 'PrimaryController', function (item) {
                 config.nav[item.id] = item;
             });
-            HawtioNav.on(HawtioMainNav.Actions.REMOVE, 'PrimaryController', function (item) {
+            HawtioNav.on(Actions.REMOVE, 'PrimaryController', function (item) {
                 delete config.nav[item.id];
             });
-            HawtioNav.on(HawtioMainNav.Actions.CHANGED, 'PrimaryController', function (items) {
+            HawtioNav.on(Actions.CHANGED, 'PrimaryController', function (items) {
                 config.numKeys = items.length;
                 config.numValid = 0;
                 items.forEach(iterationFunc);
@@ -1669,48 +1806,58 @@ var HawtioMainNav;
                 }
             };
         }]);
-    // provider so it's possible to get a nav builder in _module.config()
-    HawtioMainNav._module.provider('HawtioNavBuilder', [function HawtioNavBuilderProvider() {
-            this.$get = function () {
-                return {};
-            };
-            this.create = function () {
-                return HawtioMainNav.createBuilder();
-            };
-            this.join = NavItemBuilderImpl['join'];
-            function setRoute($routeProvider, tab) {
-                log.debug("Setting route: ", tab.href(), " to template URL: ", tab['page']());
-                var config = {
-                    templateUrl: tab['page']()
-                };
-                if (!_.isUndefined(tab['reload'])) {
-                    config['reloadOnSearch'] = tab['reload'];
-                }
-                $routeProvider.when(tab.href(), config);
+    var BuilderFactory = /** @class */ (function () {
+        function BuilderFactory() {
+        }
+        BuilderFactory.prototype.$get = function () {
+            return {};
+        };
+        BuilderFactory.prototype.create = function () {
+            return createBuilder();
+        };
+        BuilderFactory.prototype.join = function () {
+            var paths = [];
+            for (var _a = 0; _a < arguments.length; _a++) {
+                paths[_a] = arguments[_a];
             }
-            this.configureRouting = function ($routeProvider, tab) {
-                if (_.isUndefined(tab['page'])) {
-                    if (tab.tabs) {
-                        var target = _.first(tab.tabs)['href'];
-                        if (target) {
-                            log.debug("Setting route: ", tab.href(), " to redirect to ", target());
-                            $routeProvider.when(tab.href(), {
-                                reloadOnSearch: tab['reload'],
-                                redirectTo: target()
-                            });
-                        }
+            return join.apply(void 0, paths);
+        };
+        BuilderFactory.prototype.setRoute = function ($routeProvider, tab) {
+            log.debug("Setting route: ", tab.href(), " to template URL: ", tab['page']());
+            var config = {
+                templateUrl: tab['page']()
+            };
+            if (!_.isUndefined(tab['reload'])) {
+                config['reloadOnSearch'] = tab['reload'];
+            }
+            $routeProvider.when(tab.href(), config);
+        };
+        BuilderFactory.prototype.configureRouting = function ($routeProvider, tab) {
+            var _this = this;
+            if (_.isUndefined(tab['page'])) {
+                if (tab.tabs) {
+                    var target = _.first(tab.tabs)['href'];
+                    if (target) {
+                        log.debug("Setting route: ", tab.href(), " to redirect to ", target());
+                        $routeProvider.when(tab.href(), {
+                            reloadOnSearch: tab['reload'],
+                            redirectTo: target()
+                        });
                     }
                 }
-                else {
-                    setRoute($routeProvider, tab);
-                }
-                if (tab.tabs) {
-                    tab.tabs.forEach(function (tab) {
-                        return setRoute($routeProvider, tab);
-                    });
-                }
-            };
-        }]);
+            }
+            else {
+                this.setRoute($routeProvider, tab);
+            }
+            if (tab.tabs) {
+                tab.tabs.forEach(function (tab) { return _this.setRoute($routeProvider, tab); });
+            }
+        };
+        return BuilderFactory;
+    }());
+    HawtioMainNav.BuilderFactory = BuilderFactory;
+    // provider so it's possible to get a nav builder in _module.config()
+    HawtioMainNav._module.provider('HawtioNavBuilder', BuilderFactory);
     HawtioMainNav._module.factory('HawtioPerspective', [function () {
             var log = Logger.get('hawtio-dummy-perspective');
             return {
@@ -1739,7 +1886,7 @@ var HawtioMainNav;
             };
         }]);
     HawtioMainNav._module.factory('HawtioNav', ['$window', '$rootScope', function ($window, $rootScope) {
-            var registry = HawtioMainNav.createRegistry(window);
+            var registry = createRegistry(window);
             return registry;
         }]);
     HawtioMainNav._module.component('hawtioVerticalNav', {
@@ -1838,10 +1985,30 @@ var templateCache;
                     return fn;
                 }]);
         }]);
-    // this is also added by hawtio-core-navigation, but we'll add it here as well
-    hawtioPluginLoader.addModule('ngRoute');
-    hawtioPluginLoader.addModule(templateCache.pluginName);
 })(templateCache || (templateCache = {}));
+/// <reference path="branding/branding.module.ts"/>
+/// <reference path="config/config.module.ts"/>
+/// <reference path="core/hawtio-core.ts"/>
+/// <reference path="extension/hawtio-extension-service.ts"/>
+/// <reference path="navigation/hawtio-core-navigation.ts"/>
+/// <reference path="template-cache/hawtio-template-cache.ts"/>
+var Hawtio;
+(function (Hawtio) {
+    Hawtio.rootModule = angular
+        .module('hawtio', [
+        Branding.brandingModule,
+        Config.configModule,
+        HawtioCore.pluginName,
+        HawtioExtensionService.pluginName,
+        HawtioMainNav.pluginName,
+        templateCache.pluginName
+    ])
+        .name;
+    hawtioPluginLoader.addModule(Hawtio.rootModule);
+    hawtioPluginLoader.addModule("ng");
+    hawtioPluginLoader.addModule("ngSanitize");
+    hawtioPluginLoader.addModule("ngRoute");
+})(Hawtio || (Hawtio = {}));
 
 angular.module('hawtio-nav').run(['$templateCache', function($templateCache) {$templateCache.put('templates/main-nav/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
 $templateCache.put('templates/main-nav/layoutTest.html','<div>\n  <h1>Test Layout</h1>\n  <div ng-view>\n\n\n  </div>\n</div>\n\n\n');

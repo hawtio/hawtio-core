@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "declaration": false,
+    "declaration": true,
     "outFile": "hawtio-core.js",
     "typeRoots": [
       "node_modules/@types",

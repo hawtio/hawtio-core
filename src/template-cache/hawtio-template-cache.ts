@@ -78,7 +78,4 @@ var templateCache;
     }]);
   }]);
 
-  // this is also added by hawtio-core-navigation, but we'll add it here as well
-  hawtioPluginLoader.addModule('ngRoute');
-  hawtioPluginLoader.addModule(templateCache.pluginName);
 })(templateCache || (templateCache = {}));

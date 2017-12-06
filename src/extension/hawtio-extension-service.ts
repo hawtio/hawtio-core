@@ -1,5 +1,3 @@
-/// <reference path="../core/hawtio-core.ts"/>
-
 var HawtioExtensionService;
 (function (HawtioExtensionService) {
   HawtioExtensionService.pluginName = 'hawtio-extension-service';
@@ -46,7 +44,5 @@ var HawtioExtensionService;
       }
     };
   }]);
-
-  hawtioPluginLoader.addModule(HawtioExtensionService.pluginName);
 
 })(HawtioExtensionService || (HawtioExtensionService = {}));

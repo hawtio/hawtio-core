@@ -1,0 +1,7 @@
+{
+  "brand": {
+    "logoUrl": "node_modules/patternfly/dist/img/logo-alt.svg",
+    "nameUrl": "node_modules/patternfly/dist/img/brand-alt.svg",
+    "nameText": "PatternFly Enterprise Application"
+  }
+}

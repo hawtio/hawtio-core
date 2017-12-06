@@ -1,3 +1,4 @@
+/// <reference path="plugin-loader.ts"/>
 
 // hawtio log initialization
 /* globals Logger window console document localStorage $ angular jQuery navigator Jolokia */
@@ -244,354 +245,10 @@
 /*
  * Plugin loader and discovery mechanism for hawtio
  */
-var hawtioPluginLoader = (function(self) {
-  'use strict';
-
-  var log = Logger.get('hawtio-loader');
-
-  var bootstrapEl = document.documentElement;
-
-  self.log = log;
-
-  /**
-   * List of URLs that the plugin loader will try and discover
-   * plugins from
-   * @type {Array}
-   */
-  self.urls = [];
-
-  /**
-   * Holds all of the angular modules that need to be bootstrapped
-   * @type {Array}
-   */
-  self.modules = [];
-
-  /**
-   * Tasks to be run before bootstrapping, tasks can be async.
-   * Supply a function that takes the next task to be
-   * executed as an argument and be sure to call the passed
-   * in function.
-   *
-   * @type {Array}
-   */
-  self.tasks = [];
-
-  self.setBootstrapElement = function(el) {
-    log.debug("Setting bootstrap element to: ", el);
-    bootstrapEl = el; 
-  }
-
-  self.getBootstrapElement = function() {
-    return bootstrapEl;
-  }
-
-  self.registerPreBootstrapTask = function(task, front) {
-    if (angular.isFunction(task)) {
-      log.debug("Adding legacy task");
-      task = {
-        task: task
-      };
-    }
-
-    if (!task.name) {
-      task.name = 'unnamed-task-' + (self.tasks.length + 1);
-    }
-
-    if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
-      task.depends = [task.depends];
-    }
-
-    if (!front) {
-      self.tasks.push(task);
-    } else {
-      self.tasks.unshift(task);
-    }
-  };
-
-  self.addModule = function(module) {
-    log.debug("Adding module: " + module);
-    self.modules.push(module);
-  };
-
-  self.addUrl = function(url) {
-    log.debug("Adding URL: " + url);
-    self.urls.push(url);
-  };
-
-  self.getModules = function() {
-    return self.modules;
-  };
-
-  self.loaderCallback = null;
-
-  self.setLoaderCallback = function(cb) {
-    self.loaderCallback = cb;
-    // log.debug("Setting callback to : ", self.loaderCallback);
-  };
-
-  function intersection(search, needle) {
-    if (!angular.isArray(needle)) {
-      needle = [needle];
-    }
-    //self.log.debug("Search: ", search);
-    //self.log.debug("Needle: ", needle);
-    var answer = [];
-    needle.forEach(function(n) {
-      search.forEach(function(s) {
-        if (n === s) {
-          answer.push(s);
-        }
-      });
-    });
-    return answer;
-  }
-
-
-  self.loadPlugins = function(callback) {
-
-    var lcb = self.loaderCallback;
-
-    var plugins = {};
-
-    var urlsToLoad = self.urls.length;
-    var totalUrls = urlsToLoad;
-
-    var bootstrap = function() {
-      var executedTasks = [];
-      var deferredTasks = [];
-
-      var bootstrapTask = {
-        name: 'Hawtio Bootstrap',
-        depends: '*',
-        runs: 0,
-        task: function(next) {
-          function listTasks() {
-            deferredTasks.forEach(function(task) {
-              self.log.info("  name: " + task.name + " depends: ", task.depends);
-            });
-          }
-          if (deferredTasks.length > 0) {
-            self.log.info("tasks yet to run: ");
-            listTasks();
-            bootstrapTask.runs = bootstrapTask.runs + 1;
-            self.log.info("Task list restarted : ", bootstrapTask.runs, " times");
-            if (bootstrapTask.runs === 5) {
-              self.log.info("Orphaned tasks: ");
-              listTasks();
-              deferredTasks.length = 0;
-            } else {
-              deferredTasks.push(bootstrapTask);
-            }
-          }
-          self.log.debug("Executed tasks: ", executedTasks);
-          next();
-        }
-      }
-
-      self.registerPreBootstrapTask(bootstrapTask);
-
-      var executeTask = function() {
-        var tObj = null;
-        var tmp = [];
-        // if we've executed all of the tasks, let's drain any deferred tasks
-        // into the regular task queue
-        if (self.tasks.length === 0) {
-          tObj = deferredTasks.shift();
-        }
-        // first check and see what tasks have executed and see if we can pull a task
-        // from the deferred queue
-        while(!tObj && deferredTasks.length > 0) {
-          var task = deferredTasks.shift();
-          if (task.depends === '*') {
-            if (self.tasks.length > 0) {
-              tmp.push(task);
-            } else {
-              tObj = task;
-            }
-          } else {
-            var intersect = intersection(executedTasks, task.depends);
-            if (intersect.length === task.depends.length) {
-              tObj = task;
-            } else {
-              tmp.push(task);
-            }
-          }
-        }
-        if (tmp.length > 0) {
-          tmp.forEach(function(task) {
-            deferredTasks.push(task);
-          });
-        }
-        // no deferred tasks to execute, let's get a new task
-        if (!tObj) {
-          tObj = self.tasks.shift();
-        }
-        // check if task has dependencies
-        if (tObj && tObj.depends && self.tasks.length > 0) {
-          self.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
-          if (tObj.depends === '*') {
-            if (self.tasks.length > 0) {
-              self.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
-              deferredTasks.push(tObj);
-              executeTask();
-              return;
-            }
-          } else {
-            var intersect = intersection(executedTasks, tObj.depends);
-            if (intersect.length != tObj.depends.length) {
-              self.log.debug("Deferring task: '" + tObj.name + "'");
-              deferredTasks.push(tObj);
-              executeTask();
-              return;
-            }
-          }
-        }
-        if (tObj) {
-          self.log.debug("Executing task: '" + tObj.name + "'");
-          //self.log.debug("ExecutedTasks: ", executedTasks);
-          var called = false;
-          var next = function() {
-            if (next['notFired']) {
-              next['notFired'] = false;
-              executedTasks.push(tObj.name);
-              setTimeout(executeTask, 1); 
-            }
-          }
-          next['notFired'] = true;
-          tObj.task(next);
-        } else {
-          self.log.debug("All tasks executed");
-          setTimeout(callback, 1);
-        }
-      };
-      setTimeout(executeTask, 1);
-    };
-
-    var loadScripts = function() {
-
-      // keep track of when scripts are loaded so we can execute the callback
-      var loaded = 0;
-      $.each(plugins, function(key, data) {
-        loaded = loaded + data.Scripts.length;
-      });
-
-      var totalScripts = loaded;
-
-      var scriptLoaded = function() {
-        $.ajaxSetup({async:true});
-        loaded = loaded - 1;
-        if (lcb) {
-          lcb.scriptLoaderCallback(lcb, totalScripts, loaded + 1);
-        }
-        if (loaded === 0) {
-          bootstrap();
-        }
-      };
-
-      if (loaded > 0) {
-        $.each(plugins, function(key, data) {
-
-          data.Scripts.forEach( function(script) {
-
-            // log.debug("Loading script: ", data.Name + " script: " + script);
-
-            var scriptName = data.Context + "/" + script;
-            log.debug("Fetching script: ", scriptName);
-            $.ajaxSetup({async:false});
-            $.getScript(scriptName)
-            .done(function(textStatus) {
-              log.debug("Loaded script: ", scriptName);
-            })
-            .fail(function(jqxhr, settings, exception) {
-              log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
-            })
-            .always(scriptLoaded);
-          });
-        });
-      } else {
-        // no scripts to load, so just do the callback
-        $.ajaxSetup({async:true});
-        bootstrap();
-      }
-    };
-
-    if (urlsToLoad === 0) {
-      loadScripts();
-    } else {
-      var urlLoaded = function () {
-        urlsToLoad = urlsToLoad - 1;
-        if (lcb) {
-          lcb.urlLoaderCallback(lcb, totalUrls, urlsToLoad + 1);
-        }
-        if (urlsToLoad === 0) {
-          loadScripts();
-        }
-      };
-
-      var regex = new RegExp(/^jolokia:/);
-
-      $.each(self.urls, function(index, url) {
-
-        if (regex.test(url)) {
-          var parts = url.split(':');
-          parts = parts.reverse();
-          parts.pop();
-
-          url = parts.pop();
-          var attribute = parts.reverse().join(':');
-          var jolokia = new Jolokia(url);
-
-          try {
-            var data = jolokia.getAttribute(attribute, null);
-            $.extend(plugins, data);
-          } catch (Exception) {
-            // console.error("Error fetching data: " + Exception);
-          }
-          urlLoaded();
-        } else {
-
-          log.debug("Trying url: ", url);
-
-          $.get(url, function (data) {
-            if (angular.isString(data)) {
-              try {
-                data = angular.fromJson(data);
-              } catch (error) {
-                // ignore this source of plugins
-                return;
-              }
-            }
-            // log.debug("got data: ", data);
-            $.extend(plugins, data);
-          }).always(function() {
-            urlLoaded();
-          });
-        }
-      });
-    }
-  };
-
-  self.debug = function() {
-    log.debug("urls and modules");
-    log.debug(self.urls);
-    log.debug(self.modules);
-  };
-
-  self.setLoaderCallback({
-    scriptLoaderCallback: function (self, total, remaining) {
-      log.debug("Total scripts: ", total, " Remaining: ", remaining);
-    },
-    urlLoaderCallback: function (self, total, remaining) {
-      log.debug("Total URLs: ", total, " Remaining: ", remaining);
-    }
-  });
-
-  return self;
-
-})(hawtioPluginLoader || {});
+const hawtioPluginLoader = new Hawtio.PluginLoader();
 
 // Hawtio core plugin responsible for bootstrapping a hawtio app
-var HawtioCore = (function () {
+var HawtioCore: HawtioCore = (function () {
     'use strict';
 
     function HawtioCoreClass() {
@@ -740,11 +397,6 @@ var HawtioCore = (function () {
       }; 
     });
 
-    // Placeholder service for branding
-    _module.factory('branding', function() {
-      return {};
-    });
-
     // Placeholder user details service
     _module.factory('userDetails', function() {
       return {
@@ -753,10 +405,6 @@ var HawtioCore = (function () {
         }
       };
     });
-
-    hawtioPluginLoader.addModule("ng");
-    hawtioPluginLoader.addModule("ngSanitize");
-    hawtioPluginLoader.addModule(HawtioCore.pluginName);
 
     // bootstrap the app
     $(function () {
@@ -830,3 +478,34 @@ var HawtioCore = (function () {
     });
     return HawtioCore;
 })();
+
+interface HawtioCore {
+  /**
+   * The app's injector, set once bootstrap is completed
+   */
+  injector: ng.auto.IInjectorService;
+  /**
+   * This plugin's name and angular module
+   */
+  pluginName: string;
+  /**
+   * Dummy local storage object
+   */
+  dummyLocalStorage:WindowLocalStorage;
+  /**
+   * Function that returns the base href attribute
+   */
+  documentBase(): string;
+
+  /**
+   * If angular2 is installed, this will be an instance of an ng.upgrade.UpgradeAdapter
+   */
+  UpgradeAdapter:any;
+
+  /**
+   * This will be a reference to the value returned from UpgradeAdapter.bootstrap(),
+   * which contains the angular1 injector (As well as the angular2 root injector)
+   */
+  UpgradeAdapterRef:any;
+
+}

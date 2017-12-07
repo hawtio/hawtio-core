@@ -1,3 +1,24 @@
+var Auth;
+(function (Auth) {
+    var DummyAuthService = /** @class */ (function () {
+        function DummyAuthService() {
+        }
+        DummyAuthService.prototype.logout = function () {
+            // do nothing
+        };
+        return DummyAuthService;
+    }());
+    Auth.DummyAuthService = DummyAuthService;
+})(Auth || (Auth = {}));
+/// <reference path="auth.service.ts"/>
+var Auth;
+(function (Auth) {
+    Auth.log = Logger.get('hawtio-auth');
+    Auth.authModule = angular
+        .module('hawtio-auth', [])
+        .service('authService', Auth.DummyAuthService)
+        .name;
+})(Auth || (Auth = {}));
 var Config;
 (function (Config) {
     var ConfigService = /** @class */ (function () {
@@ -1992,6 +2013,7 @@ var templateCache;
                 }]);
         }]);
 })(templateCache || (templateCache = {}));
+/// <reference path="auth/auth.module.ts"/>
 /// <reference path="branding/branding.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
@@ -2002,6 +2024,7 @@ var Hawtio;
 (function (Hawtio) {
     Hawtio.rootModule = angular
         .module('hawtio', [
+        Auth.authModule,
         Branding.brandingModule,
         Config.configModule,
         HawtioCore.pluginName,

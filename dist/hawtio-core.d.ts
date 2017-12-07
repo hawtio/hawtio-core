@@ -1,5 +1,17 @@
 /// <reference types="angular" />
 /// <reference types="angular-route" />
+declare namespace Auth {
+    interface AuthService {
+        logout(): void;
+    }
+    class DummyAuthService implements AuthService {
+        logout(): void;
+    }
+}
+declare namespace Auth {
+    const log: Logging.Logger;
+    const authModule: string;
+}
 declare namespace Config {
     class ConfigService {
         private config;

@@ -1,3 +1,4 @@
+/// <reference path="auth/auth.module.ts"/>
 /// <reference path="branding/branding.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
@@ -9,6 +10,7 @@ namespace Hawtio {
 
   export const rootModule = angular
     .module('hawtio', [
+      Auth.authModule,
       Branding.brandingModule,
       Config.configModule,
       HawtioCore.pluginName,

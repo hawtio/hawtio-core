@@ -10,13 +10,19 @@ var Config;
             }
         }
         ConfigService.prototype.getBrandLogoUrl = function () {
-            return this.getProperty('brand', 'logoUrl');
+            return this.getProperty('branding', 'logoUrl');
+        };
+        ConfigService.prototype.getBrandLogoAltUrl = function () {
+            return this.getProperty('branding', 'logoAltUrl');
         };
         ConfigService.prototype.getBrandNameUrl = function () {
-            return this.getProperty('brand', 'nameUrl');
+            return this.getProperty('branding', 'brandUrl');
         };
-        ConfigService.prototype.getBrandNameText = function () {
-            return this.getProperty('brand', 'nameText');
+        ConfigService.prototype.getBrandNameAltUrl = function () {
+            return this.getProperty('branding', 'brandAltUrl');
+        };
+        ConfigService.prototype.getBrandName = function () {
+            return this.getProperty('branding', 'brandName');
         };
         ConfigService.prototype.getProperty = function (group, name) {
             if (this.config && this.config[group] && this.config[group][name]) {
@@ -40,7 +46,7 @@ var Branding;
             'ngInject';
             var _this = this;
             $rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
-                _this.src = configService.getBrandLogoUrl();
+                _this.src = configService.getBrandLogoAltUrl();
             });
         }
         return BrandLogoController;
@@ -60,8 +66,8 @@ var Branding;
             'ngInject';
             var _this = this;
             $rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
-                _this.src = configService.getBrandNameUrl();
-                _this.alt = configService.getBrandNameText();
+                _this.src = configService.getBrandNameAltUrl();
+                _this.alt = configService.getBrandName();
             });
         }
         return BrandNameController;

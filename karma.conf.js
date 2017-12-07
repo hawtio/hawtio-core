@@ -74,6 +74,10 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
+    concurrency: Infinity,
+
+
+    // Add base tag to test page
+    customContextFile: 'karma/context.html'
   })
 }

@@ -5,8 +5,10 @@ declare namespace Config {
         private config;
         constructor(config: any);
         getBrandLogoUrl(): any;
+        getBrandLogoAltUrl(): any;
         getBrandNameUrl(): any;
-        getBrandNameText(): any;
+        getBrandNameAltUrl(): any;
+        getBrandName(): any;
         private getProperty(group, name);
     }
 }

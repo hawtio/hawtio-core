@@ -9,7 +9,7 @@ namespace Branding {
     constructor($rootScope: ng.IRootScopeService) {
       'ngInject';
       $rootScope.$on(Config.EVENT_LOADED, (event, configService: Config.ConfigService) => {
-        this.src = configService.getBrandLogoUrl();
+        this.src = configService.getBrandLogoAltUrl();
       });
     }
 

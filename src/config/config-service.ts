@@ -3,10 +3,12 @@ namespace Config {
   export class ConfigService {
     
     private config: {
-      brand: {
+      branding: {
         logoUrl: string;
-        nameUrl: string;
-        nameText: string;
+        logoAltUrl: string;
+        brandUrl: string;
+        brandAltUrl: string;
+        brandName: string;
       }
     }
 
@@ -19,15 +21,23 @@ namespace Config {
     }
 
     getBrandLogoUrl() {
-      return this.getProperty('brand', 'logoUrl');
+      return this.getProperty('branding', 'logoUrl');
+    }
+
+    getBrandLogoAltUrl() {
+      return this.getProperty('branding', 'logoAltUrl');
     }
     
     getBrandNameUrl() {
-      return this.getProperty('brand', 'nameUrl');
+      return this.getProperty('branding', 'brandUrl');
     }
     
-    getBrandNameText() {
-      return this.getProperty('brand', 'nameText');
+    getBrandNameAltUrl() {
+      return this.getProperty('branding', 'brandAltUrl');
+    }
+    
+    getBrandName() {
+      return this.getProperty('branding', 'brandName');
     }
     
     private getProperty(group: string, name: string) {

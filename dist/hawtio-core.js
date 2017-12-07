@@ -95,20 +95,20 @@ var Config;
     configLoader.$inject = ["$rootScope", "$http"];
     function configLoader($rootScope, $http) {
         'ngInject';
-        Config.log.info('Loading configuration...');
+        Config.log.info('Loading hawtconfig.json...');
         $http.get('hawtconfig.json')
             .then(function (response) {
             try {
-                Config.log.info('Configuration loaded');
+                Config.log.info('hawtconfig.json loaded');
                 var configService = new Config.ConfigService(response.data);
                 $rootScope.$broadcast(Config.EVENT_LOADED, configService);
             }
             catch (error) {
-                Config.log.error(error);
+                Config.log.error('Failed to load hawtconfig.json', error);
             }
         })
             .catch(function (response) {
-            Config.log.error('Failed to load configuration');
+            Config.log.warn('hawtconfig.json not found');
         });
     }
     Config.configLoader = configLoader;

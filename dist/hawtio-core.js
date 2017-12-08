@@ -27,7 +27,7 @@ var Config;
                 this.config = config;
             }
             else {
-                throw Error('Invalid configuration: ' + config);
+                throw Error('Could not load hawtconfig.json. Expected object but found ' + (config === null ? 'null' : typeof config));
             }
         }
         ConfigService.prototype.getBrandLogoUrl = function () {
@@ -120,12 +120,13 @@ var Config;
         $http.get('hawtconfig.json')
             .then(function (response) {
             try {
-                Config.log.info('hawtconfig.json loaded');
                 var configService = new Config.ConfigService(response.data);
                 $rootScope.$broadcast(Config.EVENT_LOADED, configService);
+                Config.log.info('hawtconfig.json loaded');
             }
             catch (error) {
-                Config.log.error('Failed to load hawtconfig.json', error);
+                Config.log.warn(error.message);
+                Config.log.debug('hawtconfig.json:\n' + response.data);
             }
         })
             .catch(function (response) {

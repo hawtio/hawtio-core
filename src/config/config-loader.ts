@@ -10,11 +10,12 @@ namespace Config {
     $http.get('hawtconfig.json')
       .then(response => {
         try {
-          log.info('hawtconfig.json loaded');
           const configService = new ConfigService(response.data);
           $rootScope.$broadcast(EVENT_LOADED, configService);
+          log.info('hawtconfig.json loaded');
         } catch(error) {
-          log.error('Failed to load hawtconfig.json', error);
+          log.warn(error.message);
+          log.debug('hawtconfig.json:\n' + response.data);
         }
       })
       .catch(response => {

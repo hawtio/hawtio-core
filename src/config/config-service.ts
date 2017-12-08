@@ -16,7 +16,7 @@ namespace Config {
       if (angular.isObject(config)) {
         this.config = config;
       } else {
-        throw Error('Invalid configuration: ' + config);
+        throw Error('Could not load hawtconfig.json. Expected object but found ' + (config === null ? 'null' : typeof config));
       }
     }
 

@@ -1,5 +1,5 @@
-/// <reference path="brand-logo.component.ts"/>
-/// <reference path="brand-name.component.ts"/>
+/// <reference path="branding-image.component.ts"/>
+/// <reference path="branding-text.component.ts"/>
 
 namespace Branding {
 
@@ -7,8 +7,8 @@ namespace Branding {
 
   export const brandingModule = angular
     .module('hawtio-branding', [])
-    .component('hawtioBrandLogo', brandLogoComponent)
-    .component('hawtioBrandName', brandNameComponent)
+    .component('hawtioBrandingImage', brandingImageComponent)
+    .component('hawtioBrandingText', brandingTextComponent)
     .name;
 
 }

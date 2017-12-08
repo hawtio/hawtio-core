@@ -30,28 +30,16 @@ var Config;
                 throw Error('Could not load hawtconfig.json. Expected object but found ' + (config === null ? 'null' : typeof config));
             }
         }
-        ConfigService.prototype.getBrandLogoUrl = function () {
-            return this.getProperty('branding', 'logoUrl');
+        ConfigService.prototype.getBrandingValue = function (name) {
+            return this.getValue('branding', name);
         };
-        ConfigService.prototype.getBrandLogoAltUrl = function () {
-            return this.getProperty('branding', 'logoAltUrl');
-        };
-        ConfigService.prototype.getBrandNameUrl = function () {
-            return this.getProperty('branding', 'brandUrl');
-        };
-        ConfigService.prototype.getBrandNameAltUrl = function () {
-            return this.getProperty('branding', 'brandAltUrl');
-        };
-        ConfigService.prototype.getBrandName = function () {
-            return this.getProperty('branding', 'brandName');
-        };
-        ConfigService.prototype.getProperty = function (group, name) {
+        ConfigService.prototype.getValue = function (group, name) {
             if (this.config && this.config[group] && this.config[group][name]) {
                 return this.config[group][name];
             }
             else {
                 Config.log.warn("Configuration property \"" + group + "." + name + "\" not found");
-                return null;
+                return '';
             }
         };
         return ConfigService;
@@ -61,53 +49,67 @@ var Config;
 /// <reference path="../config/config-service.ts"/>
 var Branding;
 (function (Branding) {
-    var BrandLogoController = /** @class */ (function () {
-        BrandLogoController.$inject = ["$rootScope"];
-        function BrandLogoController($rootScope) {
+    var BrandingImageController = /** @class */ (function () {
+        BrandingImageController.$inject = ["$rootScope"];
+        function BrandingImageController($rootScope) {
             'ngInject';
-            var _this = this;
-            $rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
-                _this.src = configService.getBrandLogoAltUrl();
-            });
+            this.$rootScope = $rootScope;
         }
-        return BrandLogoController;
+        BrandingImageController.prototype.$onInit = function () {
+            var _this = this;
+            this.$rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
+                _this.src = configService.getBrandingValue(_this.src);
+                _this.alt = configService.getBrandingValue(_this.alt);
+            });
+        };
+        return BrandingImageController;
     }());
-    Branding.BrandLogoController = BrandLogoController;
-    Branding.brandLogoComponent = {
-        template: "<img class=\"navbar-brand-icon\" src=\"{{$ctrl.src}}\" alt=\"\"/>",
-        controller: BrandLogoController
+    Branding.BrandingImageController = BrandingImageController;
+    Branding.brandingImageComponent = {
+        bindings: {
+            class: '@',
+            src: '@',
+            alt: '@'
+        },
+        template: '<img class="{{$ctrl.class}}" src="{{$ctrl.src}}" alt="{{$ctrl.alt}}"/>',
+        controller: BrandingImageController
     };
 })(Branding || (Branding = {}));
 /// <reference path="../config/config-service.ts"/>
 var Branding;
 (function (Branding) {
-    var BrandNameController = /** @class */ (function () {
-        BrandNameController.$inject = ["$rootScope"];
-        function BrandNameController($rootScope) {
+    var BrandingTextController = /** @class */ (function () {
+        BrandingTextController.$inject = ["$rootScope"];
+        function BrandingTextController($rootScope) {
             'ngInject';
-            var _this = this;
-            $rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
-                _this.src = configService.getBrandNameAltUrl();
-                _this.alt = configService.getBrandName();
-            });
+            this.$rootScope = $rootScope;
         }
-        return BrandNameController;
+        BrandingTextController.prototype.$onInit = function () {
+            var _this = this;
+            this.$rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
+                _this.value = configService.getBrandingValue(_this.key);
+            });
+        };
+        return BrandingTextController;
     }());
-    Branding.BrandNameController = BrandNameController;
-    Branding.brandNameComponent = {
-        template: "<img class=\"navbar-brand-name\" src=\"{{$ctrl.src}}\" alt=\"{{$ctrl.alt}}\" />",
-        controller: BrandNameController
+    Branding.BrandingTextController = BrandingTextController;
+    Branding.brandingTextComponent = {
+        bindings: {
+            key: '@'
+        },
+        template: '{{$ctrl.value}}',
+        controller: BrandingTextController
     };
 })(Branding || (Branding = {}));
-/// <reference path="brand-logo.component.ts"/>
-/// <reference path="brand-name.component.ts"/>
+/// <reference path="branding-image.component.ts"/>
+/// <reference path="branding-text.component.ts"/>
 var Branding;
 (function (Branding) {
     Branding.log = Logger.get('hawtio-branding');
     Branding.brandingModule = angular
         .module('hawtio-branding', [])
-        .component('hawtioBrandLogo', Branding.brandLogoComponent)
-        .component('hawtioBrandName', Branding.brandNameComponent)
+        .component('hawtioBrandingImage', Branding.brandingImageComponent)
+        .component('hawtioBrandingText', Branding.brandingTextComponent)
         .name;
 })(Branding || (Branding = {}));
 /// <reference path="config-service.ts"/>

@@ -20,32 +20,16 @@ namespace Config {
       }
     }
 
-    getBrandLogoUrl() {
-      return this.getProperty('branding', 'logoUrl');
+    getBrandingValue(name: string) {
+      return this.getValue('branding', name);
     }
 
-    getBrandLogoAltUrl() {
-      return this.getProperty('branding', 'logoAltUrl');
-    }
-    
-    getBrandNameUrl() {
-      return this.getProperty('branding', 'brandUrl');
-    }
-    
-    getBrandNameAltUrl() {
-      return this.getProperty('branding', 'brandAltUrl');
-    }
-    
-    getBrandName() {
-      return this.getProperty('branding', 'brandName');
-    }
-    
-    private getProperty(group: string, name: string) {
+    private getValue(group: string, name: string) {
       if (this.config && this.config[group] && this.config[group][name]) {
         return this.config[group][name];
       } else {
         log.warn(`Configuration property "${group}.${name}" not found`);
-        return null;
+        return '';
       }
     }
 

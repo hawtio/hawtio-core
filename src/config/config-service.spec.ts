@@ -4,11 +4,8 @@ describe("Config.ConfigService", function () {
 
   const CONFIG = {
     branding: {
-      logoUrl: "node_modules/patternfly/dist/img/logo.svg",
-      logoAltUrl: "node_modules/patternfly/dist/img/logo-alt.svg",
-      brandUrl: "node_modules/patternfly/dist/img/brand.svg",
-      brandAltUrl: "node_modules/patternfly/dist/img/brand-alt.svg",
-      brandName: "PatternFly Enterprise Application"
+      name1: "value1",
+      name2: "value2"
     }
   };
   let configService: Config.ConfigService;
@@ -37,40 +34,16 @@ describe("Config.ConfigService", function () {
     }
   });
 
-  it("Should return null when property is not found", function () {
+  it("Should return blank when property is not found", function () {
     configService = new Config.ConfigService({});
-    let value = configService.getBrandLogoUrl();
-    expect(value).toBe(null);
+    let value = configService.getBrandingValue('blah');
+    expect(value).toBe('');
   });
 
-  it("Should return brand logo URL", function () {
+  it("Should return value when property is found", function () {
     configService = new Config.ConfigService(CONFIG);
-    let brandLogoUrl = configService.getBrandLogoUrl();
-    expect(configService.getBrandLogoUrl()).toBe(CONFIG.branding.logoUrl);
+    let value = configService.getBrandingValue('name1');
+    expect(value).toBe(CONFIG.branding.name1);
   });
-
-  it("Should return brand logo alternative URL", function () {
-    configService = new Config.ConfigService(CONFIG);
-    let brandLogoAltUrl = configService.getBrandLogoAltUrl();
-    expect(brandLogoAltUrl).toBe(CONFIG.branding.logoAltUrl);
-  });
-
-  it("Should return brand name URL", function () {
-    configService = new Config.ConfigService(CONFIG);
-    let brandNameUrl = configService.getBrandNameUrl();
-    expect(brandNameUrl).toBe(CONFIG.branding.brandUrl);
-  });
-
-  it("Should return brand alternative name URL", function () {
-    configService = new Config.ConfigService(CONFIG);
-    let brandNameAltUrl = configService.getBrandNameAltUrl();
-    expect(brandNameAltUrl).toBe(CONFIG.branding.brandAltUrl);
-  });
-
-  it("Should return brand name text", function () {
-    configService = new Config.ConfigService(CONFIG);
-    let brandName = configService.getBrandName();
-    expect(brandName).toBe(CONFIG.branding.brandName);
-  });
-
+  
 });

@@ -16,28 +16,30 @@ declare namespace Config {
     class ConfigService {
         private config;
         constructor(config: any);
-        getBrandLogoUrl(): any;
-        getBrandLogoAltUrl(): any;
-        getBrandNameUrl(): any;
-        getBrandNameAltUrl(): any;
-        getBrandName(): any;
-        private getProperty(group, name);
+        getBrandingValue(name: string): any;
+        private getValue(group, name);
     }
 }
 declare namespace Branding {
-    class BrandLogoController {
-        private src;
+    class BrandingImageController {
+        private $rootScope;
+        class: string;
+        src: string;
+        alt: string;
         constructor($rootScope: ng.IRootScopeService);
+        $onInit(): void;
     }
-    const brandLogoComponent: angular.IComponentOptions;
+    const brandingImageComponent: angular.IComponentOptions;
 }
 declare namespace Branding {
-    class BrandNameController {
-        private src;
-        private alt;
+    class BrandingTextController {
+        private $rootScope;
+        key: string;
+        value: string;
         constructor($rootScope: ng.IRootScopeService);
+        $onInit(): void;
     }
-    const brandNameComponent: angular.IComponentOptions;
+    const brandingTextComponent: angular.IComponentOptions;
 }
 declare namespace Branding {
     const log: Logging.Logger;

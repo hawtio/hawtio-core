@@ -27,7 +27,7 @@ gulp.task('templates', ['tsc'], function() {
   return eventStream.merge(
     gulp.src(['dist/hawtio-core.js']),
     gulp
-      .src(['templates/**/*.html'])
+      .src(['src/templates/**/*.html'])
       .pipe(templateCache({
         root: 'templates/',
         module: 'hawtio-nav'
@@ -35,6 +35,17 @@ gulp.task('templates', ['tsc'], function() {
   )
   .pipe(concat('hawtio-core.js'))
   .pipe(gulp.dest('dist/'));
+});
+
+gulp.task('copy-images', ['clean'], function() {
+  return gulp.src('src/img/**/*')
+    .pipe(gulp.dest('dist/img'));
+});
+
+gulp.task('concat-css', ['clean'], function() {
+  return gulp.src('src/css/**/*.css')
+    .pipe(concat('hawtio-core.css'))
+    .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('connect', function() {
@@ -51,7 +62,7 @@ gulp.task('reload', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch([tsConfig.include, 'example/**/*'], ['build']);
+  gulp.watch(['src/**/*'], ['build']);
   gulp.watch(['index.html', 'dist/**/*'], ['reload']);
 });
 
@@ -61,5 +72,5 @@ gulp.task('test', function (done) {
   }, done).start();
 });
 
-gulp.task('build', ['tsc', 'templates']);
+gulp.task('build', ['tsc', 'templates', 'copy-images', 'concat-css']);
 gulp.task('default', ['build', 'connect', 'watch']);

@@ -1,28 +1,31 @@
-var HawtioExtensionService;
-(function (HawtioExtensionService) {
-  HawtioExtensionService.pluginName = 'hawtio-extension-service';
-  HawtioExtensionService.templatePath = 'plugins/hawtio-extension-service/html';
+namespace HawtioExtensionService {
 
-  HawtioExtensionService._module = angular.module(HawtioExtensionService.pluginName, []);
+  export const pluginName = 'hawtio-extension-service';
+  export const templatePath = 'plugins/hawtio-extension-service/html';
 
-  HawtioExtensionService._module.service('HawtioExtension',  function() {
-    this._registeredExtensions = {};
+  export const _module = angular.module(pluginName, []);
 
-    this.add = function(extensionPointName, fn) {
+  export class HawtioExtension {
+    private _registeredExtensions = {};
+
+    constructor() {
+    }
+
+    add(extensionPointName: string, fn: any): void {
       if (!this._registeredExtensions[extensionPointName]) {
         this._registeredExtensions[extensionPointName] = [];
       }
       this._registeredExtensions[extensionPointName].push(fn);
-    };
+    }
 
-    this.render = function(extensionPointName, element, scope) {
-      var fns = this._registeredExtensions[extensionPointName];
+    render(extensionPointName: string, element: any, scope: any): void {
+      let fns = this._registeredExtensions[extensionPointName];
       if (!fns) {
         return;
       }
 
-      for (var i = 0; i < fns.length; i++) {
-        var toAppend = fns[i](scope);
+      for (let i = 0; i < fns.length; i++) {
+        let toAppend = fns[i](scope);
         if (!toAppend) {
           return;
         }
@@ -32,17 +35,22 @@ var HawtioExtensionService;
         element.append(toAppend);
       }
     }
-  });
+  }
 
-  HawtioExtensionService._module.directive('hawtioExtension', ["HawtioExtension", function(HawtioExtension) {
+  _module.service('HawtioExtension', HawtioExtension);
+
+  function hawtioExtensionDirective(HawtioExtension: HawtioExtension): any {
+    'ngInject';
     return {
       restrict: 'EA',
-      link: function(scope, element, attrs) {
+      link: (scope, element, attrs) => {
         if (attrs.name) {
           HawtioExtension.render(attrs.name, element, scope);
         }
       }
     };
-  }]);
+  }
 
-})(HawtioExtensionService || (HawtioExtensionService = {}));
+  _module.directive('hawtioExtension', hawtioExtensionDirective);
+
+}

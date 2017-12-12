@@ -157,7 +157,17 @@ interface HawtioCore {
      */
     UpgradeAdapterRef: any;
 }
-declare var HawtioExtensionService: any;
+declare namespace HawtioExtensionService {
+    const pluginName = "hawtio-extension-service";
+    const templatePath = "plugins/hawtio-extension-service/html";
+    const _module: angular.IModule;
+    class HawtioExtension {
+        private _registeredExtensions;
+        constructor();
+        add(extensionPointName: string, fn: any): void;
+        render(extensionPointName: string, element: any, scope: any): void;
+    }
+}
 declare namespace HawtioMainNav {
     const pluginName = "hawtio-nav";
     class Actions {

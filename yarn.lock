@@ -3,8 +3,8 @@
 
 
 "@hawtio/core-dts@~3.0.12":
-  version "3.0.17"
-  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.17.tgz#ee4981ef95a3251d00704d3baf1bc66830b6d095"
+  version "3.0.18"
+  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.18.tgz#20d1ff7e839c0e3180c18e954ad7a305c4ba2b24"
   dependencies:
     "@types/jquery" "~2.0.46"
 

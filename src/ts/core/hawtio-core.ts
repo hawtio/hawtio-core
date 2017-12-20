@@ -19,6 +19,7 @@
   // we'll default to 100 statements I guess...
   window['LogBuffer'] = 100;
 
+  debugger;
   if ('localStorage' in window) {
     if (!('logLevel' in window.localStorage)) {
       window.localStorage['logLevel'] = JSON.stringify(Logger.INFO);
@@ -48,15 +49,13 @@
       window.localStorage['logBuffer'] = window['LogBuffer'];
     }
     if ('childLoggers' in window.localStorage) {
-      var childLoggers = [];
       try {
-        childLoggers = JSON.parse(localStorage['childLoggers']);
+        const childLoggers: Logging.ChildLogger[] = JSON.parse(localStorage['childLoggers']);
+        childLoggers.forEach(childLogger => {
+          Logger.get(childLogger.name).setLevel(childLogger.filterLevel);
+        });
       } catch (e) {
-
       }
-      childLoggers.forEach(function(child) {
-        Logger.get(child.logger).setLevel(Logger[child.level]);
-      });
     }
   }
 

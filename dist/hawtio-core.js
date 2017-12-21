@@ -525,7 +525,6 @@ var Hawtio;
     };
     // we'll default to 100 statements I guess...
     window['LogBuffer'] = 100;
-    debugger;
     if ('localStorage' in window) {
         if (!('logLevel' in window.localStorage)) {
             window.localStorage['logLevel'] = JSON.stringify(Logger.INFO);

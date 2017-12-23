@@ -1,5 +1,5 @@
-var Auth;
-(function (Auth) {
+var Core;
+(function (Core) {
     var DummyAuthService = /** @class */ (function () {
         function DummyAuthService() {
         }
@@ -8,19 +8,18 @@ var Auth;
         };
         return DummyAuthService;
     }());
-    Auth.DummyAuthService = DummyAuthService;
-})(Auth || (Auth = {}));
+    Core.DummyAuthService = DummyAuthService;
+})(Core || (Core = {}));
 /// <reference path="auth.service.ts"/>
-var Auth;
-(function (Auth) {
-    Auth.log = Logger.get('hawtio-auth');
-    Auth.authModule = angular
+var Core;
+(function (Core) {
+    Core.authModule = angular
         .module('hawtio-auth', [])
-        .service('authService', Auth.DummyAuthService)
+        .service('authService', Core.DummyAuthService)
         .name;
-})(Auth || (Auth = {}));
-var Config;
-(function (Config) {
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
     var ConfigService = /** @class */ (function () {
         function ConfigService(config) {
             if (angular.isObject(config)) {
@@ -38,17 +37,42 @@ var Config;
                 return this.config[group][name];
             }
             else {
-                Config.log.warn("Configuration property \"" + group + "." + name + "\" not found");
+                Core.log.warn("Configuration property \"" + group + "." + name + "\" not found");
                 return '';
             }
         };
         return ConfigService;
     }());
-    Config.ConfigService = ConfigService;
-})(Config || (Config = {}));
-/// <reference path="../config/config-service.ts"/>
-var Branding;
-(function (Branding) {
+    Core.ConfigService = ConfigService;
+})(Core || (Core = {}));
+/// <reference path="config-service.ts"/>
+var Core;
+(function (Core) {
+    configLoader.$inject = ["$rootScope", "$http"];
+    function configLoader($rootScope, $http) {
+        'ngInject';
+        Core.log.info('Loading hawtconfig.json...');
+        $http.get('hawtconfig.json')
+            .then(function (response) {
+            try {
+                var configService = new Core.ConfigService(response.data);
+                $rootScope.$broadcast(Core.EVENT_LOADED, configService);
+                Core.log.info('hawtconfig.json loaded');
+            }
+            catch (error) {
+                Core.log.warn(error.message);
+                Core.log.debug('hawtconfig.json:\n' + response.data);
+            }
+        })
+            .catch(function (response) {
+            Core.log.warn('hawtconfig.json not found');
+        });
+    }
+    Core.configLoader = configLoader;
+})(Core || (Core = {}));
+/// <reference path="../config-service.ts"/>
+var Core;
+(function (Core) {
     var BrandingImageController = /** @class */ (function () {
         BrandingImageController.$inject = ["$rootScope"];
         function BrandingImageController($rootScope) {
@@ -57,15 +81,15 @@ var Branding;
         }
         BrandingImageController.prototype.$onInit = function () {
             var _this = this;
-            this.$rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
+            this.$rootScope.$on(Core.EVENT_LOADED, function (event, configService) {
                 _this.src = configService.getBrandingValue(_this.src);
                 _this.alt = configService.getBrandingValue(_this.alt);
             });
         };
         return BrandingImageController;
     }());
-    Branding.BrandingImageController = BrandingImageController;
-    Branding.brandingImageComponent = {
+    Core.BrandingImageController = BrandingImageController;
+    Core.brandingImageComponent = {
         bindings: {
             class: '@',
             src: '@',
@@ -74,10 +98,10 @@ var Branding;
         template: '<img class="{{$ctrl.class}}" src="{{$ctrl.src}}" alt="{{$ctrl.alt}}"/>',
         controller: BrandingImageController
     };
-})(Branding || (Branding = {}));
-/// <reference path="../config/config-service.ts"/>
-var Branding;
-(function (Branding) {
+})(Core || (Core = {}));
+/// <reference path="../config-service.ts"/>
+var Core;
+(function (Core) {
     var BrandingTextController = /** @class */ (function () {
         BrandingTextController.$inject = ["$rootScope"];
         function BrandingTextController($rootScope) {
@@ -86,69 +110,36 @@ var Branding;
         }
         BrandingTextController.prototype.$onInit = function () {
             var _this = this;
-            this.$rootScope.$on(Config.EVENT_LOADED, function (event, configService) {
+            this.$rootScope.$on(Core.EVENT_LOADED, function (event, configService) {
                 _this.value = configService.getBrandingValue(_this.key);
             });
         };
         return BrandingTextController;
     }());
-    Branding.BrandingTextController = BrandingTextController;
-    Branding.brandingTextComponent = {
+    Core.BrandingTextController = BrandingTextController;
+    Core.brandingTextComponent = {
         bindings: {
             key: '@'
         },
         template: '{{$ctrl.value}}',
         controller: BrandingTextController
     };
-})(Branding || (Branding = {}));
-/// <reference path="branding-image.component.ts"/>
-/// <reference path="branding-text.component.ts"/>
-var Branding;
-(function (Branding) {
-    Branding.log = Logger.get('hawtio-branding');
-    Branding.brandingModule = angular
-        .module('hawtio-branding', [])
-        .component('hawtioBrandingImage', Branding.brandingImageComponent)
-        .component('hawtioBrandingText', Branding.brandingTextComponent)
-        .name;
-})(Branding || (Branding = {}));
-/// <reference path="config-service.ts"/>
-var Config;
-(function (Config) {
-    configLoader.$inject = ["$rootScope", "$http"];
-    function configLoader($rootScope, $http) {
-        'ngInject';
-        Config.log.info('Loading hawtconfig.json...');
-        $http.get('hawtconfig.json')
-            .then(function (response) {
-            try {
-                var configService = new Config.ConfigService(response.data);
-                $rootScope.$broadcast(Config.EVENT_LOADED, configService);
-                Config.log.info('hawtconfig.json loaded');
-            }
-            catch (error) {
-                Config.log.warn(error.message);
-                Config.log.debug('hawtconfig.json:\n' + response.data);
-            }
-        })
-            .catch(function (response) {
-            Config.log.warn('hawtconfig.json not found');
-        });
-    }
-    Config.configLoader = configLoader;
-})(Config || (Config = {}));
+})(Core || (Core = {}));
 /// <reference path="config-loader.ts"/>
-var Config;
-(function (Config) {
-    Config.log = Logger.get('hawtio-config');
-    Config.EVENT_LOADED = 'hawtio-config-loaded';
-    Config.configModule = angular
+/// <reference path="branding/branding-image.component.ts"/>
+/// <reference path="branding/branding-text.component.ts"/>
+var Core;
+(function (Core) {
+    Core.EVENT_LOADED = 'hawtio-config-loaded';
+    Core.configModule = angular
         .module('hawtio-config', [])
-        .run(Config.configLoader)
+        .run(Core.configLoader)
+        .component('hawtioBrandingImage', Core.brandingImageComponent)
+        .component('hawtioBrandingText', Core.brandingTextComponent)
         .name;
-})(Config || (Config = {}));
-var Hawtio;
-(function (Hawtio) {
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
     /*
     * Plugin loader and discovery mechanism for hawtio
     */
@@ -507,8 +498,8 @@ var Hawtio;
         ;
         return PluginLoader;
     }());
-    Hawtio.PluginLoader = PluginLoader;
-})(Hawtio || (Hawtio = {}));
+    Core.PluginLoader = PluginLoader;
+})(Core || (Core = {}));
 /// <reference path="plugin-loader.ts"/>
 // hawtio log initialization
 /* globals Logger window console document localStorage $ angular jQuery navigator Jolokia */
@@ -747,7 +738,7 @@ var Hawtio;
 /*
  * Plugin loader and discovery mechanism for hawtio
  */
-var hawtioPluginLoader = new Hawtio.PluginLoader();
+var hawtioPluginLoader = new Core.PluginLoader();
 // Hawtio core plugin responsible for bootstrapping a hawtio app
 var HawtioCore = (function () {
     'use strict';
@@ -827,20 +818,6 @@ var HawtioCore = (function () {
     // own custom view
     _module.factory('viewRegistry', function () {
         return {};
-    });
-    // Placeholder service for the help registry
-    _module.factory('helpRegistry', function () {
-        return {
-            addUserDoc: function () { },
-            addDevDoc: function () { },
-            addSubTopic: function () { },
-            getOrCreateTopic: function () { return undefined; },
-            mapTopicName: function () { return undefined; },
-            mapSubTopicName: function () { return undefined; },
-            getTopics: function () { return undefined; },
-            disableAutodiscover: function () { },
-            discoverHelpFiles: function () { }
-        };
     });
     // Placeholder service for the preferences registry
     _module.factory('preferencesRegistry', function () {
@@ -947,23 +924,19 @@ var HawtioCore = (function () {
     });
     return HawtioCore;
 })();
-var HawtioExtensionService;
-(function (HawtioExtensionService) {
-    hawtioExtensionDirective.$inject = ["HawtioExtension"];
-    HawtioExtensionService.pluginName = 'hawtio-extension-service';
-    HawtioExtensionService.templatePath = 'plugins/hawtio-extension-service/html';
-    HawtioExtensionService._module = angular.module(HawtioExtensionService.pluginName, []);
-    var HawtioExtension = /** @class */ (function () {
-        function HawtioExtension() {
+var Core;
+(function (Core) {
+    var HawtioExtensionService = /** @class */ (function () {
+        function HawtioExtensionService() {
             this._registeredExtensions = {};
         }
-        HawtioExtension.prototype.add = function (extensionPointName, fn) {
+        HawtioExtensionService.prototype.add = function (extensionPointName, fn) {
             if (!this._registeredExtensions[extensionPointName]) {
                 this._registeredExtensions[extensionPointName] = [];
             }
             this._registeredExtensions[extensionPointName].push(fn);
         };
-        HawtioExtension.prototype.render = function (extensionPointName, element, scope) {
+        HawtioExtensionService.prototype.render = function (extensionPointName, element, scope) {
             var fns = this._registeredExtensions[extensionPointName];
             if (!fns) {
                 return;
@@ -979,10 +952,14 @@ var HawtioExtensionService;
                 element.append(toAppend);
             }
         };
-        return HawtioExtension;
+        return HawtioExtensionService;
     }());
-    HawtioExtensionService.HawtioExtension = HawtioExtension;
-    HawtioExtensionService._module.service('HawtioExtension', HawtioExtension);
+    Core.HawtioExtensionService = HawtioExtensionService;
+})(Core || (Core = {}));
+/// <reference path="hawtio-extension.service.ts"/>
+var Core;
+(function (Core) {
+    hawtioExtensionDirective.$inject = ["HawtioExtension"];
     function hawtioExtensionDirective(HawtioExtension) {
         'ngInject';
         return {
@@ -994,9 +971,252 @@ var HawtioExtensionService;
             }
         };
     }
-    HawtioExtensionService._module.directive('hawtioExtension', hawtioExtensionDirective);
-})(HawtioExtensionService || (HawtioExtensionService = {}));
-/// <reference path="../core/hawtio-core.ts"/>
+    Core.hawtioExtensionDirective = hawtioExtensionDirective;
+})(Core || (Core = {}));
+/// <reference path="hawtio-extension.service.ts"/>
+/// <reference path="hawtio-extension.directive.ts"/>
+var Core;
+(function (Core) {
+    Core.hawtioExtensionModule = angular
+        .module('hawtio-extension-service', [])
+        .service('HawtioExtension', Core.HawtioExtensionService)
+        .directive('hawtioExtension', Core.hawtioExtensionDirective)
+        .name;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    var HelpTopic = /** @class */ (function () {
+        function HelpTopic() {
+        }
+        HelpTopic.prototype.isIndexTopic = function () {
+            return this.topicName === 'index';
+        };
+        return HelpTopic;
+    }());
+    Core.HelpTopic = HelpTopic;
+})(Core || (Core = {}));
+/// <reference path="help-topic.ts"/>
+var Core;
+(function (Core) {
+    var HelpRegistryService = /** @class */ (function () {
+        HelpRegistryService.$inject = ["$rootScope"];
+        function HelpRegistryService($rootScope) {
+            'ngInject';
+            this.$rootScope = $rootScope;
+            this.topicNameMappings = {
+                activemq: 'ActiveMQ',
+                camel: 'Camel',
+                jboss: 'JBoss',
+                jclouds: 'jclouds',
+                jmx: 'JMX',
+                jvm: 'Connect',
+                log: 'Logs',
+                openejb: 'OpenEJB',
+                osgi: 'OSGi'
+            };
+            this.subTopicNameMappings = {
+                user: 'User Guide',
+                developer: 'Developers',
+                faq: 'FAQ',
+                changes: 'Change Log',
+            };
+            this.topics = [];
+        }
+        HelpRegistryService.prototype.addUserDoc = function (topicName, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            this.addSubTopic(topicName, 'user', path, isValid);
+        };
+        HelpRegistryService.prototype.addDevDoc = function (topicName, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            this.addSubTopic(topicName, 'developer', path, isValid);
+        };
+        HelpRegistryService.prototype.addSubTopic = function (topicName, subtopic, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            this.getOrCreateTopic(topicName, subtopic, path, isValid);
+        };
+        HelpRegistryService.prototype.getOrCreateTopic = function (topicName, subTopicName, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            var topic = this.getTopic(topicName, subTopicName);
+            if (!angular.isDefined(topic)) {
+                if (isValid === null) {
+                    isValid = function () {
+                        return true;
+                    };
+                }
+                topic = new Core.HelpTopic();
+                topic.topicName = topicName;
+                topic.subTopicName = subTopicName;
+                topic.path = path;
+                topic.isValid = isValid;
+                this.topics.push(topic);
+                this.$rootScope.$broadcast('hawtioNewHelpTopic');
+            }
+            return topic;
+        };
+        HelpRegistryService.prototype.mapTopicName = function (name) {
+            if (angular.isDefined(this.topicNameMappings[name])) {
+                return this.topicNameMappings[name];
+            }
+            return name;
+        };
+        HelpRegistryService.prototype.mapSubTopicName = function (name) {
+            if (angular.isDefined(this.subTopicNameMappings[name])) {
+                return this.subTopicNameMappings[name];
+            }
+            return name;
+        };
+        HelpRegistryService.prototype.getTopics = function () {
+            var answer = this.topics.filter(function (topic) {
+                return topic.isValid() === true;
+            });
+            return answer;
+        };
+        HelpRegistryService.prototype.getTopic = function (topicName, subTopicName) {
+            return this.topics.filter(function (topic) {
+                return topic.topicName === topicName && topic.subTopicName === subTopicName;
+            })[0];
+        };
+        return HelpRegistryService;
+    }());
+    Core.HelpRegistryService = HelpRegistryService;
+})(Core || (Core = {}));
+/// <reference path="help-registry.service.ts"/>
+/// <reference path="help-topic.ts"/>
+var Core;
+(function (Core) {
+    var HelpService = /** @class */ (function () {
+        HelpService.$inject = ["$templateCache", "helpRegistry"];
+        function HelpService($templateCache, helpRegistry) {
+            'ngInject';
+            this.$templateCache = $templateCache;
+            this.helpRegistry = helpRegistry;
+            marked.setOptions({
+                gfm: true,
+                tables: true,
+                breaks: false,
+                pedantic: true,
+                sanitize: false,
+                smartLists: true,
+                langPrefix: 'language-'
+            });
+        }
+        HelpService.prototype.getBreadcrumbs = function () {
+            var _this = this;
+            return this.helpRegistry.getTopics().filter(function (topic) {
+                if (topic.isIndexTopic() === true) {
+                    topic.label = _this.helpRegistry.mapSubTopicName(topic.subTopicName);
+                    return topic;
+                }
+            });
+        };
+        HelpService.prototype.getSections = function () {
+            var _this = this;
+            var sections = this.helpRegistry.getTopics().filter(function (topic) {
+                if (topic.isIndexTopic() === false) {
+                    topic.label = _this.helpRegistry.mapTopicName(topic.topicName);
+                    return topic;
+                }
+            });
+            return _.sortBy(sections, 'label');
+        };
+        HelpService.prototype.getTopics = function () {
+            return this.helpRegistry.getTopics();
+        };
+        HelpService.prototype.getTopic = function (topicName, subTopicName) {
+            return this.helpRegistry.getTopic(topicName, subTopicName);
+        };
+        HelpService.prototype.getHelpContent = function (topic) {
+            if (!angular.isDefined(topic)) {
+                return "Unable to display help data for " + topic.path;
+            }
+            else {
+                var template = this.$templateCache.get(topic.path);
+                if (template) {
+                    return marked(template);
+                }
+                else {
+                    return "Unable to display help data for " + topic.path;
+                }
+            }
+        };
+        return HelpService;
+    }());
+    Core.HelpService = HelpService;
+})(Core || (Core = {}));
+/// <reference path="help.service.ts"/>
+var Core;
+(function (Core) {
+    var HelpController = /** @class */ (function () {
+        HelpController.$inject = ["$rootScope", "helpService", "$sce"];
+        function HelpController($rootScope, helpService, $sce) {
+            'ngInject';
+            this.helpService = helpService;
+            this.$sce = $sce;
+            $rootScope.$on('hawtioNewHelpTopic', function () {
+                this.breadcrumbs = this.helpService.getBreadcrumbs();
+                this.sections = this.helpService.getSections();
+            });
+        }
+        HelpController.prototype.$onInit = function () {
+            this.breadcrumbs = this.helpService.getBreadcrumbs();
+            this.sections = this.helpService.getSections();
+            this.onSelectBreadcrumb(this.helpService.getTopic('index', 'user'));
+        };
+        HelpController.prototype.onSelectTopic = function (topic) {
+            this.selectedTopic = topic;
+            this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(topic));
+        };
+        HelpController.prototype.onSelectBreadcrumb = function (topic) {
+            this.selectedBreadcrumb = topic;
+            this.selectedTopic = null;
+            this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(topic));
+        };
+        return HelpController;
+    }());
+    Core.HelpController = HelpController;
+    Core.helpComponent = {
+        templateUrl: 'help/help.component.html',
+        controller: HelpController
+    };
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    HelpConfig.$inject = ["$routeProvider", "$provide"];
+    HelpRun.$inject = ["helpRegistry", "viewRegistry", "layoutFull", "$templateCache"];
+    function HelpConfig($routeProvider, $provide) {
+        'ngInject';
+        $routeProvider.when('/help', { template: '<help></help>' });
+    }
+    Core.HelpConfig = HelpConfig;
+    function HelpRun(helpRegistry, viewRegistry, layoutFull, $templateCache) {
+        'ngInject';
+        viewRegistry['help'] = layoutFull;
+        helpRegistry.addUserDoc('index', 'help/help.md');
+        // These docs live in the main hawtio project
+        helpRegistry.addSubTopic('index', 'faq', 'plugins/help/doc/FAQ.md', function () {
+            return $templateCache.get('plugins/help/doc/FAQ.md') !== undefined;
+        });
+        helpRegistry.addSubTopic('index', 'changes', 'plugins/help/doc/CHANGES.md', function () {
+            return $templateCache.get('plugins/help/doc/CHANGES.md') !== undefined;
+        });
+    }
+    Core.HelpRun = HelpRun;
+})(Core || (Core = {}));
+/// <reference path="help.component.ts"/>
+/// <reference path="help.config.ts"/>
+/// <reference path="help.service.ts"/>
+/// <reference path="help-registry.service.ts"/>
+var Core;
+(function (Core) {
+    Core.helpModule = angular
+        .module('hawtio-help', [])
+        .config(Core.HelpConfig)
+        .run(Core.HelpRun)
+        .component('help', Core.helpComponent)
+        .service('helpService', Core.HelpService)
+        .service('helpRegistry', Core.HelpRegistryService)
+        .name;
+})(Core || (Core = {}));
 /* global _ */
 /* global angular */
 /* global jQuery */
@@ -1332,13 +1552,13 @@ var HawtioMainNav;
     ;
     // Plugin initialization
     HawtioMainNav._module = angular.module(HawtioMainNav.pluginName, ['ngRoute']);
-    HawtioMainNav._module.constant('layoutFull', 'templates/main-nav/layoutFull.html');
+    HawtioMainNav._module.constant('layoutFull', 'navigation/templates/layoutFull.html');
     HawtioMainNav._module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
             $locationProvider.html5Mode({
                 enabled: true,
                 requireBase: true
             });
-            $routeProvider.otherwise({ templateUrl: 'templates/main-nav/welcome.html' });
+            $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
         }]);
     HawtioMainNav._module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
             function gotoNavItem(item) {
@@ -1659,7 +1879,7 @@ var HawtioMainNav;
             template = item.template();
         }
         else {
-            template = $templateCache.get('templates/main-nav/navItem.html');
+            template = $templateCache.get('navigation/templates/navItem.html');
         }
         if (item.attributes || item.linkAttributes) {
             var tmpEl = $(template);
@@ -1927,7 +2147,7 @@ var HawtioMainNav;
             return registry;
         }]);
     HawtioMainNav._module.component('hawtioVerticalNav', {
-        templateUrl: 'templates/main-nav/verticalNav.html',
+        templateUrl: 'navigation/templates/verticalNav.html',
         controller: function () {
             this.showSecondaryNav = false;
             this.onHover = function (item) {
@@ -1945,7 +2165,6 @@ var HawtioMainNav;
         }
     });
 })(HawtioMainNav || (HawtioMainNav = {}));
-/// <reference path="../core/hawtio-core.ts"/>
 var templateCache;
 (function (templateCache) {
     templateCache.pluginName = 'hawtio-template-cache';
@@ -2024,34 +2243,40 @@ var templateCache;
         }]);
 })(templateCache || (templateCache = {}));
 /// <reference path="auth/auth.module.ts"/>
-/// <reference path="branding/branding.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
-/// <reference path="extension/hawtio-extension-service.ts"/>
+/// <reference path="extension/hawtio-extension.module.ts"/>
+/// <reference path="help/help.module.ts"/>
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
-var Hawtio;
-(function (Hawtio) {
-    Hawtio.rootModule = angular
+var Core;
+(function (Core) {
+    Core.appModule = angular
         .module('hawtio', [
-        Auth.authModule,
-        Branding.brandingModule,
-        Config.configModule,
+        'ng',
+        'ngRoute',
+        'ngSanitize',
+        Core.authModule,
+        Core.configModule,
         HawtioCore.pluginName,
-        HawtioExtensionService.pluginName,
+        Core.hawtioExtensionModule,
+        Core.helpModule,
         HawtioMainNav.pluginName,
         templateCache.pluginName
     ])
         .name;
-    hawtioPluginLoader.addModule(Hawtio.rootModule);
-    hawtioPluginLoader.addModule("ng");
-    hawtioPluginLoader.addModule("ngSanitize");
-    hawtioPluginLoader.addModule("ngRoute");
-})(Hawtio || (Hawtio = {}));
+    Core.log = Logger.get(Core.appModule);
+    hawtioPluginLoader.addModule(Core.appModule);
+})(Core || (Core = {}));
 
-angular.module('hawtio-nav').run(['$templateCache', function($templateCache) {$templateCache.put('templates/main-nav/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
-$templateCache.put('templates/main-nav/layoutTest.html','<div>\n  <h1>Test Layout</h1>\n  <div ng-view>\n\n\n  </div>\n</div>\n\n\n');
-$templateCache.put('templates/main-nav/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
-$templateCache.put('templates/main-nav/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
-$templateCache.put('templates/main-nav/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
-$templateCache.put('templates/main-nav/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');}]);
+angular.module('hawtio-core').run(['$templateCache', function($templateCache) {$templateCache.put('help/help.component.html','<div class="help-ht">\n\n  <h1>Help</h1>\n \n  <ul class="nav nav-tabs">\n    <li ng-repeat="breadcrumb in $ctrl.breadcrumbs" ng-class="{active : breadcrumb === $ctrl.selectedBreadcrumb}">\n      <a href="#" ng-click="$ctrl.onSelectBreadcrumb(breadcrumb)">{{breadcrumb.label}}</a>\n    </li>\n  </ul>\n\n  <div ng-show="$ctrl.selectedBreadcrumb.subTopicName === \'user\'">\n    <div>\n      <div class="col-sm-9 col-md-10 col-sm-push-3 col-md-push-2">\n        <div ng-hide="!$ctrl.html">\n          <div ng-bind-html="$ctrl.html"></div>\n        </div>\n      </div>\n      <div class="col-sm-3 col-md-2 col-sm-pull-9 col-md-pull-10 sidebar-pf">\n        <div class="nav-category">\n          <ul class="nav nav-pills nav-stacked">\n            <li ng-repeat="section in $ctrl.sections" ng-class="{active : section === $ctrl.selectedTopic}">\n              <a class="help-sectionlink" ng-href="#" ng-click="$ctrl.onSelectTopic(section)">{{section.label}}</a>\n            </li>\n          </ul>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <div ng-show="$ctrl.selectedBreadcrumb.subTopicName !== \'user\'">\n    <div ng-bind-html="$ctrl.html"></div>\n  </div>\n</div>\n');
+$templateCache.put('navigation/templates/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
+$templateCache.put('navigation/templates/layoutTest.html','<div>\n  <h1>Test Layout</h1>\n  <div ng-view>\n\n\n  </div>\n</div>\n\n\n');
+$templateCache.put('navigation/templates/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
+$templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
+$templateCache.put('navigation/templates/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
+$templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
+$templateCache.put('help/help.md','##### Plugin Help #####\nBrowse the available help topics for plugin specific documentation using the help navigation bar on the left.\n\n##### Further Reading #####\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
+$templateCache.put('help/example/activemq.md','## ActiveMQ\n\nTest documentation for ActiveMQ\n');
+$templateCache.put('help/example/camel.md','## Camel\n\nTest documentation for camel\n');
+$templateCache.put('help/example/osgi.md','## OSGi\n\nTest documentation for OSGi\n');}]);

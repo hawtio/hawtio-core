@@ -78,6 +78,6 @@ module.exports = function(config) {
 
 
     // Add base tag to test page
-    customContextFile: 'karma/context.html'
+    customContextFile: '.karma/context.html'
   })
 }

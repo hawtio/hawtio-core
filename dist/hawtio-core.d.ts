@@ -1,6 +1,6 @@
 /// <reference types="angular" />
 /// <reference types="angular-route" />
-declare namespace Auth {
+declare namespace Core {
     interface AuthService {
         logout(): void;
     }
@@ -8,11 +8,10 @@ declare namespace Auth {
         logout(): void;
     }
 }
-declare namespace Auth {
-    const log: Logging.Logger;
+declare namespace Core {
     const authModule: string;
 }
-declare namespace Config {
+declare namespace Core {
     class ConfigService {
         private config;
         constructor(config: any);
@@ -20,7 +19,10 @@ declare namespace Config {
         private getValue(group, name);
     }
 }
-declare namespace Branding {
+declare namespace Core {
+    function configLoader($rootScope: ng.IRootScopeService, $http: ng.IHttpService): void;
+}
+declare namespace Core {
     class BrandingImageController {
         private $rootScope;
         class: string;
@@ -31,7 +33,7 @@ declare namespace Branding {
     }
     const brandingImageComponent: angular.IComponentOptions;
 }
-declare namespace Branding {
+declare namespace Core {
     class BrandingTextController {
         private $rootScope;
         key: string;
@@ -41,19 +43,11 @@ declare namespace Branding {
     }
     const brandingTextComponent: angular.IComponentOptions;
 }
-declare namespace Branding {
-    const log: Logging.Logger;
-    const brandingModule: string;
-}
-declare namespace Config {
-    function configLoader($rootScope: ng.IRootScopeService, $http: ng.IHttpService): void;
-}
-declare namespace Config {
-    const log: Logging.Logger;
+declare namespace Core {
     const EVENT_LOADED = "hawtio-config-loaded";
     const configModule: string;
 }
-declare namespace Hawtio {
+declare namespace Core {
     class PluginLoader {
         private log;
         private bootstrapEl;
@@ -128,7 +122,7 @@ declare namespace Hawtio {
         debug(): void;
     }
 }
-declare const hawtioPluginLoader: Hawtio.PluginLoader;
+declare const hawtioPluginLoader: Core.PluginLoader;
 declare var HawtioCore: HawtioCore;
 interface HawtioCore {
     /**
@@ -157,16 +151,81 @@ interface HawtioCore {
      */
     UpgradeAdapterRef: any;
 }
-declare namespace HawtioExtensionService {
-    const pluginName = "hawtio-extension-service";
-    const templatePath = "plugins/hawtio-extension-service/html";
-    const _module: angular.IModule;
-    class HawtioExtension {
+declare namespace Core {
+    class HawtioExtensionService {
         private _registeredExtensions;
-        constructor();
         add(extensionPointName: string, fn: any): void;
         render(extensionPointName: string, element: any, scope: any): void;
     }
+}
+declare namespace Core {
+    function hawtioExtensionDirective(HawtioExtension: HawtioExtensionService): any;
+}
+declare namespace Core {
+    const hawtioExtensionModule: string;
+}
+declare namespace Core {
+    class HelpTopic {
+        topicName: string;
+        subTopicName: string;
+        label: string;
+        path: string;
+        isValid: any;
+        selected: boolean;
+        isIndexTopic(): boolean;
+    }
+}
+declare namespace Core {
+    class HelpRegistryService {
+        private $rootScope;
+        private topicNameMappings;
+        private subTopicNameMappings;
+        private topics;
+        constructor($rootScope: any);
+        addUserDoc(topicName: string, path: string, isValid?: () => boolean): void;
+        addDevDoc(topicName: string, path: string, isValid?: () => boolean): void;
+        addSubTopic(topicName: string, subtopic: string, path: any, isValid?: () => boolean): void;
+        getOrCreateTopic(topicName: string, subTopicName: string, path: string, isValid?: () => boolean): HelpTopic;
+        mapTopicName(name: any): any;
+        mapSubTopicName(name: any): any;
+        getTopics(): HelpTopic[];
+        getTopic(topicName: string, subTopicName: string): HelpTopic;
+    }
+}
+declare namespace Core {
+    class HelpService {
+        private $templateCache;
+        private helpRegistry;
+        constructor($templateCache: any, helpRegistry: HelpRegistryService);
+        getBreadcrumbs(): HelpTopic[];
+        getSections(): HelpTopic[];
+        getTopics(): HelpTopic[];
+        getTopic(topicName: string, subTopicName: string): HelpTopic;
+        getHelpContent(topic: HelpTopic): string;
+    }
+}
+declare namespace Core {
+    class HelpController {
+        private helpService;
+        private $sce;
+        breadcrumbs: HelpTopic[];
+        sections: HelpTopic[];
+        selectedTopic: HelpTopic;
+        selectedBreadcrumb: HelpTopic;
+        html: any;
+        constructor($rootScope: any, helpService: HelpService, $sce: ng.ISCEService);
+        $onInit(): void;
+        onSelectTopic(topic: HelpTopic): void;
+        onSelectBreadcrumb(topic: HelpTopic): void;
+    }
+    const helpComponent: angular.IComponentOptions;
+}
+declare namespace Core {
+    function HelpConfig($routeProvider: any, $provide: any): void;
+    function HelpRun(helpRegistry: any, viewRegistry: any, layoutFull: any, $templateCache: any): void;
+}
+declare namespace Core {
+    const helpModule: string;
 }
 declare namespace HawtioMainNav {
     const pluginName = "hawtio-nav";
@@ -261,6 +320,7 @@ declare namespace HawtioMainNav {
     }
 }
 declare var templateCache: any;
-declare namespace Hawtio {
-    const rootModule: string;
+declare namespace Core {
+    const appModule: string;
+    const log: Logging.Logger;
 }

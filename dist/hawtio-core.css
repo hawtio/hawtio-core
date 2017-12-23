@@ -1,3 +1,17 @@
-.navbar-brand-icon, .navbar-brand-name {
+div.nav-ht-full-layout {
+  height: 100%;
+}
+.help-ht {
+  height: 100%;
+}
+.help-ht .sidebar-pf {
+  height: 100%;
+}
+.help-sectionlink {
+  text-transform: capitalize;
+}
+
+.navbar-brand-icon,
+.navbar-brand-name {
   max-height: 35px;
 }

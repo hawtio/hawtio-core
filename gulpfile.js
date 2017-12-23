@@ -3,6 +3,8 @@ var connect = require('gulp-connect');
 var concat = require('gulp-concat');
 var del = require('del');
 var eventStream = require('event-stream');
+var less = require('gulp-less');
+var path = require('path');
 var templateCache = require('gulp-angular-templatecache');
 var ts = require('gulp-typescript');
 var tsProject = ts.createProject('tsconfig.json');
@@ -27,10 +29,9 @@ gulp.task('templates', ['tsc'], function() {
   return eventStream.merge(
     gulp.src(['dist/hawtio-core.js']),
     gulp
-      .src(['src/templates/**/*.html'])
+      .src(['src/app/**/*.html', 'src/app/**/*.md'])
       .pipe(templateCache({
-        root: 'templates/',
-        module: 'hawtio-nav'
+        module: 'hawtio-core'
       }))
   )
   .pipe(concat('hawtio-core.js'))
@@ -38,12 +39,18 @@ gulp.task('templates', ['tsc'], function() {
 });
 
 gulp.task('copy-images', ['clean'], function() {
-  return gulp.src('src/img/**/*')
+  return gulp.src('src/assets/img/**/*')
     .pipe(gulp.dest('dist/img'));
 });
 
-gulp.task('concat-css', ['clean'], function() {
-  return gulp.src('src/css/**/*.css')
+gulp.task('less', ['clean'], function () {
+  return gulp.src('src/app/**/*.less')
+    .pipe(less({
+      paths: [
+        path.join(__dirname, 'src/app'),
+        path.join(__dirname, 'node_modules')
+      ]
+    }))
     .pipe(concat('hawtio-core.css'))
     .pipe(gulp.dest('dist/'));
 });
@@ -72,5 +79,5 @@ gulp.task('test', function (done) {
   }, done).start();
 });
 
-gulp.task('build', ['tsc', 'templates', 'copy-images', 'concat-css']);
+gulp.task('build', ['tsc', 'templates', 'copy-images', 'less']);
 gulp.task('default', ['build', 'connect', 'watch']);

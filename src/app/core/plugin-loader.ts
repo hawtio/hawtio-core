@@ -5,7 +5,6 @@ namespace Core {
   */
   export class PluginLoader {
 
-    private log = Logger.get('hawtio-loader');
     private bootstrapEl = document.documentElement;
     private loaderCallback = null;
 
@@ -35,10 +34,10 @@ namespace Core {
     constructor() {
       this.setLoaderCallback({
         scriptLoaderCallback: function (self, total, remaining) {
-          this.log.debug("Total scripts: ", total, " Remaining: ", remaining);
+          log.debug("Total scripts: ", total, " Remaining: ", remaining);
         },
         urlLoaderCallback: function (self, total, remaining) {
-          this.log.debug("Total URLs: ", total, " Remaining: ", remaining);
+          log.debug("Total URLs: ", total, " Remaining: ", remaining);
         }
       });
     }
@@ -47,7 +46,7 @@ namespace Core {
      * Set the HTML element that the plugin loader will pass to angular.bootstrap
      */
     setBootstrapElement(el) {
-      this.log.debug("Setting bootstrap element to: ", el);
+      log.debug("Setting bootstrap element to: ", el);
       this.bootstrapEl = el;
     }
 
@@ -72,7 +71,7 @@ namespace Core {
      */
     registerPreBootstrapTask(task, front?) {
       if (angular.isFunction(task)) {
-        this.log.debug("Adding legacy task");
+        log.debug("Adding legacy task");
         task = {
           task: task
         };
@@ -97,7 +96,7 @@ namespace Core {
      * Add an angular module to the list of modules to bootstrap
      */
     addModule(module) {
-      this.log.debug("Adding module: " + module);
+      log.debug("Adding module: " + module);
       this.modules.push(module);
     };
 
@@ -105,7 +104,7 @@ namespace Core {
      * Add a URL for discovering plugins.
      */
     addUrl(url) {
-      this.log.debug("Adding URL: " + url);
+      log.debug("Adding URL: " + url);
       this.urls.push(url);
     };
 
@@ -129,8 +128,8 @@ namespace Core {
       if (!angular.isArray(needle)) {
         needle = [needle];
       }
-      //this.log.debug("Search: ", search);
-      //this.log.debug("Needle: ", needle);
+      //log.debug("Search: ", search);
+      //log.debug("Needle: ", needle);
       var answer = [];
       needle.forEach(function (n) {
         search.forEach(function (s) {
@@ -165,23 +164,23 @@ namespace Core {
           task: (next) => {
             function listTasks() {
               deferredTasks.forEach(function (task) {
-                this.log.info("  name: " + task.name + " depends: ", task.depends);
+                log.info("  name: " + task.name + " depends: ", task.depends);
               });
             }
             if (deferredTasks.length > 0) {
-              this.log.info("tasks yet to run: ");
+              log.info("tasks yet to run: ");
               listTasks();
               bootstrapTask.runs = bootstrapTask.runs + 1;
-              this.log.info("Task list restarted : ", bootstrapTask.runs, " times");
+              log.info("Task list restarted : ", bootstrapTask.runs, " times");
               if (bootstrapTask.runs === 5) {
-                this.log.info("Orphaned tasks: ");
+                log.info("Orphaned tasks: ");
                 listTasks();
                 deferredTasks.length = 0;
               } else {
                 deferredTasks.push(bootstrapTask);
               }
             }
-            this.log.debug("Executed tasks: ", executedTasks);
+            log.debug("Executed tasks: ", executedTasks);
             next();
           }
         }
@@ -226,10 +225,10 @@ namespace Core {
           }
           // check if task has dependencies
           if (tObj && tObj.depends && this.tasks.length > 0) {
-            this.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
+            log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
             if (tObj.depends === '*') {
               if (this.tasks.length > 0) {
-                this.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
+                log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
                 deferredTasks.push(tObj);
                 executeTask();
                 return;
@@ -237,7 +236,7 @@ namespace Core {
             } else {
               var intersect = this.intersection(executedTasks, tObj.depends);
               if (intersect.length != tObj.depends.length) {
-                this.log.debug("Deferring task: '" + tObj.name + "'");
+                log.debug("Deferring task: '" + tObj.name + "'");
                 deferredTasks.push(tObj);
                 executeTask();
                 return;
@@ -245,8 +244,8 @@ namespace Core {
             }
           }
           if (tObj) {
-            this.log.debug("Executing task: '" + tObj.name + "'");
-            //this.log.debug("ExecutedTasks: ", executedTasks);
+            log.debug("Executing task: '" + tObj.name + "'");
+            //log.debug("ExecutedTasks: ", executedTasks);
             var called = false;
             var next = function () {
               if (next['notFired']) {
@@ -258,7 +257,7 @@ namespace Core {
             next['notFired'] = true;
             tObj.task(next);
           } else {
-            this.log.debug("All tasks executed");
+            log.debug("All tasks executed");
             setTimeout(callback, 1);
           }
         };
@@ -294,14 +293,14 @@ namespace Core {
               // log.debug("Loading script: ", data.Name + " script: " + script);
 
               var scriptName = data.Context + "/" + script;
-              this.log.debug("Fetching script: ", scriptName);
+              log.debug("Fetching script: ", scriptName);
               $.ajaxSetup({ async: false });
               $.getScript(scriptName)
                 .done(function (textStatus) {
-                  this.log.debug("Loaded script: ", scriptName);
+                  log.debug("Loaded script: ", scriptName);
                 })
                 .fail(function (jqxhr, settings, exception) {
-                  this.log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
+                  log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
                 })
                 .always(scriptLoaded);
             });
@@ -348,7 +347,7 @@ namespace Core {
             urlLoaded();
           } else {
 
-            this.log.debug("Trying url: ", url);
+            log.debug("Trying url: ", url);
 
             $.get(url, function (data) {
               if (angular.isString(data)) {
@@ -373,9 +372,9 @@ namespace Core {
      * Dumps the current list of configured modules and URLs to the console
      */
     debug() {
-      this.log.debug("urls and modules");
-      this.log.debug(this.urls);
-      this.log.debug(this.modules);
+      log.debug("urls and modules");
+      log.debug(this.urls);
+      log.debug(this.modules);
     };
 
   }

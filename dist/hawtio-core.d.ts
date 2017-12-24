@@ -49,7 +49,6 @@ declare namespace Core {
 }
 declare namespace Core {
     class PluginLoader {
-        private log;
         private bootstrapEl;
         private loaderCallback;
         /**
@@ -243,20 +242,7 @@ declare namespace HawtioMainNav {
         add(item: any): void;
         remove(search: any): any[];
         iterate(iterator: any): void;
-        selected(): number | ((...items: any[]) => number) | ((callbackfn: (value: any, index: number, array: any[]) => void, thisArg?: any) => void) | (() => string) | (() => any) | {
-            (...items: ReadonlyArray<any>[]): any[];
-            (...items: any[]): any[];
-        } | ((separator?: string) => string) | (() => any[]) | ((start?: number, end?: number) => any[]) | ((compareFn?: (a: any, b: any) => number) => any[]) | {
-            (start: number, deleteCount?: number): any[];
-            (start: number, deleteCount: number, ...items: any[]): any[];
-        } | ((searchElement: any, fromIndex?: number) => number) | ((callbackfn: (value: any, index: number, array: any[]) => boolean, thisArg?: any) => boolean) | (<U>(callbackfn: (value: any, index: number, array: any[]) => U, thisArg?: any) => U[]) | {
-            <S extends any>(callbackfn: (value: any, index: number, array: any[]) => value is S, thisArg?: any): S[];
-            (callbackfn: (value: any, index: number, array: any[]) => any, thisArg?: any): any[];
-        } | {
-            (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any): any;
-            (callbackfn: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => any, initialValue: any): any;
-            <U>(callbackfn: (previousValue: U, currentValue: any, currentIndex: number, array: any[]) => U, initialValue: U): U;
-        };
+        selected(): any;
         on(action: any, key: any, fn: any): void;
     }
     function createRegistry(root: any): Registry;

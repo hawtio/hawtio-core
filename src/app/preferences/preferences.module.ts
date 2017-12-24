@@ -25,6 +25,4 @@ namespace Core {
     .service('preferencesRegistry', PreferencesRegistry)
     .name;
 
-  hawtioPluginLoader.addModule(preferencesModule);
-
 }

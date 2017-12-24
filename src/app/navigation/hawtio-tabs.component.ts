@@ -14,7 +14,6 @@ namespace HawtioMainNav {
     }
 
     $onInit() {
-      this.names.push('aaaaaaa', 'abbbbbb', 'acccccc', 'adddd', 'aeeeeee', 'afffff', 'a');
       this.setDefaultAtiveTab();
       this.adjustTabs();
     }

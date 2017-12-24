@@ -145,7 +145,6 @@ var Core;
     */
     var PluginLoader = /** @class */ (function () {
         function PluginLoader() {
-            this.log = Logger.get('hawtio-loader');
             this.bootstrapEl = document.documentElement;
             this.loaderCallback = null;
             /**
@@ -170,10 +169,10 @@ var Core;
             this.tasks = [];
             this.setLoaderCallback({
                 scriptLoaderCallback: function (self, total, remaining) {
-                    this.log.debug("Total scripts: ", total, " Remaining: ", remaining);
+                    Core.log.debug("Total scripts: ", total, " Remaining: ", remaining);
                 },
                 urlLoaderCallback: function (self, total, remaining) {
-                    this.log.debug("Total URLs: ", total, " Remaining: ", remaining);
+                    Core.log.debug("Total URLs: ", total, " Remaining: ", remaining);
                 }
             });
         }
@@ -181,7 +180,7 @@ var Core;
          * Set the HTML element that the plugin loader will pass to angular.bootstrap
          */
         PluginLoader.prototype.setBootstrapElement = function (el) {
-            this.log.debug("Setting bootstrap element to: ", el);
+            Core.log.debug("Setting bootstrap element to: ", el);
             this.bootstrapEl = el;
         };
         /**
@@ -204,7 +203,7 @@ var Core;
          */
         PluginLoader.prototype.registerPreBootstrapTask = function (task, front) {
             if (angular.isFunction(task)) {
-                this.log.debug("Adding legacy task");
+                Core.log.debug("Adding legacy task");
                 task = {
                     task: task
                 };
@@ -227,7 +226,7 @@ var Core;
          * Add an angular module to the list of modules to bootstrap
          */
         PluginLoader.prototype.addModule = function (module) {
-            this.log.debug("Adding module: " + module);
+            Core.log.debug("Adding module: " + module);
             this.modules.push(module);
         };
         ;
@@ -235,7 +234,7 @@ var Core;
          * Add a URL for discovering plugins.
          */
         PluginLoader.prototype.addUrl = function (url) {
-            this.log.debug("Adding URL: " + url);
+            Core.log.debug("Adding URL: " + url);
             this.urls.push(url);
         };
         ;
@@ -259,8 +258,8 @@ var Core;
             if (!angular.isArray(needle)) {
                 needle = [needle];
             }
-            //this.log.debug("Search: ", search);
-            //this.log.debug("Needle: ", needle);
+            //log.debug("Search: ", search);
+            //log.debug("Needle: ", needle);
             var answer = [];
             needle.forEach(function (n) {
                 search.forEach(function (s) {
@@ -290,16 +289,16 @@ var Core;
                     task: function (next) {
                         function listTasks() {
                             deferredTasks.forEach(function (task) {
-                                this.log.info("  name: " + task.name + " depends: ", task.depends);
+                                Core.log.info("  name: " + task.name + " depends: ", task.depends);
                             });
                         }
                         if (deferredTasks.length > 0) {
-                            _this.log.info("tasks yet to run: ");
+                            Core.log.info("tasks yet to run: ");
                             listTasks();
                             bootstrapTask.runs = bootstrapTask.runs + 1;
-                            _this.log.info("Task list restarted : ", bootstrapTask.runs, " times");
+                            Core.log.info("Task list restarted : ", bootstrapTask.runs, " times");
                             if (bootstrapTask.runs === 5) {
-                                _this.log.info("Orphaned tasks: ");
+                                Core.log.info("Orphaned tasks: ");
                                 listTasks();
                                 deferredTasks.length = 0;
                             }
@@ -307,7 +306,7 @@ var Core;
                                 deferredTasks.push(bootstrapTask);
                             }
                         }
-                        _this.log.debug("Executed tasks: ", executedTasks);
+                        Core.log.debug("Executed tasks: ", executedTasks);
                         next();
                     }
                 };
@@ -353,10 +352,10 @@ var Core;
                     }
                     // check if task has dependencies
                     if (tObj && tObj.depends && _this.tasks.length > 0) {
-                        _this.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
+                        Core.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
                         if (tObj.depends === '*') {
                             if (_this.tasks.length > 0) {
-                                _this.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
+                                Core.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
                                 deferredTasks.push(tObj);
                                 executeTask();
                                 return;
@@ -365,7 +364,7 @@ var Core;
                         else {
                             var intersect = _this.intersection(executedTasks, tObj.depends);
                             if (intersect.length != tObj.depends.length) {
-                                _this.log.debug("Deferring task: '" + tObj.name + "'");
+                                Core.log.debug("Deferring task: '" + tObj.name + "'");
                                 deferredTasks.push(tObj);
                                 executeTask();
                                 return;
@@ -373,8 +372,8 @@ var Core;
                         }
                     }
                     if (tObj) {
-                        _this.log.debug("Executing task: '" + tObj.name + "'");
-                        //this.log.debug("ExecutedTasks: ", executedTasks);
+                        Core.log.debug("Executing task: '" + tObj.name + "'");
+                        //log.debug("ExecutedTasks: ", executedTasks);
                         var called = false;
                         var next = function () {
                             if (next['notFired']) {
@@ -387,7 +386,7 @@ var Core;
                         tObj.task(next);
                     }
                     else {
-                        _this.log.debug("All tasks executed");
+                        Core.log.debug("All tasks executed");
                         setTimeout(callback, 1);
                     }
                 };
@@ -415,14 +414,14 @@ var Core;
                         data.Scripts.forEach(function (script) {
                             // log.debug("Loading script: ", data.Name + " script: " + script);
                             var scriptName = data.Context + "/" + script;
-                            this.log.debug("Fetching script: ", scriptName);
+                            Core.log.debug("Fetching script: ", scriptName);
                             $.ajaxSetup({ async: false });
                             $.getScript(scriptName)
                                 .done(function (textStatus) {
-                                this.log.debug("Loaded script: ", scriptName);
+                                Core.log.debug("Loaded script: ", scriptName);
                             })
                                 .fail(function (jqxhr, settings, exception) {
-                                this.log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
+                                Core.log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
                             })
                                 .always(scriptLoaded);
                         });
@@ -466,7 +465,7 @@ var Core;
                         urlLoaded();
                     }
                     else {
-                        this.log.debug("Trying url: ", url);
+                        Core.log.debug("Trying url: ", url);
                         $.get(url, function (data) {
                             if (angular.isString(data)) {
                                 try {
@@ -491,9 +490,9 @@ var Core;
          * Dumps the current list of configured modules and URLs to the console
          */
         PluginLoader.prototype.debug = function () {
-            this.log.debug("urls and modules");
-            this.log.debug(this.urls);
-            this.log.debug(this.modules);
+            Core.log.debug("urls and modules");
+            Core.log.debug(this.urls);
+            Core.log.debug(this.modules);
         };
         ;
         return PluginLoader;
@@ -2543,7 +2542,6 @@ var Core;
         .service('preferencesService', Core.PreferencesService)
         .service('preferencesRegistry', Core.PreferencesRegistry)
         .name;
-    hawtioPluginLoader.addModule(Core.preferencesModule);
 })(Core || (Core = {}));
 var templateCache;
 (function (templateCache) {
@@ -2662,7 +2660,6 @@ var HawtioMainNav;
             this.dropdownNames = [];
         }
         HawtioTabsController.prototype.$onInit = function () {
-            this.names.push('aaaaaaa', 'abbbbbb', 'acccccc', 'adddd', 'aeeeeee', 'afffff', 'a');
             this.setDefaultAtiveTab();
             this.adjustTabs();
         };

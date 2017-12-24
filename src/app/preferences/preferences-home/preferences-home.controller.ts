@@ -12,23 +12,11 @@ namespace Core {
     var panels = preferencesRegistry.getTabs();
     $scope.names = sortNames(_.keys(panels));
 
-    $scope.$watch(() => {
-      panels = preferencesRegistry.getTabs();
-      $scope.names = sortNames(_.keys(panels));
-    });
-
     // pick the first one as the default
     preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.names[0]);
 
     $scope.setPanel = (name) => {
       $scope.pref = name;
-    };
-
-    $scope.active = (name) => {
-      if (name === $scope.pref) {
-        return 'active';
-      }
-      return '';
     };
 
     $scope.close = () => {

@@ -414,3 +414,21 @@ declare namespace Core {
     const appModule: string;
     const log: Logging.Logger;
 }
+declare namespace HawtioMainNav {
+    class HawtioTabsController {
+        private $document;
+        private $timeout;
+        names: string[];
+        tabNames: string[];
+        dropdownNames: string[];
+        adjustingTabs: boolean;
+        onChange: Function;
+        activeTab: string;
+        constructor($document: ng.IDocumentService, $timeout: ng.ITimeoutService);
+        $onInit(): void;
+        private setDefaultAtiveTab();
+        private adjustTabs();
+        onClick(name: string): void;
+    }
+    const hawtioTabsComponent: angular.IComponentOptions;
+}

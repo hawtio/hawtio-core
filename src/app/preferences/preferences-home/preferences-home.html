@@ -3,16 +3,6 @@
   <h1>
     Preferences
   </h1>
-  <ul class="nav nav-tabs" hawtio-auto-dropdown>
-    <li ng-repeat="name in names" ng-class="active(name)">
-      <a href="#" ng-click="setPanel(name)">{{name}}</a>
-    </li>
-    <li class="dropdown overflow">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        More <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu" role="menu"></ul>
-    </li>
-  </ul>
+  <hawtio-tabs names="names" on-change="setPanel(name)"></hawtio-tabs>
   <div ng-include="getPrefs(pref)"></div>
 </div>

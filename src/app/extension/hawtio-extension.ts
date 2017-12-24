@@ -1,6 +1,6 @@
 namespace Core {
 
-  export class HawtioExtensionService {
+  export class HawtioExtension {
 
     private _registeredExtensions = {};
 

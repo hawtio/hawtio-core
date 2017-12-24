@@ -1,8 +1,8 @@
-/// <reference path="hawtio-extension.service.ts"/>
+/// <reference path="hawtio-extension.ts"/>
 
 namespace Core {
 
-  export function hawtioExtensionDirective(HawtioExtension: HawtioExtensionService): any {
+  export function hawtioExtensionDirective(HawtioExtension: HawtioExtension): any {
     'ngInject';
     return {
       restrict: 'EA',

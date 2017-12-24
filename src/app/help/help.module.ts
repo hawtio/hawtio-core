@@ -1,7 +1,7 @@
 /// <reference path="help.component.ts"/>
 /// <reference path="help.config.ts"/>
 /// <reference path="help.service.ts"/>
-/// <reference path="help-registry.service.ts"/>
+/// <reference path="help-registry.ts"/>
 
 namespace Core {
 
@@ -11,7 +11,7 @@ namespace Core {
     .run(HelpRun)
     .component('help', helpComponent)
     .service('helpService', HelpService)
-    .service('helpRegistry', HelpRegistryService)
+    .service('helpRegistry', HelpRegistry)
     .name;
 
 }

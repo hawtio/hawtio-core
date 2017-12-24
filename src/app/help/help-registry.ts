@@ -2,7 +2,7 @@
 
 namespace Core {
 
-  export class HelpRegistryService {
+  export class HelpRegistry {
 
     private topicNameMappings = {
       activemq: 'ActiveMQ',

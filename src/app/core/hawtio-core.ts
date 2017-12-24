@@ -339,15 +339,6 @@ var HawtioCore: HawtioCore = (function () {
       return {};
     });
 
-    // Placeholder service for the preferences registry
-    _module.factory('preferencesRegistry', function() {
-      return {
-        addTab: function() {},
-        getTab: function() { return undefined; },
-        getTabs: function() { return undefined; }
-      };
-    });
-
     // Placeholder service for the page title service
     _module.factory('pageTitle', function() {
       return {

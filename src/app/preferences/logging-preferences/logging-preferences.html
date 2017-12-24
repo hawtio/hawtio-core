@@ -1,0 +1,56 @@
+<div ng-controller="PreferencesLoggingController">
+  <form class="form-horizontal logging-preferences-form">
+    <div class="form-group">
+      <label class="col-md-2 control-label" for="log-buffer">
+        Log buffer
+        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>
+      </label>
+      <div class="col-md-6">
+        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-md-2 control-label" for="log-level">Global log level</label>
+      <div class="col-md-6">
+        <select id="log-level" class="form-control" ng-model="logLevel"
+                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"
+                ng-change="onLogLevelChange(logLevel)">
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>
+      <div class="col-md-6">
+        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">
+          <label class="col-md-4 control-label child-logger-label" for="log-level">
+            {{childLogger.name}}
+          </label>
+          <div class="col-md-8">
+            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"
+                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"
+                    ng-change="onChildLoggersChange(childLoggers)">
+            </select>
+            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">
+              <span class="pficon pficon-delete"></span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">
+              Add
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">
+              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">
+                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">
+                  {{ availableChildLogger.name }}
+                </a>
+              </li>
+            </ul>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

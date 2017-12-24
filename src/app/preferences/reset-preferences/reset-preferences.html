@@ -1,0 +1,13 @@
+<div ng-controller="ResetPreferencesController">
+  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">
+    <span class="pficon pficon-ok"></span>
+    Settings reset successfully!
+  </div>
+  <h3>Reset settings</h3>
+  <p>
+    Clear all custom settings stored in your browser's local storage and reset to defaults.
+  </p>
+  <p>
+    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>
+  </p>
+</div>

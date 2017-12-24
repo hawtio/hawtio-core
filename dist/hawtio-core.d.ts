@@ -152,14 +152,14 @@ interface HawtioCore {
     UpgradeAdapterRef: any;
 }
 declare namespace Core {
-    class HawtioExtensionService {
+    class HawtioExtension {
         private _registeredExtensions;
         add(extensionPointName: string, fn: any): void;
         render(extensionPointName: string, element: any, scope: any): void;
     }
 }
 declare namespace Core {
-    function hawtioExtensionDirective(HawtioExtension: HawtioExtensionService): any;
+    function hawtioExtensionDirective(HawtioExtension: HawtioExtension): any;
 }
 declare namespace Core {
     const hawtioExtensionModule: string;
@@ -176,7 +176,7 @@ declare namespace Core {
     }
 }
 declare namespace Core {
-    class HelpRegistryService {
+    class HelpRegistry {
         private $rootScope;
         private topicNameMappings;
         private subTopicNameMappings;
@@ -196,7 +196,7 @@ declare namespace Core {
     class HelpService {
         private $templateCache;
         private helpRegistry;
-        constructor($templateCache: any, helpRegistry: HelpRegistryService);
+        constructor($templateCache: any, helpRegistry: HelpRegistry);
         getBreadcrumbs(): HelpTopic[];
         getSections(): HelpTopic[];
         getTopics(): HelpTopic[];
@@ -318,6 +318,96 @@ declare namespace HawtioMainNav {
         setRoute($routeProvider: any, tab: any): void;
         configureRouting($routeProvider: angular.route.IRouteProvider, tab: NavItem): any;
     }
+}
+declare namespace Core {
+    class LoggingPreferencesService {
+        private $window;
+        private static DEFAULT_LOG_BUFFER_SIZE;
+        private static DEFAULT_GLOBAL_LOG_LEVEL;
+        constructor($window: ng.IWindowService);
+        getLogBuffer(): number;
+        setLogBuffer(logBuffer: number): void;
+        getGlobalLogLevel(): Logging.LogLevel;
+        setGlobalLogLevel(logLevel: Logging.LogLevel): void;
+        getChildLoggers(): Logging.ChildLogger[];
+        getAvailableChildLoggers(): Logging.ChildLogger[];
+        addChildLogger(childLogger: Logging.ChildLogger): void;
+        removeChildLogger(childLogger: Logging.ChildLogger): void;
+        setChildLoggers(childLoggers: Logging.ChildLogger[]): void;
+        reconfigureLoggers(): void;
+    }
+}
+declare namespace Core {
+    function LoggingPreferencesController($scope: any, loggingPreferencesService: LoggingPreferencesService): void;
+}
+declare namespace Core {
+    const loggingPreferencesModule: string;
+}
+declare namespace Core {
+    class PreferencesService {
+        private $window;
+        constructor($window: ng.IWindowService);
+        saveLocationUrl(url: string): void;
+        restoreLocation($location: ng.ILocationService): void;
+        /**
+         * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
+         * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
+         * @method bindModelToSearchParam
+         * @for Core
+         * @static
+         * @param {*} $scope
+         * @param {ng.ILocationService} $location
+         * @param {String} modelName
+         * @param {String} paramName
+         * @param {Object} initialValue
+         */
+        bindModelToSearchParam($scope: any, $location: any, modelName: string, paramName: string, initialValue?: any, to?: (value: any) => any, from?: (value: any) => any): void;
+        /**
+         * Navigates the given set of paths in turn on the source object
+         * and updates the last path value to the given newValue
+         *
+         * @method pathSet
+         * @for Core
+         * @static
+         * @param {Object} object the start object to start navigating from
+         * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
+         * @param {Object} newValue the value to update
+         * @return {*} the last step on the path which is updated
+         */
+        pathSet(object: any, paths: any, newValue: any): any;
+    }
+}
+declare namespace Core {
+    class PreferencesRegistry {
+        private $rootScope;
+        private tabs;
+        constructor($rootScope: ng.IRootScopeService);
+        addTab(name: string, template: string, isValid?: () => boolean): void;
+        getTab(name: string): any;
+        getTabs(): {};
+    }
+}
+declare namespace Core {
+    function PreferencesHomeController($scope: any, $location: ng.ILocationService, preferencesRegistry: PreferencesRegistry, preferencesService: PreferencesService): void;
+}
+declare namespace Core {
+    const preferencesHomeModule: string;
+}
+declare namespace Core {
+    function ResetPreferencesController($scope: any, $window: ng.IWindowService): void;
+}
+declare namespace Core {
+    const resetPreferencesModule: string;
+}
+declare namespace Core {
+    function configureRoutes($routeProvider: any): void;
+    function addItemToUserMenu(HawtioExtension: HawtioExtension, $templateCache: ng.ITemplateCacheService, $compile: ng.ICompileService): void;
+    function savePreviousLocationWhenOpeningPreferences($rootScope: ng.IScope, preferencesService: PreferencesService): void;
+    function addHelpDocumentation(helpRegistry: HelpRegistry): void;
+    function addPreferencesPages(preferencesRegistry: PreferencesRegistry): void;
+}
+declare namespace Core {
+    const preferencesModule: string;
 }
 declare var templateCache: any;
 declare namespace Core {

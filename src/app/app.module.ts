@@ -4,6 +4,7 @@
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
+/// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
 
 namespace Core {
@@ -19,6 +20,7 @@ namespace Core {
       hawtioExtensionModule,
       helpModule,
       HawtioMainNav.pluginName,
+      preferencesModule,
       templateCache.pluginName
     ])
     .name;

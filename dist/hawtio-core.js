@@ -819,14 +819,6 @@ var HawtioCore = (function () {
     _module.factory('viewRegistry', function () {
         return {};
     });
-    // Placeholder service for the preferences registry
-    _module.factory('preferencesRegistry', function () {
-        return {
-            addTab: function () { },
-            getTab: function () { return undefined; },
-            getTabs: function () { return undefined; }
-        };
-    });
     // Placeholder service for the page title service
     _module.factory('pageTitle', function () {
         return {
@@ -926,17 +918,17 @@ var HawtioCore = (function () {
 })();
 var Core;
 (function (Core) {
-    var HawtioExtensionService = /** @class */ (function () {
-        function HawtioExtensionService() {
+    var HawtioExtension = /** @class */ (function () {
+        function HawtioExtension() {
             this._registeredExtensions = {};
         }
-        HawtioExtensionService.prototype.add = function (extensionPointName, fn) {
+        HawtioExtension.prototype.add = function (extensionPointName, fn) {
             if (!this._registeredExtensions[extensionPointName]) {
                 this._registeredExtensions[extensionPointName] = [];
             }
             this._registeredExtensions[extensionPointName].push(fn);
         };
-        HawtioExtensionService.prototype.render = function (extensionPointName, element, scope) {
+        HawtioExtension.prototype.render = function (extensionPointName, element, scope) {
             var fns = this._registeredExtensions[extensionPointName];
             if (!fns) {
                 return;
@@ -952,11 +944,11 @@ var Core;
                 element.append(toAppend);
             }
         };
-        return HawtioExtensionService;
+        return HawtioExtension;
     }());
-    Core.HawtioExtensionService = HawtioExtensionService;
+    Core.HawtioExtension = HawtioExtension;
 })(Core || (Core = {}));
-/// <reference path="hawtio-extension.service.ts"/>
+/// <reference path="hawtio-extension.ts"/>
 var Core;
 (function (Core) {
     hawtioExtensionDirective.$inject = ["HawtioExtension"];
@@ -973,13 +965,13 @@ var Core;
     }
     Core.hawtioExtensionDirective = hawtioExtensionDirective;
 })(Core || (Core = {}));
-/// <reference path="hawtio-extension.service.ts"/>
+/// <reference path="hawtio-extension.ts"/>
 /// <reference path="hawtio-extension.directive.ts"/>
 var Core;
 (function (Core) {
     Core.hawtioExtensionModule = angular
         .module('hawtio-extension-service', [])
-        .service('HawtioExtension', Core.HawtioExtensionService)
+        .service('HawtioExtension', Core.HawtioExtension)
         .directive('hawtioExtension', Core.hawtioExtensionDirective)
         .name;
 })(Core || (Core = {}));
@@ -998,9 +990,9 @@ var Core;
 /// <reference path="help-topic.ts"/>
 var Core;
 (function (Core) {
-    var HelpRegistryService = /** @class */ (function () {
-        HelpRegistryService.$inject = ["$rootScope"];
-        function HelpRegistryService($rootScope) {
+    var HelpRegistry = /** @class */ (function () {
+        HelpRegistry.$inject = ["$rootScope"];
+        function HelpRegistry($rootScope) {
             'ngInject';
             this.$rootScope = $rootScope;
             this.topicNameMappings = {
@@ -1022,19 +1014,19 @@ var Core;
             };
             this.topics = [];
         }
-        HelpRegistryService.prototype.addUserDoc = function (topicName, path, isValid) {
+        HelpRegistry.prototype.addUserDoc = function (topicName, path, isValid) {
             if (isValid === void 0) { isValid = null; }
             this.addSubTopic(topicName, 'user', path, isValid);
         };
-        HelpRegistryService.prototype.addDevDoc = function (topicName, path, isValid) {
+        HelpRegistry.prototype.addDevDoc = function (topicName, path, isValid) {
             if (isValid === void 0) { isValid = null; }
             this.addSubTopic(topicName, 'developer', path, isValid);
         };
-        HelpRegistryService.prototype.addSubTopic = function (topicName, subtopic, path, isValid) {
+        HelpRegistry.prototype.addSubTopic = function (topicName, subtopic, path, isValid) {
             if (isValid === void 0) { isValid = null; }
             this.getOrCreateTopic(topicName, subtopic, path, isValid);
         };
-        HelpRegistryService.prototype.getOrCreateTopic = function (topicName, subTopicName, path, isValid) {
+        HelpRegistry.prototype.getOrCreateTopic = function (topicName, subTopicName, path, isValid) {
             if (isValid === void 0) { isValid = null; }
             var topic = this.getTopic(topicName, subTopicName);
             if (!angular.isDefined(topic)) {
@@ -1053,34 +1045,34 @@ var Core;
             }
             return topic;
         };
-        HelpRegistryService.prototype.mapTopicName = function (name) {
+        HelpRegistry.prototype.mapTopicName = function (name) {
             if (angular.isDefined(this.topicNameMappings[name])) {
                 return this.topicNameMappings[name];
             }
             return name;
         };
-        HelpRegistryService.prototype.mapSubTopicName = function (name) {
+        HelpRegistry.prototype.mapSubTopicName = function (name) {
             if (angular.isDefined(this.subTopicNameMappings[name])) {
                 return this.subTopicNameMappings[name];
             }
             return name;
         };
-        HelpRegistryService.prototype.getTopics = function () {
+        HelpRegistry.prototype.getTopics = function () {
             var answer = this.topics.filter(function (topic) {
                 return topic.isValid() === true;
             });
             return answer;
         };
-        HelpRegistryService.prototype.getTopic = function (topicName, subTopicName) {
+        HelpRegistry.prototype.getTopic = function (topicName, subTopicName) {
             return this.topics.filter(function (topic) {
                 return topic.topicName === topicName && topic.subTopicName === subTopicName;
             })[0];
         };
-        return HelpRegistryService;
+        return HelpRegistry;
     }());
-    Core.HelpRegistryService = HelpRegistryService;
+    Core.HelpRegistry = HelpRegistry;
 })(Core || (Core = {}));
-/// <reference path="help-registry.service.ts"/>
+/// <reference path="help-registry.ts"/>
 /// <reference path="help-topic.ts"/>
 var Core;
 (function (Core) {
@@ -1205,7 +1197,7 @@ var Core;
 /// <reference path="help.component.ts"/>
 /// <reference path="help.config.ts"/>
 /// <reference path="help.service.ts"/>
-/// <reference path="help-registry.service.ts"/>
+/// <reference path="help-registry.ts"/>
 var Core;
 (function (Core) {
     Core.helpModule = angular
@@ -1214,7 +1206,7 @@ var Core;
         .run(Core.HelpRun)
         .component('help', Core.helpComponent)
         .service('helpService', Core.HelpService)
-        .service('helpRegistry', Core.HelpRegistryService)
+        .service('helpRegistry', Core.HelpRegistry)
         .name;
 })(Core || (Core = {}));
 /* global _ */
@@ -2165,6 +2157,404 @@ var HawtioMainNav;
         }
     });
 })(HawtioMainNav || (HawtioMainNav = {}));
+var Core;
+(function (Core) {
+    var LoggingPreferencesService = /** @class */ (function () {
+        LoggingPreferencesService.$inject = ["$window"];
+        function LoggingPreferencesService($window) {
+            'ngInject';
+            this.$window = $window;
+        }
+        LoggingPreferencesService.prototype.getLogBuffer = function () {
+            if (window.localStorage.getItem('logBuffer') !== null) {
+                return parseInt(this.$window.localStorage.getItem('logBuffer'), 10);
+            }
+            else {
+                return LoggingPreferencesService.DEFAULT_LOG_BUFFER_SIZE;
+            }
+        };
+        LoggingPreferencesService.prototype.setLogBuffer = function (logBuffer) {
+            this.$window.localStorage.setItem('logBuffer', logBuffer.toString());
+        };
+        LoggingPreferencesService.prototype.getGlobalLogLevel = function () {
+            if (this.$window.localStorage.getItem('logLevel') !== null) {
+                return JSON.parse(this.$window.localStorage.getItem('logLevel'));
+            }
+            else {
+                return LoggingPreferencesService.DEFAULT_GLOBAL_LOG_LEVEL;
+            }
+        };
+        LoggingPreferencesService.prototype.setGlobalLogLevel = function (logLevel) {
+            this.$window.localStorage.setItem('logLevel', JSON.stringify(logLevel));
+        };
+        LoggingPreferencesService.prototype.getChildLoggers = function () {
+            if (this.$window.localStorage.getItem('childLoggers') !== null) {
+                return JSON.parse(this.$window.localStorage.getItem('childLoggers'));
+            }
+            else {
+                return [];
+            }
+        };
+        LoggingPreferencesService.prototype.getAvailableChildLoggers = function () {
+            var allChildLoggers = _.values(Logger['loggers']).map(function (obj) { return obj['context']; });
+            var childLoggers = this.getChildLoggers();
+            var availableChildLoggers = allChildLoggers.filter(function (childLogger) { return !childLoggers.some(function (c) { return c.name === childLogger.name; }); });
+            return _.sortBy(availableChildLoggers, 'name');
+        };
+        ;
+        LoggingPreferencesService.prototype.addChildLogger = function (childLogger) {
+            var childLoggers = this.getChildLoggers();
+            childLoggers.push(childLogger);
+            this.setChildLoggers(childLoggers);
+        };
+        LoggingPreferencesService.prototype.removeChildLogger = function (childLogger) {
+            var childLoggers = this.getChildLoggers();
+            _.remove(childLoggers, function (c) { return c.name === childLogger.name; });
+            this.setChildLoggers(childLoggers);
+            Logger.get(childLogger.name).setLevel(this.getGlobalLogLevel());
+        };
+        LoggingPreferencesService.prototype.setChildLoggers = function (childLoggers) {
+            this.$window.localStorage.setItem('childLoggers', JSON.stringify(childLoggers));
+        };
+        LoggingPreferencesService.prototype.reconfigureLoggers = function () {
+            Logger.setLevel(this.getGlobalLogLevel());
+            this.getChildLoggers().forEach(function (childLogger) {
+                Logger.get(childLogger.name).setLevel(childLogger.filterLevel);
+            });
+        };
+        LoggingPreferencesService.DEFAULT_LOG_BUFFER_SIZE = 100;
+        LoggingPreferencesService.DEFAULT_GLOBAL_LOG_LEVEL = Logger.INFO;
+        return LoggingPreferencesService;
+    }());
+    Core.LoggingPreferencesService = LoggingPreferencesService;
+})(Core || (Core = {}));
+/// <reference path="logging-preferences.service.ts"/>
+var Core;
+(function (Core) {
+    LoggingPreferencesController.$inject = ["$scope", "loggingPreferencesService"];
+    function LoggingPreferencesController($scope, loggingPreferencesService) {
+        'ngInject';
+        // Initialize tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+        $scope.logBuffer = loggingPreferencesService.getLogBuffer();
+        $scope.logLevel = loggingPreferencesService.getGlobalLogLevel();
+        $scope.childLoggers = loggingPreferencesService.getChildLoggers();
+        $scope.availableChildLoggers = loggingPreferencesService.getAvailableChildLoggers();
+        $scope.availableLogLevels = [Logger.OFF, Logger.ERROR, Logger.WARN, Logger.INFO, Logger.DEBUG];
+        $scope.onLogBufferChange = function (logBuffer) {
+            if (logBuffer) {
+                loggingPreferencesService.setLogBuffer(logBuffer);
+            }
+        };
+        $scope.onLogLevelChange = function (logLevel) {
+            loggingPreferencesService.setGlobalLogLevel(logLevel);
+            loggingPreferencesService.reconfigureLoggers();
+        };
+        $scope.addChildLogger = function (childLogger) {
+            loggingPreferencesService.addChildLogger(childLogger);
+            $scope.childLoggers = loggingPreferencesService.getChildLoggers();
+            $scope.availableChildLoggers = loggingPreferencesService.getAvailableChildLoggers();
+        };
+        $scope.removeChildLogger = function (childLogger) {
+            loggingPreferencesService.removeChildLogger(childLogger);
+            $scope.childLoggers = loggingPreferencesService.getChildLoggers();
+            $scope.availableChildLoggers = loggingPreferencesService.getAvailableChildLoggers();
+        };
+        $scope.onChildLoggersChange = function (childLoggers) {
+            loggingPreferencesService.setChildLoggers(childLoggers);
+            loggingPreferencesService.reconfigureLoggers();
+        };
+    }
+    Core.LoggingPreferencesController = LoggingPreferencesController;
+})(Core || (Core = {}));
+/// <reference path="logging-preferences.controller.ts"/>
+/// <reference path="logging-preferences.service.ts"/>
+var Core;
+(function (Core) {
+    Core.loggingPreferencesModule = angular
+        .module('hawtio-logging-preferences', [])
+        .controller('PreferencesLoggingController', Core.LoggingPreferencesController)
+        .service('loggingPreferencesService', Core.LoggingPreferencesService)
+        .name;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    var PreferencesService = /** @class */ (function () {
+        PreferencesService.$inject = ["$window"];
+        function PreferencesService($window) {
+            'ngInject';
+            this.$window = $window;
+        }
+        PreferencesService.prototype.saveLocationUrl = function (url) {
+            this.$window.sessionStorage.setItem('lastUrl', url);
+        };
+        PreferencesService.prototype.restoreLocation = function ($location) {
+            var url = URI(this.$window.sessionStorage.getItem('lastUrl'));
+            $location.path(url.path());
+            $location.search(url.search());
+        };
+        /**
+         * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
+         * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
+         * @method bindModelToSearchParam
+         * @for Core
+         * @static
+         * @param {*} $scope
+         * @param {ng.ILocationService} $location
+         * @param {String} modelName
+         * @param {String} paramName
+         * @param {Object} initialValue
+         */
+        PreferencesService.prototype.bindModelToSearchParam = function ($scope, $location, modelName, paramName, initialValue, to, from) {
+            if (!(modelName in $scope)) {
+                $scope[modelName] = initialValue;
+            }
+            var toConverter = to || (function (value) { return value; });
+            var fromConverter = from || (function (value) { return value; });
+            function currentValue() {
+                return fromConverter($location.search()[paramName] || initialValue);
+            }
+            var value = currentValue();
+            this.pathSet($scope, modelName, value);
+            $scope.$watch(modelName, function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if (newValue !== undefined && newValue !== null) {
+                        $location.search(paramName, toConverter(newValue));
+                    }
+                    else {
+                        $location.search(paramName, '');
+                    }
+                }
+            });
+        };
+        /**
+         * Navigates the given set of paths in turn on the source object
+         * and updates the last path value to the given newValue
+         *
+         * @method pathSet
+         * @for Core
+         * @static
+         * @param {Object} object the start object to start navigating from
+         * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
+         * @param {Object} newValue the value to update
+         * @return {*} the last step on the path which is updated
+         */
+        PreferencesService.prototype.pathSet = function (object, paths, newValue) {
+            var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
+            var value = object;
+            var lastIndex = pathArray.length - 1;
+            angular.forEach(pathArray, function (name, idx) {
+                var next = value[name];
+                if (idx >= lastIndex || !angular.isObject(next)) {
+                    next = (idx < lastIndex) ? {} : newValue;
+                    value[name] = next;
+                }
+                value = next;
+            });
+            return value;
+        };
+        return PreferencesService;
+    }());
+    Core.PreferencesService = PreferencesService;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    var PreferencesRegistry = /** @class */ (function () {
+        PreferencesRegistry.$inject = ["$rootScope"];
+        function PreferencesRegistry($rootScope) {
+            'ngInject';
+            this.$rootScope = $rootScope;
+            this.tabs = {};
+        }
+        PreferencesRegistry.prototype.addTab = function (name, template, isValid) {
+            if (isValid === void 0) { isValid = undefined; }
+            if (!isValid) {
+                isValid = function () { return true; };
+            }
+            this.tabs[name] = {
+                template: template,
+                isValid: isValid
+            };
+            this.$rootScope.$broadcast('HawtioPreferencesTabAdded');
+        };
+        PreferencesRegistry.prototype.getTab = function (name) {
+            return this.tabs[name];
+        };
+        PreferencesRegistry.prototype.getTabs = function () {
+            var answer = {};
+            angular.forEach(this.tabs, function (value, key) {
+                if (value.isValid()) {
+                    answer[key] = value;
+                }
+            });
+            return answer;
+        };
+        return PreferencesRegistry;
+    }());
+    Core.PreferencesRegistry = PreferencesRegistry;
+})(Core || (Core = {}));
+/// <reference path="../preferences.service.ts"/>
+/// <reference path="../preferences-registry.ts"/>
+var Core;
+(function (Core) {
+    PreferencesHomeController.$inject = ["$scope", "$location", "preferencesRegistry", "preferencesService"];
+    function PreferencesHomeController($scope, $location, preferencesRegistry, preferencesService) {
+        'ngInject';
+        var panels = preferencesRegistry.getTabs();
+        $scope.names = sortNames(_.keys(panels));
+        $scope.$watch(function () {
+            panels = preferencesRegistry.getTabs();
+            $scope.names = sortNames(_.keys(panels));
+        });
+        // pick the first one as the default
+        preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.names[0]);
+        $scope.setPanel = function (name) {
+            $scope.pref = name;
+        };
+        $scope.active = function (name) {
+            if (name === $scope.pref) {
+                return 'active';
+            }
+            return '';
+        };
+        $scope.close = function () {
+            preferencesService.restoreLocation($location);
+        };
+        $scope.getPrefs = function (pref) {
+            var panel = panels[pref];
+            if (panel) {
+                return panel.template;
+            }
+            return undefined;
+        };
+        /**
+         * Sort the preference by names (and ensure Reset is last).
+         * @param names  the names
+         * @returns {any} the sorted names
+         */
+        function sortNames(names) {
+            return names.sort(function (a, b) {
+                if ("Reset" == a) {
+                    return 1;
+                }
+                else if ("Reset" == b) {
+                    return -1;
+                }
+                return a.localeCompare(b);
+            });
+        }
+    }
+    Core.PreferencesHomeController = PreferencesHomeController;
+})(Core || (Core = {}));
+/// <reference path="preferences-home.controller.ts"/>
+var Core;
+(function (Core) {
+    Core.preferencesHomeModule = angular
+        .module('hawtio-preferences-home', [])
+        .controller('PreferencesHomeController', Core.PreferencesHomeController)
+        .name;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    ResetPreferencesController.$inject = ["$scope", "$window"];
+    var SHOW_ALERT = 'showPreferencesResetAlert';
+    function ResetPreferencesController($scope, $window) {
+        'ngInject';
+        $scope.showAlert = !!$window.sessionStorage.getItem(SHOW_ALERT);
+        $window.sessionStorage.removeItem(SHOW_ALERT);
+        $scope.doReset = function () {
+            Core.log.info("Resetting preferences");
+            $window.localStorage.clear();
+            $window.sessionStorage.setItem(SHOW_ALERT, 'true');
+            $window.setTimeout(function () {
+                $window.location.reload();
+            }, 10);
+        };
+    }
+    Core.ResetPreferencesController = ResetPreferencesController;
+})(Core || (Core = {}));
+/// <reference path="reset-preferences.controller.ts"/>
+var Core;
+(function (Core) {
+    Core.resetPreferencesModule = angular
+        .module('hawtio-preferences-menu-item', [])
+        .controller('ResetPreferencesController', Core.ResetPreferencesController)
+        .name;
+})(Core || (Core = {}));
+/// <reference path="../extension/hawtio-extension.ts"/>
+/// <reference path="../help/help-registry.ts"/>
+/// <reference path="preferences.service.ts"/>
+var Core;
+(function (Core) {
+    configureRoutes.$inject = ["$routeProvider"];
+    addItemToUserMenu.$inject = ["HawtioExtension", "$templateCache", "$compile"];
+    savePreviousLocationWhenOpeningPreferences.$inject = ["$rootScope", "preferencesService"];
+    addHelpDocumentation.$inject = ["helpRegistry"];
+    addPreferencesPages.$inject = ["preferencesRegistry"];
+    function configureRoutes($routeProvider) {
+        'ngInject';
+        $routeProvider.when('/preferences', {
+            templateUrl: 'preferences/preferences-home/preferences-home.html',
+            reloadOnSearch: false
+        });
+    }
+    Core.configureRoutes = configureRoutes;
+    function addItemToUserMenu(HawtioExtension, $templateCache, $compile) {
+        'ngInject';
+        HawtioExtension.add('hawtio-user', function ($scope) {
+            var template = '<li><a ng-href="/preferences">Preferences</a></li>';
+            return $compile(template)($scope);
+        });
+    }
+    Core.addItemToUserMenu = addItemToUserMenu;
+    function savePreviousLocationWhenOpeningPreferences($rootScope, preferencesService) {
+        'ngInject';
+        $rootScope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
+            if (_.endsWith(newUrl, '/preferences')) {
+                preferencesService.saveLocationUrl(oldUrl);
+            }
+        });
+    }
+    Core.savePreviousLocationWhenOpeningPreferences = savePreviousLocationWhenOpeningPreferences;
+    function addHelpDocumentation(helpRegistry) {
+        'ngInject';
+        helpRegistry.addUserDoc('preferences', 'preferences/help.md');
+    }
+    Core.addHelpDocumentation = addHelpDocumentation;
+    function addPreferencesPages(preferencesRegistry) {
+        'ngInject';
+        preferencesRegistry.addTab("Console Logging", 'preferences/logging-preferences/logging-preferences.html');
+        preferencesRegistry.addTab("Reset", 'preferences/reset-preferences/reset-preferences.html');
+    }
+    Core.addPreferencesPages = addPreferencesPages;
+})(Core || (Core = {}));
+/// <reference path="logging-preferences/logging-preferences.module.ts"/>
+/// <reference path="preferences-home/preferences-home.module.ts"/>
+/// <reference path="reset-preferences/reset-preferences.module.ts"/>
+/// <reference path="preferences.config.ts"/>
+/// <reference path="preferences.service.ts"/>
+/// <reference path="preferences-registry.ts"/>
+var Core;
+(function (Core) {
+    Core.preferencesModule = angular
+        .module('hawtio-preferences', [
+        'ng',
+        'ngRoute',
+        'ngSanitize',
+        Core.loggingPreferencesModule,
+        Core.preferencesHomeModule,
+        Core.resetPreferencesModule
+    ])
+        .config(Core.configureRoutes)
+        .run(Core.addItemToUserMenu)
+        .run(Core.savePreviousLocationWhenOpeningPreferences)
+        .run(Core.addHelpDocumentation)
+        .run(Core.addPreferencesPages)
+        .service('preferencesService', Core.PreferencesService)
+        .service('preferencesRegistry', Core.PreferencesRegistry)
+        .name;
+    hawtioPluginLoader.addModule(Core.preferencesModule);
+})(Core || (Core = {}));
 var templateCache;
 (function (templateCache) {
     templateCache.pluginName = 'hawtio-template-cache';
@@ -2248,6 +2638,7 @@ var templateCache;
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
+/// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
 var Core;
 (function (Core) {
@@ -2262,6 +2653,7 @@ var Core;
         Core.hawtioExtensionModule,
         Core.helpModule,
         HawtioMainNav.pluginName,
+        Core.preferencesModule,
         templateCache.pluginName
     ])
         .name;
@@ -2276,7 +2668,11 @@ $templateCache.put('navigation/templates/navItem.html','<li class="list-group-it
 $templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
 $templateCache.put('navigation/templates/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
 $templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
+$templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
+$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <ul class="nav nav-tabs" hawtio-auto-dropdown>\n    <li ng-repeat="name in names" ng-class="active(name)">\n      <a href="#" ng-click="setPanel(name)">{{name}}</a>\n    </li>\n    <li class="dropdown overflow">\n      <a href="#" class="dropdown-toggle" data-toggle="dropdown">\n        More <span class="caret"></span>\n      </a>\n      <ul class="dropdown-menu" role="menu"></ul>\n    </li>\n  </ul>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
+$templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
 $templateCache.put('help/help.md','##### Plugin Help #####\nBrowse the available help topics for plugin specific documentation using the help navigation bar on the left.\n\n##### Further Reading #####\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
+$templateCache.put('preferences/help.md','### Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');
 $templateCache.put('help/example/activemq.md','## ActiveMQ\n\nTest documentation for ActiveMQ\n');
 $templateCache.put('help/example/camel.md','## Camel\n\nTest documentation for camel\n');
 $templateCache.put('help/example/osgi.md','## OSGi\n\nTest documentation for OSGi\n');}]);

@@ -21,10 +21,10 @@
     <script src="node_modules/patternfly/dist/js/patternfly.min.js"></script>
     <!-- angular -->
     <script src="node_modules/angular/angular.js"></script>
-    <!-- angular-sanitize -->
-    <script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
     <!-- angular-route -->
     <script src="node_modules/angular-route/angular-route.min.js"></script>
+    <!-- angular-sanitize -->
+    <script src="node_modules/angular-sanitize/angular-sanitize.js"></script>
     <!-- lodash -->
     <script src="node_modules/lodash/lodash.min.js"></script>
     <!-- urijs -->
@@ -57,11 +57,11 @@
             </a>
           </li>
           <li class="dropdown">
-            <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               <span title="Username" class="fa pficon-user"></span>
               <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" hawtio-extension name="hawtio-user">
+            <ul class="dropdown-menu" aria-labelledby="userDropdownMenu" hawtio-extension name="hawtio-user">
             </ul>
           </li>
         </ul>
@@ -70,7 +70,7 @@
   
     <hawtio-vertical-nav></hawtio-vertical-nav>
 
-    <div id="main" class="container-fluid container-pf-nav-pf-vertical ng-cloak"
+    <div class="container-fluid container-pf-nav-pf-vertical ng-cloak"
          ng-controller="HawtioNav.ViewController"
          ng-include src="viewPartial">
     </div>

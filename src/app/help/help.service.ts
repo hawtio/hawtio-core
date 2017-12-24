@@ -1,11 +1,11 @@
-/// <reference path="help-registry.service.ts"/>
+/// <reference path="help-registry.ts"/>
 /// <reference path="help-topic.ts"/>
 
 namespace Core {
 
   export class HelpService {
 
-    constructor(private $templateCache, private helpRegistry: HelpRegistryService) {
+    constructor(private $templateCache, private helpRegistry: HelpRegistry) {
       'ngInject';
 
       marked.setOptions({

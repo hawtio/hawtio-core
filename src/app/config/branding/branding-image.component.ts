@@ -7,6 +7,8 @@ namespace Core {
     class: string;
     src: string;
     alt: string;
+    srcValue: string;
+    altValue: string;
 
     constructor(private $rootScope: ng.IRootScopeService) {
       'ngInject';
@@ -14,8 +16,8 @@ namespace Core {
 
     $onInit() {
       this.$rootScope.$on(EVENT_LOADED, (event, configService: ConfigService) => {
-        this.src = configService.getBrandingValue(this.src);
-        this.alt = configService.getBrandingValue(this.alt);
+        this.srcValue = configService.getBrandingValue(this.src);
+        this.altValue = configService.getBrandingValue(this.alt);
       });
     }
     
@@ -27,7 +29,7 @@ namespace Core {
       src: '@',
       alt: '@'
     },
-    template: '<img class="{{$ctrl.class}}" src="{{$ctrl.src}}" alt="{{$ctrl.alt}}"/>',
+    template: '<img class="{{$ctrl.class}}" src="{{$ctrl.srcValue}}" alt="{{$ctrl.altValue}}"/>',
     controller: BrandingImageController
   };
 

@@ -70,7 +70,6 @@ gulp.task('connect', ['watch'], function() {
           var path = req.originalUrl;
           if (path === '/') {
             res.redirect('/hawtio/');
-            res.end();
           } else {
             next();
           }

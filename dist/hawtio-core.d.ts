@@ -28,6 +28,8 @@ declare namespace Core {
         class: string;
         src: string;
         alt: string;
+        srcValue: string;
+        altValue: string;
         constructor($rootScope: ng.IRootScopeService);
         $onInit(): void;
     }

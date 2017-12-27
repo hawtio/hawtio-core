@@ -221,7 +221,7 @@ declare namespace Core {
 }
 declare namespace Core {
     function HelpConfig($routeProvider: any, $provide: any): void;
-    function HelpRun(helpRegistry: any, viewRegistry: any, layoutFull: any, $templateCache: any): void;
+    function HelpRun(helpRegistry: HelpRegistry, viewRegistry: any, layoutFull: any, $templateCache: any): void;
 }
 declare namespace Core {
     const helpModule: string;

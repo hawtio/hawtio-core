@@ -1,3 +1,3 @@
-## ActiveMQ
+### ActiveMQ
 
 Test documentation for ActiveMQ

@@ -1,3 +1,3 @@
-## OSGi
+### OSGi
 
 Test documentation for OSGi

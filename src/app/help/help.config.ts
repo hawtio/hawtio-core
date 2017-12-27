@@ -6,7 +6,7 @@ namespace Core {
     $routeProvider.when('/help', { template: '<help></help>' });
   }
 
-  export function HelpRun(helpRegistry, viewRegistry, layoutFull, $templateCache) {
+  export function HelpRun(helpRegistry: HelpRegistry, viewRegistry, layoutFull, $templateCache) {
     'ngInject';
 
     viewRegistry['help'] = layoutFull;

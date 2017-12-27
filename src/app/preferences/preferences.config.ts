@@ -16,7 +16,7 @@ namespace Core {
     $compile: ng.ICompileService) {
     'ngInject';
     HawtioExtension.add('hawtio-user', $scope => {
-      let template = '<li><a ng-href="/preferences">Preferences</a></li>';
+      let template = '<li><a ng-href="preferences">Preferences</a></li>';
       return $compile(template)($scope);
     });
   }
@@ -25,7 +25,9 @@ namespace Core {
     'ngInject';
     $rootScope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
       if (_.endsWith(newUrl, '/preferences')) {
-        preferencesService.saveLocationUrl(oldUrl);
+        const baseUrl = newUrl.substring(0, newUrl.indexOf('/preferences'));
+        const url = oldUrl.substring(baseUrl.length);
+        preferencesService.saveLocationUrl(url);
       }
     });  
   }

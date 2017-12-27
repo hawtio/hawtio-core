@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var connect = require('gulp-connect');
 var concat = require('gulp-concat');
 var del = require('del');
 var eventStream = require('event-stream');
@@ -11,6 +10,7 @@ var tsProject = ts.createProject('tsconfig.json');
 var tsConfig = require('./tsconfig.json');
 var ngAnnotate = require('gulp-ng-annotate');
 var Server = require('karma').Server;
+var hawtio = require('@hawtio/node-backend');
 
 gulp.task('clean', function() {
   return del('dist/*');
@@ -55,17 +55,36 @@ gulp.task('less', ['clean'], function () {
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('connect', function() {
-  connect.server({
-    livereload: true,
+gulp.task('connect', ['watch'], function() {
+  hawtio.setConfig({
     port: 2772,
-    fallback: 'index.html'
+    staticAssets: [{
+      path: '/hawtio/',
+      dir: '.'
+    }],
+    liveReload: {
+      enabled: true
+    }
+  });
+  hawtio.use('/', function(req, res, next) {
+          var path = req.originalUrl;
+          if (path === '/') {
+            res.redirect('/hawtio/');
+            res.end();
+          } else {
+            next();
+          }
+        });
+  hawtio.listen(function(server) {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log("started from gulp file at ", host, ":", port);
   });
 });
 
 gulp.task('reload', function() {
-  gulp.src('index.html')
-    .pipe(connect.reload());
+  gulp.src('.')
+    .pipe(hawtio.reload());
 });
 
 gulp.task('watch', function() {

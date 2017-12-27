@@ -28,12 +28,12 @@
     "urijs": "1.19.0"
   },
   "devDependencies": {
+    "@hawtio/node-backend": "3.0.4",
     "del": "^2.0.0",
     "event-stream": "~3.3.2",
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
     "gulp-concat": "^2.0.0",
-    "gulp-connect": "^5.0.0",
     "gulp-less": "~3.3.2",
     "gulp-ng-annotate": "^2.0.0",
     "gulp-typescript": "^3.1.7",
@@ -144,6 +144,14 @@
     "ajv": "4.11.8",
     "har-schema": "1.0.5",
     "camelcase": "2.1.1",
-    "wordwrap": "0.0.3"
+    "wordwrap": "0.0.3",
+    "safe-buffer": "5.1.1",
+    "setprototypeof": "1.0.3",
+    "ws": "1.1.2",
+    "ultron": "1.0.2",
+    "etag": "1.7.0",
+    "fresh": "0.3.0",
+    "send": "0.13.2",
+    "serve-static": "1.10.3"
   }
 }

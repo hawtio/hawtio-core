@@ -2288,9 +2288,8 @@ var Core;
             this.$window.sessionStorage.setItem('lastUrl', url);
         };
         PreferencesService.prototype.restoreLocation = function ($location) {
-            var url = URI(this.$window.sessionStorage.getItem('lastUrl'));
-            $location.path(url.path());
-            $location.search(url.search());
+            var url = this.$window.sessionStorage.getItem('lastUrl');
+            $location.url(url);
         };
         /**
          * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
@@ -2491,7 +2490,7 @@ var Core;
     function addItemToUserMenu(HawtioExtension, $templateCache, $compile) {
         'ngInject';
         HawtioExtension.add('hawtio-user', function ($scope) {
-            var template = '<li><a ng-href="/preferences">Preferences</a></li>';
+            var template = '<li><a ng-href="preferences">Preferences</a></li>';
             return $compile(template)($scope);
         });
     }
@@ -2500,7 +2499,9 @@ var Core;
         'ngInject';
         $rootScope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
             if (_.endsWith(newUrl, '/preferences')) {
-                preferencesService.saveLocationUrl(oldUrl);
+                var baseUrl = newUrl.substring(0, newUrl.indexOf('/preferences'));
+                var url = oldUrl.substring(baseUrl.length);
+                preferencesService.saveLocationUrl(url);
             }
         });
     }

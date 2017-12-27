@@ -11,9 +11,8 @@ namespace Core {
     }
 
     restoreLocation($location: ng.ILocationService) {
-      const url = URI(this.$window.sessionStorage.getItem('lastUrl'));
-      $location.path(url.path());
-      $location.search(url.search());
+      const url = this.$window.sessionStorage.getItem('lastUrl');
+      $location.url(url);
     }
 
     /**

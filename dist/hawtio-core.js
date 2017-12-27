@@ -2498,7 +2498,7 @@ var Core;
     function savePreviousLocationWhenOpeningPreferences($rootScope, preferencesService) {
         'ngInject';
         $rootScope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
-            if (_.endsWith(newUrl, '/preferences')) {
+            if (newUrl.indexOf('/preferences') !== -1 && oldUrl.indexOf('/preferences') === -1) {
                 var baseUrl = newUrl.substring(0, newUrl.indexOf('/preferences'));
                 var url = oldUrl.substring(baseUrl.length);
                 preferencesService.saveLocationUrl(url);

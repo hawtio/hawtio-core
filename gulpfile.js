@@ -62,6 +62,7 @@ gulp.task('connect', ['watch'], function() {
       path: '/hawtio/',
       dir: '.'
     }],
+    fallback: 'index.html',
     liveReload: {
       enabled: true
     }

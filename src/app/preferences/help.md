@@ -1,4 +1,4 @@
-### Preferences
+## Preferences
 
 The preferences page is used to configure application preferences and individual plugin preferences.
 

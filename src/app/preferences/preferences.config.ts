@@ -39,7 +39,7 @@ namespace Core {
 
   export function addPreferencesPages(preferencesRegistry: PreferencesRegistry) {
     'ngInject';
-    preferencesRegistry.addTab("Console Logging", 'preferences/logging-preferences/logging-preferences.html');
+    preferencesRegistry.addTab("Console Logs", 'preferences/logging-preferences/logging-preferences.html');
     preferencesRegistry.addTab("Reset", 'preferences/reset-preferences/reset-preferences.html');
   }
 

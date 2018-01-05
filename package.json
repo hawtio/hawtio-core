@@ -6,7 +6,7 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build && gulp test",
-    "test": "gulp test"
+    "test": "gulp build && gulp test"
   },
   "dependencies": {
     "@hawtio/core-dts": "3.0.18",

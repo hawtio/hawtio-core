@@ -942,7 +942,7 @@ escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
-etag@~1.7.0, etag@~1.8.1:
+etag@1.7.0, etag@~1.7.0, etag@~1.8.1:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.7.0.tgz#03d30b5f67dd6e632d2945d30d6652731a34d5d8"
 
@@ -2923,7 +2923,7 @@ serve-index@~1.7.2:
     mime-types "~2.1.9"
     parseurl "~1.3.1"
 
-serve-static@1.13.1, serve-static@~1.10.0:
+serve-static@1.10.3, serve-static@1.13.1, serve-static@~1.10.0:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/serve-static/-/serve-static-1.10.3.tgz#ce5a6ecd3101fed5ec09827dac22a9c29bfb0535"
   dependencies:
@@ -3299,7 +3299,7 @@ uid-safe@2.1.4:
   dependencies:
     random-bytes "~1.0.0"
 
-ultron@1.0.x, ultron@~1.1.0:
+ultron@1.0.2, ultron@1.0.x, ultron@~1.1.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.0.2.tgz#ace116ab557cd197386a4e88f4685378c8b2e4fa"
 

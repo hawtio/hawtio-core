@@ -1,4 +1,5 @@
 /// <reference path="auth/auth.module.ts"/>
+/// <reference path="common/common.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
@@ -15,6 +16,7 @@ namespace Core {
       'ngRoute',
       'ngSanitize',
       authModule,
+      commonModule,
       configModule,
       HawtioCore.pluginName,
       hawtioExtensionModule,

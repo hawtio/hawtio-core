@@ -7,7 +7,6 @@ var path = require('path');
 var templateCache = require('gulp-angular-templatecache');
 var ts = require('gulp-typescript');
 var tsProject = ts.createProject('tsconfig.json');
-var tsConfig = require('./tsconfig.json');
 var ngAnnotate = require('gulp-ng-annotate');
 var Server = require('karma').Server;
 var hawtio = require('@hawtio/node-backend');

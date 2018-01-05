@@ -12,6 +12,18 @@ declare namespace Core {
     const authModule: string;
 }
 declare namespace Core {
+    class HumanizeService {
+        constructor();
+        toUpperCase(str: string): string;
+        toLowerCase(str: string): string;
+        toSentenceCase(str: string): string;
+        toTitleCase(str: string): string;
+    }
+}
+declare namespace Core {
+    const commonModule: string;
+}
+declare namespace Core {
     class ConfigService {
         private config;
         constructor(config: any);

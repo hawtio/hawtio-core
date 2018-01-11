@@ -1,38 +1,38 @@
-namespace HawtioMainNav {
+/// <reference path="hawtio-tab.ts"/>
+
+namespace Core {
 
   export class HawtioTabsController {
 
-    names: string[];
-    tabNames: string[] = [];
-    dropdownNames: string[] = [];
+    tabs: HawtioTab[] = [];
+    moreTabs: HawtioTab[] = [];
     adjustingTabs: boolean;
     onChange: Function;
-    activeTab: string;
+    activeTab: HawtioTab;
 
     constructor(private $document: ng.IDocumentService, private $timeout: ng.ITimeoutService) {
       'ngInject';      
     }
 
     $onInit() {
-      this.setDefaultAtiveTab();
+      if (!this.tabs) {
+        throw Error(`hawtioTabsComponent 'tabs' input is ${this.tabs}`);
+      }
+      this.activateFirstTab();
       this.adjustTabs();
     }
     
-    private setDefaultAtiveTab() {
-      if (this.names.length > 0) {
-        this.activeTab = this.names[0];
+    private activateFirstTab() {
+      if (!this.activeTab && this.tabs.length > 0) {
+        this.activeTab = this.tabs[0];
       }
     }
 
     private adjustTabs() {
-      this.tabNames = this.names;
       this.adjustingTabs = true;
 
       // wait for the tabs to be rendered by AngularJS before calculating the widths
       this.$timeout(() => {
-        this.tabNames = [];
-        this.adjustingTabs = false;
-        
         let $ul = this.$document.find('.hawtio-tabs');
         let $liTabs = $ul.find('.hawtio-tab');
         let $liDropdown = $ul.find('.dropdown');
@@ -42,41 +42,42 @@ namespace HawtioMainNav {
 
         $liTabs.each((index: number, element: Element) => {
           lisWidth += element.clientWidth;
-          if (lisWidth < availableWidth) {
-            this.tabNames.push(this.names[index]);
-          } else {
-            this.dropdownNames.push(this.names[index]);
+          if (lisWidth > availableWidth) {
+            this.moreTabs.unshift(this.tabs.pop());
           }
         });
+
+        this.adjustingTabs = false;
       });
     }
 
-    onClick(name: string) {
-      this.activeTab = name;
-      this.onChange({name: name});
+    onClick(tab: HawtioTab) {
+      this.activeTab = tab;
+      this.onChange({tab: tab});
     }
 
   }
 
   export const hawtioTabsComponent: angular.IComponentOptions = {
     bindings: {
-      names: '<',
+      tabs: '<',
+      activeTab: '<',
       onChange: '&',
     },
     template: `
       <ul class="nav nav-tabs hawtio-tabs">
-        <li ng-repeat="name in $ctrl.tabNames" class="hawtio-tab" 
-            ng-class="{invisible: $ctrl.adjustingTabs, active: name === $ctrl.activeTab}">
-          <a href="#" ng-click="$ctrl.onClick(name)">{{name}}</a>
+        <li ng-repeat="tab in $ctrl.tabs track by tab.label" class="hawtio-tab" 
+            ng-class="{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}">
+          <a href="#" ng-click="$ctrl.onClick(tab)">{{tab.label}}</a>
         </li>
-        <li class="dropdown" ng-class="{invisible: $ctrl.dropdownNames.length === 0}">
+        <li class="dropdown" ng-class="{invisible: $ctrl.moreTabs.length === 0}">
           <a id="moreDropdown" class="dropdown-toggle" href="" data-toggle="dropdown">
             More
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="moreDropdown">
-            <li role="presentation" ng-repeat="name in $ctrl.dropdownNames">
-              <a role="menuitem" tabindex="-1" href="#" ng-click="$ctrl.onClick(name)">{{name}}</a>
+            <li role="presentation" ng-repeat="tab in $ctrl.moreTabs track by tab.label">
+              <a role="menuitem" tabindex="-1" href="#" ng-click="$ctrl.onClick(tab)">{{tab.label}}</a>
             </li>
           </ul>
         </li>
@@ -85,6 +86,6 @@ namespace HawtioMainNav {
     controller: HawtioTabsController
   };
 
-  _module.component('hawtioTabs', hawtioTabsComponent);
+  HawtioMainNav._module.component('hawtioTabs', hawtioTabsComponent);
 
 }

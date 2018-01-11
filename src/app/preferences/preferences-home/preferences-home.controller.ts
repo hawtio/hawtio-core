@@ -1,22 +1,21 @@
 /// <reference path="../preferences.service.ts"/>
 /// <reference path="../preferences-registry.ts"/>
+/// <reference path="../../navigation/hawtio-tab.ts"/>
 
 namespace Core {
 
-  export function PreferencesHomeController($scope,
-                                        $location: ng.ILocationService,
-                                        preferencesRegistry: PreferencesRegistry,
-                                        preferencesService: PreferencesService) {
-    'ngInject';      
+  export function PreferencesHomeController($scope, $location: ng.ILocationService,
+    preferencesRegistry: PreferencesRegistry, preferencesService: PreferencesService) {
+    'ngInject';
 
     var panels = preferencesRegistry.getTabs();
-    $scope.names = sortNames(_.keys(panels));
+    $scope.tabs = _.keys(panels).sort(byLabel).map(label => new HawtioTab(label, ''));
 
     // pick the first one as the default
-    preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.names[0]);
+    preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);
 
-    $scope.setPanel = (name) => {
-      $scope.pref = name;
+    $scope.setPanel = (tab: HawtioTab) => {
+      $scope.pref = tab.label;
     };
 
     $scope.close = () => {
@@ -26,25 +25,25 @@ namespace Core {
     $scope.getPrefs = (pref) => {
       var panel = panels[pref];
       if (panel) {
-        return panel.template;
+        return panel.templateUrl;
       }
       return undefined;
     };
 
+    $scope.getTab = (pref: string): Core.HawtioTab => {
+      return _.find($scope.tabs, {label: pref});
+    };
+    
     /**
      * Sort the preference by names (and ensure Reset is last).
-     * @param names  the names
-     * @returns {any} the sorted names
      */
-    function sortNames(names) {
-      return names.sort((a,b) => {
-        if ("Reset" == a) {
-          return 1;
-        } else if ("Reset" == b) {
-          return -1;
-        }
-        return a.localeCompare(b);
-      })
+    function byLabel(a, b) {
+      if ("Reset" == a) {
+        return 1;
+      } else if ("Reset" == b) {
+        return -1;
+      }
+      return a.localeCompare(b);
     }
 
   }

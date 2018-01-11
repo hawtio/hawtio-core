@@ -1,4 +1,4 @@
-/// <reference path="../config-service.ts"/>
+/// <reference path="../config-manager.ts"/>
 
 namespace Core {
 
@@ -7,14 +7,12 @@ namespace Core {
     key: string;
     value: string;
     
-    constructor(private $rootScope: ng.IRootScopeService) {
+    constructor(private configManager: ConfigManager) {
       'ngInject';
     }
 
     $onInit() {
-      this.$rootScope.$on(EVENT_LOADED, (event, configService: ConfigService) => {
-        this.value = configService.getBrandingValue(this.key);
-      });
+      this.value = this.configManager.getBrandingValue(this.key);
     }
     
   }

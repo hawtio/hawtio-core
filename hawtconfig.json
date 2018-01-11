@@ -2,5 +2,6 @@
   "branding": {
     "appName": "Hawtio Management Console",
     "logoUrl": "dist/img/hawtio-logo.svg"
-  }
+  },
+  "disabledRoutes": []
 }

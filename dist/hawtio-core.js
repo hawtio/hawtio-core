@@ -47,73 +47,47 @@ var Core;
         .service('humanizeService', Core.HumanizeService)
         .name;
 })(Core || (Core = {}));
+/// <reference path="config.ts"/>
 var Core;
 (function (Core) {
-    var ConfigService = /** @class */ (function () {
-        function ConfigService(config) {
-            if (angular.isObject(config)) {
-                this.config = config;
-            }
-            else {
-                throw Error('Could not load hawtconfig.json. Expected object but found ' + (config === null ? 'null' : typeof config));
-            }
+    var ConfigManager = /** @class */ (function () {
+        function ConfigManager(config, $routeProvider) {
+            this.config = config;
+            this.$routeProvider = $routeProvider;
         }
-        ConfigService.prototype.getBrandingValue = function (name) {
-            return this.getValue('branding', name);
-        };
-        ConfigService.prototype.getValue = function (group, name) {
-            if (this.config && this.config[group] && this.config[group][name]) {
-                return this.config[group][name];
+        ConfigManager.prototype.getBrandingValue = function (key) {
+            if (this.config && this.config.branding && this.config.branding[key]) {
+                return this.config.branding[key];
             }
             else {
-                Core.log.warn("Configuration property \"" + group + "." + name + "\" not found");
                 return '';
             }
         };
-        return ConfigService;
+        ConfigManager.prototype.isRouteEnabled = function (path) {
+            return !this.config || !this.config.disabledRoutes || this.config.disabledRoutes.indexOf(path) === -1;
+        };
+        ConfigManager.prototype.addRoute = function (path, route) {
+            if (this.isRouteEnabled(path)) {
+                this.$routeProvider.when(path, route);
+            }
+            return this;
+        };
+        return ConfigManager;
     }());
-    Core.ConfigService = ConfigService;
+    Core.ConfigManager = ConfigManager;
 })(Core || (Core = {}));
-/// <reference path="config-service.ts"/>
-var Core;
-(function (Core) {
-    configLoader.$inject = ["$rootScope", "$http"];
-    function configLoader($rootScope, $http) {
-        'ngInject';
-        Core.log.info('Loading hawtconfig.json...');
-        $http.get('hawtconfig.json')
-            .then(function (response) {
-            try {
-                var configService = new Core.ConfigService(response.data);
-                $rootScope.$broadcast(Core.EVENT_LOADED, configService);
-                Core.log.info('hawtconfig.json loaded');
-            }
-            catch (error) {
-                Core.log.warn(error.message);
-                Core.log.debug('hawtconfig.json:\n' + response.data);
-            }
-        })
-            .catch(function (response) {
-            Core.log.warn('hawtconfig.json not found');
-        });
-    }
-    Core.configLoader = configLoader;
-})(Core || (Core = {}));
-/// <reference path="../config-service.ts"/>
+/// <reference path="../config-manager.ts"/>
 var Core;
 (function (Core) {
     var BrandingImageController = /** @class */ (function () {
-        BrandingImageController.$inject = ["$rootScope"];
-        function BrandingImageController($rootScope) {
+        BrandingImageController.$inject = ["configManager"];
+        function BrandingImageController(configManager) {
             'ngInject';
-            this.$rootScope = $rootScope;
+            this.configManager = configManager;
         }
         BrandingImageController.prototype.$onInit = function () {
-            var _this = this;
-            this.$rootScope.$on(Core.EVENT_LOADED, function (event, configService) {
-                _this.srcValue = configService.getBrandingValue(_this.src);
-                _this.altValue = configService.getBrandingValue(_this.alt);
-            });
+            this.srcValue = this.configManager.getBrandingValue(this.src);
+            this.altValue = this.configManager.getBrandingValue(this.alt);
         };
         return BrandingImageController;
     }());
@@ -128,20 +102,17 @@ var Core;
         controller: BrandingImageController
     };
 })(Core || (Core = {}));
-/// <reference path="../config-service.ts"/>
+/// <reference path="../config-manager.ts"/>
 var Core;
 (function (Core) {
     var BrandingTextController = /** @class */ (function () {
-        BrandingTextController.$inject = ["$rootScope"];
-        function BrandingTextController($rootScope) {
+        BrandingTextController.$inject = ["configManager"];
+        function BrandingTextController(configManager) {
             'ngInject';
-            this.$rootScope = $rootScope;
+            this.configManager = configManager;
         }
         BrandingTextController.prototype.$onInit = function () {
-            var _this = this;
-            this.$rootScope.$on(Core.EVENT_LOADED, function (event, configService) {
-                _this.value = configService.getBrandingValue(_this.key);
-            });
+            this.value = this.configManager.getBrandingValue(this.key);
         };
         return BrandingTextController;
     }());
@@ -154,18 +125,41 @@ var Core;
         controller: BrandingTextController
     };
 })(Core || (Core = {}));
-/// <reference path="config-loader.ts"/>
 /// <reference path="branding/branding-image.component.ts"/>
 /// <reference path="branding/branding-text.component.ts"/>
+/// <reference path="config.ts"/>
+/// <reference path="config-manager.ts"/>
 var Core;
 (function (Core) {
-    Core.EVENT_LOADED = 'hawtio-config-loaded';
     Core.configModule = angular
         .module('hawtio-config', [])
-        .run(Core.configLoader)
+        .config(["$provide", "$routeProvider", function ($provide, $routeProvider) {
+        var config = window['hawtconfig'];
+        var configManager = new Core.ConfigManager(config, $routeProvider);
+        $provide.constant('configManager', configManager);
+        delete window['hawtconfig'];
+    }])
         .component('hawtioBrandingImage', Core.brandingImageComponent)
         .component('hawtioBrandingText', Core.brandingTextComponent)
         .name;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    function configLoader(next) {
+        Core.log.info('Loading hawtconfig.json...');
+        $.getJSON('hawtconfig.json')
+            .done(function (config) {
+            window['hawtconfig'] = config;
+            Core.log.info('hawtconfig.json loaded');
+        })
+            .fail(function (jqxhr, textStatus, errorThrown) {
+            Core.log.error("Error fetching 'hawtconfig.json'. Status: '" + textStatus + "'. Error: '" + errorThrown + "'");
+        })
+            .always(function () {
+            next();
+        });
+    }
+    Core.configLoader = configLoader;
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -2393,19 +2387,19 @@ var Core;
             this.$rootScope = $rootScope;
             this.tabs = {};
         }
-        PreferencesRegistry.prototype.addTab = function (name, template, isValid) {
+        PreferencesRegistry.prototype.addTab = function (label, templateUrl, isValid) {
             if (isValid === void 0) { isValid = undefined; }
             if (!isValid) {
                 isValid = function () { return true; };
             }
-            this.tabs[name] = {
-                template: template,
+            this.tabs[label] = {
+                templateUrl: templateUrl,
                 isValid: isValid
             };
             this.$rootScope.$broadcast('HawtioPreferencesTabAdded');
         };
-        PreferencesRegistry.prototype.getTab = function (name) {
-            return this.tabs[name];
+        PreferencesRegistry.prototype.getTab = function (label) {
+            return this.tabs[label];
         };
         PreferencesRegistry.prototype.getTabs = function () {
             var answer = {};
@@ -2420,19 +2414,31 @@ var Core;
     }());
     Core.PreferencesRegistry = PreferencesRegistry;
 })(Core || (Core = {}));
+var Core;
+(function (Core) {
+    var HawtioTab = /** @class */ (function () {
+        function HawtioTab(label, path) {
+            this.label = label;
+            this.path = path;
+        }
+        return HawtioTab;
+    }());
+    Core.HawtioTab = HawtioTab;
+})(Core || (Core = {}));
 /// <reference path="../preferences.service.ts"/>
 /// <reference path="../preferences-registry.ts"/>
+/// <reference path="../../navigation/hawtio-tab.ts"/>
 var Core;
 (function (Core) {
     PreferencesHomeController.$inject = ["$scope", "$location", "preferencesRegistry", "preferencesService"];
     function PreferencesHomeController($scope, $location, preferencesRegistry, preferencesService) {
         'ngInject';
         var panels = preferencesRegistry.getTabs();
-        $scope.names = sortNames(_.keys(panels));
+        $scope.tabs = _.keys(panels).sort(byLabel).map(function (label) { return new Core.HawtioTab(label, ''); });
         // pick the first one as the default
-        preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.names[0]);
-        $scope.setPanel = function (name) {
-            $scope.pref = name;
+        preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);
+        $scope.setPanel = function (tab) {
+            $scope.pref = tab.label;
         };
         $scope.close = function () {
             preferencesService.restoreLocation($location);
@@ -2440,25 +2446,24 @@ var Core;
         $scope.getPrefs = function (pref) {
             var panel = panels[pref];
             if (panel) {
-                return panel.template;
+                return panel.templateUrl;
             }
             return undefined;
         };
+        $scope.getTab = function (pref) {
+            return _.find($scope.tabs, { label: pref });
+        };
         /**
          * Sort the preference by names (and ensure Reset is last).
-         * @param names  the names
-         * @returns {any} the sorted names
          */
-        function sortNames(names) {
-            return names.sort(function (a, b) {
-                if ("Reset" == a) {
-                    return 1;
-                }
-                else if ("Reset" == b) {
-                    return -1;
-                }
-                return a.localeCompare(b);
-            });
+        function byLabel(a, b) {
+            if ("Reset" == a) {
+                return 1;
+            }
+            else if ("Reset" == b) {
+                return -1;
+            }
+            return a.localeCompare(b);
         }
     }
     Core.PreferencesHomeController = PreferencesHomeController;
@@ -2653,6 +2658,7 @@ var templateCache;
 /// <reference path="auth/auth.module.ts"/>
 /// <reference path="common/common.module.ts"/>
 /// <reference path="config/config.module.ts"/>
+/// <reference path="config/config-loader.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
@@ -2679,35 +2685,37 @@ var Core;
         .name;
     Core.log = Logger.get(Core.appModule);
     hawtioPluginLoader.addModule(Core.appModule);
+    hawtioPluginLoader.registerPreBootstrapTask(Core.configLoader);
 })(Core || (Core = {}));
-var HawtioMainNav;
-(function (HawtioMainNav) {
+/// <reference path="hawtio-tab.ts"/>
+var Core;
+(function (Core) {
     var HawtioTabsController = /** @class */ (function () {
         HawtioTabsController.$inject = ["$document", "$timeout"];
         function HawtioTabsController($document, $timeout) {
             'ngInject';
             this.$document = $document;
             this.$timeout = $timeout;
-            this.tabNames = [];
-            this.dropdownNames = [];
+            this.tabs = [];
+            this.moreTabs = [];
         }
         HawtioTabsController.prototype.$onInit = function () {
-            this.setDefaultAtiveTab();
+            if (!this.tabs) {
+                throw Error("hawtioTabsComponent 'tabs' input is " + this.tabs);
+            }
+            this.activateFirstTab();
             this.adjustTabs();
         };
-        HawtioTabsController.prototype.setDefaultAtiveTab = function () {
-            if (this.names.length > 0) {
-                this.activeTab = this.names[0];
+        HawtioTabsController.prototype.activateFirstTab = function () {
+            if (!this.activeTab && this.tabs.length > 0) {
+                this.activeTab = this.tabs[0];
             }
         };
         HawtioTabsController.prototype.adjustTabs = function () {
             var _this = this;
-            this.tabNames = this.names;
             this.adjustingTabs = true;
             // wait for the tabs to be rendered by AngularJS before calculating the widths
             this.$timeout(function () {
-                _this.tabNames = [];
-                _this.adjustingTabs = false;
                 var $ul = _this.$document.find('.hawtio-tabs');
                 var $liTabs = $ul.find('.hawtio-tab');
                 var $liDropdown = $ul.find('.dropdown');
@@ -2715,32 +2723,31 @@ var HawtioMainNav;
                 var lisWidth = 0;
                 $liTabs.each(function (index, element) {
                     lisWidth += element.clientWidth;
-                    if (lisWidth < availableWidth) {
-                        _this.tabNames.push(_this.names[index]);
-                    }
-                    else {
-                        _this.dropdownNames.push(_this.names[index]);
+                    if (lisWidth > availableWidth) {
+                        _this.moreTabs.unshift(_this.tabs.pop());
                     }
                 });
+                _this.adjustingTabs = false;
             });
         };
-        HawtioTabsController.prototype.onClick = function (name) {
-            this.activeTab = name;
-            this.onChange({ name: name });
+        HawtioTabsController.prototype.onClick = function (tab) {
+            this.activeTab = tab;
+            this.onChange({ tab: tab });
         };
         return HawtioTabsController;
     }());
-    HawtioMainNav.HawtioTabsController = HawtioTabsController;
-    HawtioMainNav.hawtioTabsComponent = {
+    Core.HawtioTabsController = HawtioTabsController;
+    Core.hawtioTabsComponent = {
         bindings: {
-            names: '<',
+            tabs: '<',
+            activeTab: '<',
             onChange: '&',
         },
-        template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\">\n        <li ng-repeat=\"name in $ctrl.tabNames\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: name === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(name)\">{{name}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.dropdownNames.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"name in $ctrl.dropdownNames\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(name)\">{{name}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
+        template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs track by tab.label\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.moreTabs.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"tab in $ctrl.moreTabs track by tab.label\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
         controller: HawtioTabsController
     };
-    HawtioMainNav._module.component('hawtioTabs', HawtioMainNav.hawtioTabsComponent);
-})(HawtioMainNav || (HawtioMainNav = {}));
+    HawtioMainNav._module.component('hawtioTabs', Core.hawtioTabsComponent);
+})(Core || (Core = {}));
 
 angular.module('hawtio-core').run(['$templateCache', function($templateCache) {$templateCache.put('help/help.component.html','<div>\n  <h1>Help</h1>\n  <ul class="nav nav-tabs">\n    <li ng-repeat="breadcrumb in $ctrl.breadcrumbs" ng-class="{active : breadcrumb === $ctrl.selectedBreadcrumb}">\n      <a href="#" ng-click="$ctrl.onSelectBreadcrumb(breadcrumb)">{{breadcrumb.label}}</a>\n    </li>\n  </ul>\n  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs">\n    <li ng-repeat="section in $ctrl.sections" ng-class="{active : section === $ctrl.selectedTopic}">\n      <a ng-href="#" ng-click="$ctrl.onSelectTopic(section)">{{section.label}}</a>\n    </li>\n  </ul>\n  <div ng-bind-html="$ctrl.html"></div>\n</div>\n');
 $templateCache.put('navigation/templates/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
@@ -2750,7 +2757,7 @@ $templateCache.put('navigation/templates/subTabHeader.html','<li class="header">
 $templateCache.put('navigation/templates/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
 $templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
 $templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
-$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs names="names" on-change="setPanel(name)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
+$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
 $templateCache.put('help/help.md','### Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar on the left.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
 $templateCache.put('preferences/help.md','## Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');

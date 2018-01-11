@@ -1,25 +1,18 @@
-/// <reference path="config-service.ts"/>
-
 namespace Core {
 
-  export function configLoader($rootScope: ng.IRootScopeService, $http: ng.IHttpService) {
-    'ngInject';
-    
+  export function configLoader(next) {
     log.info('Loading hawtconfig.json...');
     
-    $http.get('hawtconfig.json')
-      .then(response => {
-        try {
-          const configService = new ConfigService(response.data);
-          $rootScope.$broadcast(EVENT_LOADED, configService);
-          log.info('hawtconfig.json loaded');
-        } catch(error) {
-          log.warn(error.message);
-          log.debug('hawtconfig.json:\n' + response.data);
-        }
+    $.getJSON('hawtconfig.json')
+      .done(config => {
+        window['hawtconfig'] = config;
+        log.info('hawtconfig.json loaded');
       })
-      .catch(response => {
-        log.warn('hawtconfig.json not found');
+      .fail((jqxhr, textStatus, errorThrown) => {
+        log.error(`Error fetching 'hawtconfig.json'. Status: '${textStatus}'. Error: '${errorThrown}'`);
+      })
+      .always(() => {
+        next();
       });
   }
 

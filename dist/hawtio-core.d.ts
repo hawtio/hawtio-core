@@ -1,5 +1,5 @@
-/// <reference types="angular" />
 /// <reference types="angular-route" />
+/// <reference types="angular" />
 declare namespace Core {
     interface AuthService {
         logout(): void;
@@ -13,7 +13,6 @@ declare namespace Core {
 }
 declare namespace Core {
     class HumanizeService {
-        constructor();
         toUpperCase(str: string): string;
         toLowerCase(str: string): string;
         toSentenceCase(str: string): string;
@@ -24,42 +23,51 @@ declare namespace Core {
     const commonModule: string;
 }
 declare namespace Core {
-    class ConfigService {
-        private config;
-        constructor(config: any);
-        getBrandingValue(name: string): any;
-        private getValue(group, name);
+    interface Config {
+        branding?: {
+            [key: string]: string;
+        };
+        disabledRoutes?: string[];
     }
 }
 declare namespace Core {
-    function configLoader($rootScope: ng.IRootScopeService, $http: ng.IHttpService): void;
+    class ConfigManager {
+        private config;
+        private $routeProvider;
+        constructor(config: Config, $routeProvider: ng.route.IRouteProvider);
+        getBrandingValue(key: string): string;
+        isRouteEnabled(path: string): boolean;
+        addRoute(path: string, route: ng.route.IRoute): ConfigManager;
+    }
 }
 declare namespace Core {
     class BrandingImageController {
-        private $rootScope;
+        private configManager;
         class: string;
         src: string;
         alt: string;
         srcValue: string;
         altValue: string;
-        constructor($rootScope: ng.IRootScopeService);
+        constructor(configManager: ConfigManager);
         $onInit(): void;
     }
     const brandingImageComponent: angular.IComponentOptions;
 }
 declare namespace Core {
     class BrandingTextController {
-        private $rootScope;
+        private configManager;
         key: string;
         value: string;
-        constructor($rootScope: ng.IRootScopeService);
+        constructor(configManager: ConfigManager);
         $onInit(): void;
     }
     const brandingTextComponent: angular.IComponentOptions;
 }
 declare namespace Core {
-    const EVENT_LOADED = "hawtio-config-loaded";
     const configModule: string;
+}
+declare namespace Core {
+    function configLoader(next: any): void;
 }
 declare namespace Core {
     class PluginLoader {
@@ -382,9 +390,16 @@ declare namespace Core {
         private $rootScope;
         private tabs;
         constructor($rootScope: ng.IRootScopeService);
-        addTab(name: string, template: string, isValid?: () => boolean): void;
-        getTab(name: string): any;
+        addTab(label: string, templateUrl: string, isValid?: () => boolean): void;
+        getTab(label: string): any;
         getTabs(): {};
+    }
+}
+declare namespace Core {
+    class HawtioTab {
+        readonly label: string;
+        readonly path: string;
+        constructor(label: string, path: string);
     }
 }
 declare namespace Core {
@@ -414,21 +429,20 @@ declare namespace Core {
     const appModule: string;
     const log: Logging.Logger;
 }
-declare namespace HawtioMainNav {
+declare namespace Core {
     class HawtioTabsController {
         private $document;
         private $timeout;
-        names: string[];
-        tabNames: string[];
-        dropdownNames: string[];
+        tabs: HawtioTab[];
+        moreTabs: HawtioTab[];
         adjustingTabs: boolean;
         onChange: Function;
-        activeTab: string;
+        activeTab: HawtioTab;
         constructor($document: ng.IDocumentService, $timeout: ng.ITimeoutService);
         $onInit(): void;
-        private setDefaultAtiveTab();
+        private activateFirstTab();
         private adjustTabs();
-        onClick(name: string): void;
+        onClick(tab: HawtioTab): void;
     }
     const hawtioTabsComponent: angular.IComponentOptions;
 }

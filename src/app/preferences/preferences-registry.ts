@@ -8,19 +8,19 @@ namespace Core {
       'ngInject';      
     }
 
-    addTab(name: string, template: string, isValid: () => boolean = undefined) {
+    addTab(label: string, templateUrl: string, isValid: () => boolean = undefined) {
       if (!isValid) {
         isValid = () => { return true; };
       }
-      this.tabs[name] = {
-        template: template,
+      this.tabs[label] = {
+        templateUrl: templateUrl,
         isValid: isValid
       };
       this.$rootScope.$broadcast('HawtioPreferencesTabAdded');
     }
 
-    getTab(name: string) {
-      return this.tabs[name];
+    getTab(label: string) {
+      return this.tabs[label];
     }
 
     getTabs() {

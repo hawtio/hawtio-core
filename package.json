@@ -5,8 +5,8 @@
   "types": "./dist/hawtio-core.d.ts",
   "scripts": {
     "start": "gulp",
-    "build": "gulp build && gulp test",
-    "test": "gulp build && gulp test"
+    "build": "gulp build",
+    "test": "gulp test"
   },
   "dependencies": {
     "@hawtio/core-dts": "3.0.18",

@@ -3,6 +3,6 @@
   <h1>
     Preferences
   </h1>
-  <hawtio-tabs names="names" on-change="setPanel(name)"></hawtio-tabs>
+  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>
   <div ng-include="getPrefs(pref)"></div>
 </div>

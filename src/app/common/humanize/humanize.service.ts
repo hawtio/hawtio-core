@@ -2,8 +2,6 @@ namespace Core {
 
   export class HumanizeService {
 
-    constructor() {}
-
     toUpperCase(str: string): string {
       return _.upperCase(str);
     }

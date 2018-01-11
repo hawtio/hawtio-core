@@ -1,6 +1,7 @@
 /// <reference path="auth/auth.module.ts"/>
 /// <reference path="common/common.module.ts"/>
 /// <reference path="config/config.module.ts"/>
+/// <reference path="config/config-loader.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
@@ -30,5 +31,7 @@ namespace Core {
   export const log = Logger.get(appModule);
 
   hawtioPluginLoader.addModule(appModule);
+
+  hawtioPluginLoader.registerPreBootstrapTask(configLoader);
   
 }

@@ -337,7 +337,7 @@ namespace HawtioMainNav {
       return this;
     }
 
-    subPath(title, path, page, rank, reload, isValid) {
+    subPath(title: string, path: string, page?: string, rank?: number, reload?: boolean, isValid?: boolean) {
       var parent = this.self;
       if (!this.self.tabs) {
         this.self.tabs = [];

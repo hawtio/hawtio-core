@@ -314,7 +314,7 @@ declare namespace HawtioMainNav {
         template(template: any): this;
         defaultPage(defaultPage: any): this;
         tabs(item: any): this;
-        subPath(title: any, path: any, page: any, rank: any, reload: any, isValid: any): this;
+        subPath(title: string, path: string, page?: string, rank?: number, reload?: boolean, isValid?: boolean): this;
         build(): NavItem;
     }
     function createBuilder(): NavItemBuilder;

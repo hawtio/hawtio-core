@@ -453,8 +453,8 @@ declare namespace Core {
         onChange: Function;
         activeTab: HawtioTab;
         constructor($document: ng.IDocumentService, $timeout: ng.ITimeoutService);
-        $onInit(): void;
-        private activateFirstTab();
+        $onChanges(changesObj: ng.IOnChangesObject): void;
+        private setActiveTab(changesObj);
         private adjustTabs();
         onClick(tab: HawtioTab): void;
     }

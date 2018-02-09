@@ -14,16 +14,18 @@ namespace Core {
       'ngInject';      
     }
 
-    $onInit() {
+    $onChanges(changesObj: ng.IOnChangesObject) {
       if (!this.tabs) {
         throw Error(`hawtioTabsComponent 'tabs' input is ${this.tabs}`);
       }
-      this.activateFirstTab();
+      this.setActiveTab(changesObj);
       this.adjustTabs();
     }
     
-    private activateFirstTab() {
-      if (!this.activeTab && this.tabs.length > 0) {
+    private setActiveTab(changesObj: ng.IOnChangesObject) {
+      if (changesObj.activeTab && changesObj.activeTab.currentValue) {
+        this.activeTab = _.find(this.tabs, tab => tab === changesObj.activeTab.currentValue);
+      } else if (this.tabs.length > 0) {
         this.activeTab = this.tabs[0];
       }
     }
@@ -39,6 +41,7 @@ namespace Core {
         
         let availableWidth = $ul.width() - $liDropdown.width();
         let lisWidth = 0;
+        this.moreTabs = [];
 
         $liTabs.each((index: number, element: Element) => {
           lisWidth += element.clientWidth;
@@ -66,7 +69,7 @@ namespace Core {
     },
     template: `
       <ul class="nav nav-tabs hawtio-tabs">
-        <li ng-repeat="tab in $ctrl.tabs track by tab.label" class="hawtio-tab" 
+        <li ng-repeat="tab in $ctrl.tabs track by tab.path" class="hawtio-tab" 
             ng-class="{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}">
           <a href="#" ng-click="$ctrl.onClick(tab)">{{tab.label}}</a>
         </li>

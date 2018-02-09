@@ -9,7 +9,7 @@ namespace Core {
     'ngInject';
 
     var panels = preferencesRegistry.getTabs();
-    $scope.tabs = _.keys(panels).sort(byLabel).map(label => new HawtioTab(label, ''));
+    $scope.tabs = _.keys(panels).sort(byLabel).map(label => new HawtioTab(label, label));
 
     // pick the first one as the default
     preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);

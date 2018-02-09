@@ -69,6 +69,8 @@ declare namespace Core {
 declare namespace Core {
     function configLoader(next: any): void;
 }
+declare namespace Bootstrap {
+}
 declare namespace Core {
     class PluginLoader {
         private bootstrapEl;

@@ -2,16 +2,15 @@
 
 To hack on hawtio-core locally first run:
 
-* `yarn install`
+    yarn install
 
 Then run the app:
 
-* `yarn start`
+    yarn start
 
 ### Release an update:
 
-* Commit your changes
+Commit your changes and then:
 
-* `yarn publish`
-
-* `git push && git push --tags`
+    yarn publish
+    git push && git push --tags

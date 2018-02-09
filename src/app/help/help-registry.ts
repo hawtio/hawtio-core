@@ -20,7 +20,7 @@ namespace Core {
       user: 'User Guide',
       developer: 'Developers',
       faq: 'FAQ',
-      changes: 'Change Log',
+      changes: 'Change Log'
     };
 
     private topics: HelpTopic[] = [];
@@ -29,27 +29,22 @@ namespace Core {
       'ngInject';
     }
 
-    public addUserDoc(topicName: string, path: string, isValid: () => boolean = null) {
+    public addUserDoc(topicName: string, path: string, isValid: () => boolean = null): void {
       this.addSubTopic(topicName, 'user', path, isValid);
     }
 
-    public addDevDoc(topicName: string, path: string, isValid: () => boolean = null) {
+    public addDevDoc(topicName: string, path: string, isValid: () => boolean = null): void {
       this.addSubTopic(topicName, 'developer', path, isValid);
     }
 
-    public addSubTopic(topicName: string, subtopic: string, path, isValid: () => boolean = null) {
+    public addSubTopic(topicName: string, subtopic: string, path, isValid: () => boolean = null): void {
       this.getOrCreateTopic(topicName, subtopic, path, isValid);
     }
 
-    public getOrCreateTopic(topicName: string, subTopicName: string, path: string, isValid: () => boolean = null) {
+    public getOrCreateTopic(topicName: string, subTopicName: string, path: string,
+      isValid: () => boolean = () => true): HelpTopic {
       let topic = this.getTopic(topicName, subTopicName)
       if (!angular.isDefined(topic)) {
-
-        if (isValid === null) {
-          isValid = () => {
-            return true;
-          }
-        }
 
         topic = new HelpTopic();
         topic.topicName = topicName;
@@ -63,24 +58,22 @@ namespace Core {
       return topic;
     }
 
-    public mapTopicName(name) {
+    public mapTopicName(name): string {
       if (angular.isDefined(this.topicNameMappings[name])) {
         return this.topicNameMappings[name];
       }
       return name;
     }
 
-    public mapSubTopicName(name) {
+    public mapSubTopicName(name): string {
       if (angular.isDefined(this.subTopicNameMappings[name])) {
         return this.subTopicNameMappings[name];
       }
       return name;
     }
 
-    public getTopics() {
-      let answer = this.topics.filter((topic) => {
-        return topic.isValid() === true;
-      });
+    public getTopics(): HelpTopic[] {
+      let answer = this.topics.filter((topic) => topic.isValid() === true);
       return answer;
     }
 
@@ -89,7 +82,7 @@ namespace Core {
         return topic.topicName === topicName && topic.subTopicName === subTopicName;
       })[0];
     }
-  
+
   }
 
 }

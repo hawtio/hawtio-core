@@ -207,8 +207,8 @@ declare namespace Core {
         addDevDoc(topicName: string, path: string, isValid?: () => boolean): void;
         addSubTopic(topicName: string, subtopic: string, path: any, isValid?: () => boolean): void;
         getOrCreateTopic(topicName: string, subTopicName: string, path: string, isValid?: () => boolean): HelpTopic;
-        mapTopicName(name: any): any;
-        mapSubTopicName(name: any): any;
+        mapTopicName(name: any): string;
+        mapSubTopicName(name: any): string;
         getTopics(): HelpTopic[];
         getTopic(topicName: string, subTopicName: string): HelpTopic;
     }

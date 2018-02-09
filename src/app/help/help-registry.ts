@@ -29,15 +29,15 @@ namespace Core {
       'ngInject';
     }
 
-    public addUserDoc(topicName: string, path: string, isValid: () => boolean = null): void {
+    public addUserDoc(topicName: string, path: string, isValid?: () => boolean): void {
       this.addSubTopic(topicName, 'user', path, isValid);
     }
 
-    public addDevDoc(topicName: string, path: string, isValid: () => boolean = null): void {
+    public addDevDoc(topicName: string, path: string, isValid?: () => boolean): void {
       this.addSubTopic(topicName, 'developer', path, isValid);
     }
 
-    public addSubTopic(topicName: string, subtopic: string, path, isValid: () => boolean = null): void {
+    public addSubTopic(topicName: string, subtopic: string, path, isValid?: () => boolean): void {
       this.getOrCreateTopic(topicName, subtopic, path, isValid);
     }
 
@@ -73,14 +73,13 @@ namespace Core {
     }
 
     public getTopics(): HelpTopic[] {
-      let answer = this.topics.filter((topic) => topic.isValid() === true);
+      let answer = this.topics.filter((topic) => topic.isValid());
       return answer;
     }
 
     public getTopic(topicName: string, subTopicName: string): HelpTopic {
-      return this.topics.filter((topic) => {
-        return topic.topicName === topicName && topic.subTopicName === subTopicName;
-      })[0];
+      return this.topics.filter((topic) =>
+        topic.topicName === topicName && topic.subTopicName === subTopicName)[0];
     }
 
   }

@@ -1037,15 +1037,12 @@ var Core;
             this.topics = [];
         }
         HelpRegistry.prototype.addUserDoc = function (topicName, path, isValid) {
-            if (isValid === void 0) { isValid = null; }
             this.addSubTopic(topicName, 'user', path, isValid);
         };
         HelpRegistry.prototype.addDevDoc = function (topicName, path, isValid) {
-            if (isValid === void 0) { isValid = null; }
             this.addSubTopic(topicName, 'developer', path, isValid);
         };
         HelpRegistry.prototype.addSubTopic = function (topicName, subtopic, path, isValid) {
-            if (isValid === void 0) { isValid = null; }
             this.getOrCreateTopic(topicName, subtopic, path, isValid);
         };
         HelpRegistry.prototype.getOrCreateTopic = function (topicName, subTopicName, path, isValid) {
@@ -1075,7 +1072,7 @@ var Core;
             return name;
         };
         HelpRegistry.prototype.getTopics = function () {
-            var answer = this.topics.filter(function (topic) { return topic.isValid() === true; });
+            var answer = this.topics.filter(function (topic) { return topic.isValid(); });
             return answer;
         };
         HelpRegistry.prototype.getTopic = function (topicName, subTopicName) {

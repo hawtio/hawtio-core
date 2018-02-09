@@ -5,8 +5,8 @@ namespace Core {
     topicName: string;
     subTopicName: string;
     label: string;
-    path:string;
-    isValid: any;
+    path: string;
+    isValid: () => boolean;
     selected: boolean;
 
     isIndexTopic(): boolean {

@@ -191,7 +191,7 @@ declare namespace Core {
         subTopicName: string;
         label: string;
         path: string;
-        isValid: any;
+        isValid: () => boolean;
         selected: boolean;
         isIndexTopic(): boolean;
     }

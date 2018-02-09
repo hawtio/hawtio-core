@@ -28,10 +28,13 @@ namespace Core {
     ])
     .name;
 
-  export const log = Logger.get(appModule);
+  export const log: Logging.Logger = Logger.get('hawtio-core');
 
-  hawtioPluginLoader.addModule(appModule);
-
-  hawtioPluginLoader.registerPreBootstrapTask(configLoader);
+  hawtioPluginLoader
+    .addModule(appModule)
+    .registerPreBootstrapTask({
+      name: 'ConfigLoader',
+      task: configLoader
+    });
 
 }

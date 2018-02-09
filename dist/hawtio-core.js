@@ -424,6 +424,7 @@ var Core;
         PluginLoader.prototype.setBootstrapElement = function (el) {
             Core.log.debug("Setting bootstrap element to:", el);
             this.bootstrapEl = el;
+            return this;
         };
         /**
          * Get the HTML element used for angular.bootstrap
@@ -462,6 +463,7 @@ var Core;
             else {
                 this.tasks.unshift(task);
             }
+            return this;
         };
         /**
          * Add an angular module to the list of modules to bootstrap
@@ -469,6 +471,7 @@ var Core;
         PluginLoader.prototype.addModule = function (module) {
             Core.log.debug("Adding module:", module);
             this.modules.push(module);
+            return this;
         };
         ;
         /**
@@ -477,6 +480,7 @@ var Core;
         PluginLoader.prototype.addUrl = function (url) {
             Core.log.debug("Adding URL:", url);
             this.urls.push(url);
+            return this;
         };
         ;
         /**
@@ -491,6 +495,7 @@ var Core;
          */
         PluginLoader.prototype.setLoaderCallback = function (callback) {
             this.loaderCallback = callback;
+            return this;
         };
         /**
          * Downloads plugins at any configured URLs and bootstraps the app
@@ -763,11 +768,11 @@ var HawtioCore = (function () {
      */
     var log = Logger.get(HawtioCore.pluginName);
     var _module = angular
-        .module(HawtioCore.pluginName, []);
-    _module.config(["$locationProvider", function ($locationProvider) {
+        .module(HawtioCore.pluginName, [])
+        .config(["$locationProvider", function ($locationProvider) {
             $locationProvider.html5Mode(true);
-        }]);
-    _module.run(['documentBase', function (documentBase) {
+        }])
+        .run(['documentBase', function (documentBase) {
             log.debug("loaded");
         }]);
     var dummyLocalStorage = {
@@ -800,14 +805,10 @@ var HawtioCore = (function () {
     // localStorage service, returns a dummy impl
     // if for some reason it's not in the window
     // object
-    _module.factory('localStorage', function () {
-        return window.localStorage || dummyLocalStorage;
-    });
+    _module.factory('localStorage', function () { return window.localStorage || dummyLocalStorage; });
     // Holds the document base so plugins can easily
     // figure out absolute URLs when needed
-    _module.factory('documentBase', function () {
-        return HawtioCore.documentBase();
-    });
+    _module.factory('documentBase', function () { return HawtioCore.documentBase(); });
     // Holds a mapping of plugins to layouts, plugins use 
     // this to specify a full width view, tree view or their 
     // own custom view
@@ -1222,7 +1223,7 @@ var HawtioMainNav;
         }
         return text;
     }
-    HawtioMainNav.pluginName = 'hawtio-nav';
+    HawtioMainNav.pluginName = 'hawtio-core-nav';
     var log = Logger.get(HawtioMainNav.pluginName);
     // Actions class with some pre-defined actions
     var Actions = /** @class */ (function () {
@@ -2642,9 +2643,13 @@ var Core;
         templateCache.pluginName
     ])
         .name;
-    Core.log = Logger.get(Core.appModule);
-    hawtioPluginLoader.addModule(Core.appModule);
-    hawtioPluginLoader.registerPreBootstrapTask(Core.configLoader);
+    Core.log = Logger.get('hawtio-core');
+    hawtioPluginLoader
+        .addModule(Core.appModule)
+        .registerPreBootstrapTask({
+        name: 'ConfigLoader',
+        task: Core.configLoader
+    });
 })(Core || (Core = {}));
 /// <reference path="hawtio-tab.ts"/>
 var Core;

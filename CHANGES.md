@@ -1,5 +1,11 @@
 ### Change Log
 
+#### 3.2.8
+* Make PluginLoader more type-friendly
+* Add minimal plugin example
+
+...
+
 #### 2.0.7
 * Comment out console hijacking
 

@@ -18,7 +18,7 @@ let HawtioCore: HawtioCore = (function () {
    * The app's injector, set once bootstrap is completed
    */
   Object.defineProperty(HawtioCoreClass.prototype, "injector", {
-    get: function () {
+    get: () => {
       if (HawtioCore.UpgradeAdapter) {
         return HawtioCore.UpgradeAdapter.ng1Injector;
       }
@@ -37,18 +37,16 @@ let HawtioCore: HawtioCore = (function () {
   /**
    * This plugins logger instance
    */
-  let log = Logger.get(HawtioCore.pluginName);
+  const log = Logger.get(HawtioCore.pluginName);
 
-  let _module = angular
-    .module(HawtioCore.pluginName, []);
-
-  _module.config(["$locationProvider", function ($locationProvider) {
-    $locationProvider.html5Mode(true);
-  }]);
-
-  _module.run(['documentBase', function (documentBase) {
-    log.debug("loaded");
-  }]);
+  const _module = angular
+    .module(HawtioCore.pluginName, [])
+    .config(["$locationProvider", function ($locationProvider) {
+      $locationProvider.html5Mode(true);
+    }])
+    .run(['documentBase', function (documentBase) {
+      log.debug("loaded");
+    }]);
 
   let dummyLocalStorage = {
     length: 0,
@@ -81,26 +79,22 @@ let HawtioCore: HawtioCore = (function () {
   // localStorage service, returns a dummy impl
   // if for some reason it's not in the window
   // object
-  _module.factory('localStorage', function () {
-    return window.localStorage || dummyLocalStorage;
-  });
+  _module.factory('localStorage', () => window.localStorage || dummyLocalStorage);
 
   // Holds the document base so plugins can easily
   // figure out absolute URLs when needed
-  _module.factory('documentBase', function () {
-    return HawtioCore.documentBase();
-  });
+  _module.factory('documentBase', () => HawtioCore.documentBase());
 
 
   // Holds a mapping of plugins to layouts, plugins use 
   // this to specify a full width view, tree view or their 
   // own custom view
-  _module.factory('viewRegistry', function () {
+  _module.factory('viewRegistry', () => {
     return {};
   });
 
   // Placeholder service for the page title service
-  _module.factory('pageTitle', function () {
+  _module.factory('pageTitle', () => {
     return {
       addTitleElement: () => { },
       getTitle: () => undefined,
@@ -121,7 +115,7 @@ let HawtioCore: HawtioCore = (function () {
     return answer;
   }]);
 
-  _module.factory('HawtioDashboard', function () {
+  _module.factory('HawtioDashboard', () => {
     return {
       hasDashboard: false,
       inDashboard: false,
@@ -130,7 +124,7 @@ let HawtioCore: HawtioCore = (function () {
   });
 
   // Placeholder user details service
-  _module.factory('userDetails', function () {
+  _module.factory('userDetails', () => {
     return {
       logout: () => {
         log.debug("Dummy userDetails.logout()");

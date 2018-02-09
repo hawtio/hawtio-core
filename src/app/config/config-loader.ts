@@ -1,8 +1,8 @@
 namespace Core {
 
-  export function configLoader(next) {
+  export function configLoader(next: () => void): void {
     log.info('Loading hawtconfig.json...');
-    
+
     $.getJSON('hawtconfig.json')
       .done(config => {
         window['hawtconfig'] = config;

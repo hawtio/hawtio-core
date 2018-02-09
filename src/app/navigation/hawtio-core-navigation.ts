@@ -36,8 +36,8 @@ namespace HawtioMainNav {
     return text;
   }
 
-  export const pluginName = 'hawtio-nav';
-  var log = Logger.get(pluginName);
+  export const pluginName = 'hawtio-core-nav';
+  const log = Logger.get(pluginName);
 
   // Actions class with some pre-defined actions
   export class Actions {
@@ -48,14 +48,14 @@ namespace HawtioMainNav {
   }
 
   export class Registry {
-    
+
     items = [];
     root;
 
     constructor(root) {
       this.root = root;
     }
-    
+
     builder() {
       return new NavItemBuilder();
     }
@@ -84,7 +84,7 @@ namespace HawtioMainNav {
         detail: {}
       }));
     }
-    
+
     remove(search) {
       var _this = this;
       var removed = _.remove(this.items, search);
@@ -229,7 +229,7 @@ namespace HawtioMainNav {
     defaultPage?: DefaultPageRanking;
     attributes?: AttributeMap;
     linkAttributes?: AttributeMap;
-    [name:string]: any;
+    [name: string]: any;
   }
 
   export interface DefaultPageRanking {
@@ -238,12 +238,12 @@ namespace HawtioMainNav {
   }
 
   export interface AttributeMap {
-    [name:string]: string;
+    [name: string]: string;
   }
 
   // Class NavItemBuilderImpl
   export class NavItemBuilder {
-    
+
     private self: NavItem = {
       id: ''
     };
@@ -267,7 +267,7 @@ namespace HawtioMainNav {
       this.self.tooltip = tooltip;
       return this;
     }
-    
+
     page(page) {
       this.self.page = page;
       return this;

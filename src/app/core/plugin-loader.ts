@@ -57,9 +57,10 @@ namespace Core {
     /**
      * Set the HTML element that the plugin loader will pass to angular.bootstrap
      */
-    setBootstrapElement(el: HTMLElement): void {
+    setBootstrapElement(el: HTMLElement): PluginLoader {
       log.debug("Setting bootstrap element to:", el);
       this.bootstrapEl = el;
+      return this;
     }
 
     /**
@@ -81,7 +82,7 @@ namespace Core {
      * task: the function to be executed with 1 argument, which is a function
      *       that will execute the next task in the queue
      */
-    registerPreBootstrapTask(task, front?): void {
+    registerPreBootstrapTask(task, front?): PluginLoader {
       if (angular.isFunction(task)) {
         log.debug("Adding legacy task");
         task = {
@@ -102,22 +103,26 @@ namespace Core {
       } else {
         this.tasks.unshift(task);
       }
+
+      return this;
     }
 
     /**
      * Add an angular module to the list of modules to bootstrap
      */
-    addModule(module: string): void {
+    addModule(module: string): PluginLoader {
       log.debug("Adding module:", module);
       this.modules.push(module);
+      return this;
     };
 
     /**
      * Add a URL for discovering plugins.
      */
-    addUrl(url: string): void {
+    addUrl(url: string): PluginLoader {
       log.debug("Adding URL:", url);
       this.urls.push(url);
+      return this;
     };
 
     /**
@@ -131,8 +136,9 @@ namespace Core {
      * Set a callback to be notified as URLs are checked and plugin 
      * scripts are downloaded
      */
-    setLoaderCallback(callback: PluginLoaderCallback): void {
+    setLoaderCallback(callback: PluginLoaderCallback): PluginLoader {
       this.loaderCallback = callback;
+      return this;
     }
 
     /**

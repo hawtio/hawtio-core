@@ -67,7 +67,7 @@ declare namespace Core {
     const configModule: string;
 }
 declare namespace Core {
-    function configLoader(next: any): void;
+    function configLoader(next: () => void): void;
 }
 declare namespace Bootstrap {
 }
@@ -108,7 +108,7 @@ declare namespace Core {
         /**
          * Set the HTML element that the plugin loader will pass to angular.bootstrap
          */
-        setBootstrapElement(el: HTMLElement): void;
+        setBootstrapElement(el: HTMLElement): PluginLoader;
         /**
          * Get the HTML element used for angular.bootstrap
          */
@@ -125,15 +125,15 @@ declare namespace Core {
          * task: the function to be executed with 1 argument, which is a function
          *       that will execute the next task in the queue
          */
-        registerPreBootstrapTask(task: any, front?: any): void;
+        registerPreBootstrapTask(task: any, front?: any): PluginLoader;
         /**
          * Add an angular module to the list of modules to bootstrap
          */
-        addModule(module: string): void;
+        addModule(module: string): PluginLoader;
         /**
          * Add a URL for discovering plugins.
          */
-        addUrl(url: string): void;
+        addUrl(url: string): PluginLoader;
         /**
          * Return the current list of configured modules
          */
@@ -142,7 +142,7 @@ declare namespace Core {
          * Set a callback to be notified as URLs are checked and plugin
          * scripts are downloaded
          */
-        setLoaderCallback(callback: PluginLoaderCallback): void;
+        setLoaderCallback(callback: PluginLoaderCallback): PluginLoader;
         /**
          * Downloads plugins at any configured URLs and bootstraps the app
          */
@@ -263,7 +263,7 @@ declare namespace Core {
     const helpModule: string;
 }
 declare namespace HawtioMainNav {
-    const pluginName = "hawtio-nav";
+    const pluginName = "hawtio-core-nav";
     class Actions {
         static ADD: string;
         static REMOVE: string;

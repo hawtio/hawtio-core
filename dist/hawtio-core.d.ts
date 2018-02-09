@@ -78,12 +78,10 @@ declare namespace Core {
         /**
          * List of URLs that the plugin loader will try and discover
          * plugins from
-         * @type {Array}
          */
         private urls;
         /**
          * Holds all of the angular modules that need to be bootstrapped
-         * @type {Array}
          */
         private modules;
         /**
@@ -91,15 +89,13 @@ declare namespace Core {
          * Supply a function that takes the next task to be
          * executed as an argument and be sure to call the passed
          * in function.
-         *
-         * @type {Array}
          */
         private tasks;
         constructor();
         /**
          * Set the HTML element that the plugin loader will pass to angular.bootstrap
          */
-        setBootstrapElement(el: any): void;
+        setBootstrapElement(el: HTMLElement): void;
         /**
          * Get the HTML element used for angular.bootstrap
          */
@@ -120,15 +116,15 @@ declare namespace Core {
         /**
          * Add an angular module to the list of modules to bootstrap
          */
-        addModule(module: any): void;
+        addModule(module: string): void;
         /**
          * Add a URL for discovering plugins.
          */
-        addUrl(url: any): void;
+        addUrl(url: string): void;
         /**
          * Return the current list of configured modules
          */
-        getModules(): any[];
+        getModules(): string[];
         /**
          * Set a callback to be notified as URLs are checked and plugin
          * scripts are downloaded
@@ -146,7 +142,7 @@ declare namespace Core {
     }
 }
 declare const hawtioPluginLoader: Core.PluginLoader;
-declare var HawtioCore: HawtioCore;
+declare let HawtioCore: HawtioCore;
 interface HawtioCore {
     /**
      * The app's injector, set once bootstrap is completed

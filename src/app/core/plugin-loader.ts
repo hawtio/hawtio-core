@@ -5,39 +5,35 @@ namespace Core {
   */
   export class PluginLoader {
 
-    private bootstrapEl = document.documentElement;
+    private bootstrapEl: HTMLElement = document.documentElement;
     private loaderCallback = null;
 
     /**
      * List of URLs that the plugin loader will try and discover
      * plugins from
-     * @type {Array}
      */
-    private urls = [];
+    private urls: string[] = [];
 
     /**
      * Holds all of the angular modules that need to be bootstrapped
-     * @type {Array}
      */
-    private modules = [];
+    private modules: string[] = [];
 
     /**
      * Tasks to be run before bootstrapping, tasks can be async.
      * Supply a function that takes the next task to be
      * executed as an argument and be sure to call the passed
      * in function.
-     *
-     * @type {Array}
      */
     private tasks = [];
 
     constructor() {
       this.setLoaderCallback({
-        scriptLoaderCallback: function (self, total, remaining) {
-          log.debug("Total scripts: ", total, " Remaining: ", remaining);
+        scriptLoaderCallback: (self, total, remaining) => {
+          log.debug("Total scripts:", total, "Remaining:", remaining);
         },
-        urlLoaderCallback: function (self, total, remaining) {
-          log.debug("Total URLs: ", total, " Remaining: ", remaining);
+        urlLoaderCallback: (self, total, remaining) => {
+          log.debug("Total URLs:", total, "Remaining:", remaining);
         }
       });
     }
@@ -45,15 +41,15 @@ namespace Core {
     /**
      * Set the HTML element that the plugin loader will pass to angular.bootstrap
      */
-    setBootstrapElement(el) {
-      log.debug("Setting bootstrap element to: ", el);
+    setBootstrapElement(el: HTMLElement): void {
+      log.debug("Setting bootstrap element to:", el);
       this.bootstrapEl = el;
     }
 
     /**
      * Get the HTML element used for angular.bootstrap
      */
-    getBootstrapElement() {
+    getBootstrapElement(): HTMLElement {
       return this.bootstrapEl;
     }
 
@@ -69,7 +65,7 @@ namespace Core {
      * task: the function to be executed with 1 argument, which is a function
      *       that will execute the next task in the queue
      */
-    registerPreBootstrapTask(task, front?) {
+    registerPreBootstrapTask(task, front?): void {
       if (angular.isFunction(task)) {
         log.debug("Adding legacy task");
         task = {
@@ -90,49 +86,46 @@ namespace Core {
       } else {
         this.tasks.unshift(task);
       }
-    };
+    }
 
     /**
      * Add an angular module to the list of modules to bootstrap
      */
-    addModule(module) {
-      log.debug("Adding module: " + module);
+    addModule(module: string): void {
+      log.debug("Adding module:", module);
       this.modules.push(module);
     };
 
     /**
      * Add a URL for discovering plugins.
      */
-    addUrl(url) {
-      log.debug("Adding URL: " + url);
+    addUrl(url: string): void {
+      log.debug("Adding URL:", url);
       this.urls.push(url);
     };
 
     /**
      * Return the current list of configured modules
      */
-    getModules() {
+    getModules(): string[] {
       return this.modules;
-    };
+    }
 
     /**
      * Set a callback to be notified as URLs are checked and plugin 
      * scripts are downloaded
      */
-    setLoaderCallback(cb) {
+    setLoaderCallback(cb): void {
       this.loaderCallback = cb;
-      // log.debug("Setting callback to : ", this.loaderCallback);
-    };
+    }
 
     private intersection(search, needle) {
       if (!angular.isArray(needle)) {
         needle = [needle];
       }
-      //log.debug("Search: ", search);
-      //log.debug("Needle: ", needle);
-      var answer = [];
-      needle.forEach(function (n) {
-        search.forEach(function (s) {
+      let answer = [];
+      needle.forEach((n) => {
+        search.forEach((s) => {
           if (n === s) {
             answer.push(s);
           }
@@ -144,52 +137,52 @@ namespace Core {
     /**
      * Downloads plugins at any configured URLs and bootstraps the app
      */
-    loadPlugins(callback) {
+    loadPlugins(callback): void {
 
-      var lcb = this.loaderCallback;
+      let lcb = this.loaderCallback;
 
-      var plugins = {};
+      let plugins = {};
 
-      var urlsToLoad = this.urls.length;
-      var totalUrls = urlsToLoad;
+      let urlsToLoad = this.urls.length;
+      let totalUrls = urlsToLoad;
 
-      var bootstrap = () => {
-        var executedTasks = [];
-        var deferredTasks = [];
+      let bootstrap = () => {
+        let executedTasks = [];
+        let deferredTasks = [];
 
-        var bootstrapTask = {
+        let bootstrapTask = {
           name: 'Hawtio Bootstrap',
           depends: '*',
           runs: 0,
           task: (next) => {
             function listTasks() {
               deferredTasks.forEach(function (task) {
-                log.info("  name: " + task.name + " depends: ", task.depends);
+                log.info("  name:", task.name, "depends:", task.depends);
               });
             }
             if (deferredTasks.length > 0) {
-              log.info("tasks yet to run: ");
+              log.info("tasks yet to run:");
               listTasks();
               bootstrapTask.runs = bootstrapTask.runs + 1;
-              log.info("Task list restarted : ", bootstrapTask.runs, " times");
+              log.info("Task list restarted:", bootstrapTask.runs, "times");
               if (bootstrapTask.runs === 5) {
-                log.info("Orphaned tasks: ");
+                log.info("Orphaned tasks:");
                 listTasks();
                 deferredTasks.length = 0;
               } else {
                 deferredTasks.push(bootstrapTask);
               }
             }
-            log.debug("Executed tasks: ", executedTasks);
+            log.debug("Executed tasks:", executedTasks);
             next();
           }
         }
 
         this.registerPreBootstrapTask(bootstrapTask);
 
-        var executeTask = () => {
-          var tObj = null;
-          var tmp = [];
+        let executeTask = () => {
+          let tObj = null;
+          let tmp = [];
           // if we've executed all of the tasks, let's drain any deferred tasks
           // into the regular task queue
           if (this.tasks.length === 0) {
@@ -198,7 +191,7 @@ namespace Core {
           // first check and see what tasks have executed and see if we can pull a task
           // from the deferred queue
           while (!tObj && deferredTasks.length > 0) {
-            var task = deferredTasks.shift();
+            let task = deferredTasks.shift();
             if (task.depends === '*') {
               if (this.tasks.length > 0) {
                 tmp.push(task);
@@ -206,7 +199,7 @@ namespace Core {
                 tObj = task;
               }
             } else {
-              var intersect = this.intersection(executedTasks, task.depends);
+              let intersect = this.intersection(executedTasks, task.depends);
               if (intersect.length === task.depends.length) {
                 tObj = task;
               } else {
@@ -215,9 +208,7 @@ namespace Core {
             }
           }
           if (tmp.length > 0) {
-            tmp.forEach(function (task) {
-              deferredTasks.push(task);
-            });
+            tmp.forEach((task) => deferredTasks.push(task));
           }
           // no deferred tasks to execute, let's get a new task
           if (!tObj) {
@@ -225,7 +216,7 @@ namespace Core {
           }
           // check if task has dependencies
           if (tObj && tObj.depends && this.tasks.length > 0) {
-            log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
+            log.debug("Task '" + tObj.name + "' has dependencies:", tObj.depends);
             if (tObj.depends === '*') {
               if (this.tasks.length > 0) {
                 log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
@@ -234,7 +225,7 @@ namespace Core {
                 return;
               }
             } else {
-              var intersect = this.intersection(executedTasks, tObj.depends);
+              let intersect = this.intersection(executedTasks, tObj.depends);
               if (intersect.length != tObj.depends.length) {
                 log.debug("Deferring task: '" + tObj.name + "'");
                 deferredTasks.push(tObj);
@@ -246,8 +237,8 @@ namespace Core {
           if (tObj) {
             log.debug("Executing task: '" + tObj.name + "'");
             //log.debug("ExecutedTasks: ", executedTasks);
-            var called = false;
-            var next = function () {
+            let called = false;
+            let next = () => {
               if (next['notFired']) {
                 next['notFired'] = false;
                 executedTasks.push(tObj.name);
@@ -264,17 +255,17 @@ namespace Core {
         setTimeout(executeTask, 1);
       };
 
-      var loadScripts = function () {
+      let loadScripts = () => {
 
         // keep track of when scripts are loaded so we can execute the callback
-        var loaded = 0;
+        let loaded = 0;
         $.each(plugins, function (key, data) {
           loaded = loaded + data.Scripts.length;
         });
 
-        var totalScripts = loaded;
+        let totalScripts = loaded;
 
-        var scriptLoaded = function () {
+        let scriptLoaded = function () {
           $.ajaxSetup({ async: true });
           loaded = loaded - 1;
           if (lcb) {
@@ -286,20 +277,17 @@ namespace Core {
         };
 
         if (loaded > 0) {
-          $.each(plugins, function (key, data) {
+          $.each(plugins, (key, data) => {
 
-            data.Scripts.forEach(function (script) {
-
-              // log.debug("Loading script: ", data.Name + " script: " + script);
-
-              var scriptName = data.Context + "/" + script;
+            data.Scripts.forEach((script) => {
+              let scriptName = data.Context + "/" + script;
               log.debug("Fetching script: ", scriptName);
               $.ajaxSetup({ async: false });
               $.getScript(scriptName)
-                .done(function (textStatus) {
-                  log.debug("Loaded script: ", scriptName);
+                .done((textStatus) => {
+                  log.debug("Loaded script:", scriptName);
                 })
-                .fail(function (jqxhr, settings, exception) {
+                .fail((jqxhr, settings, exception) => {
                   log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
                 })
                 .always(scriptLoaded);
@@ -315,7 +303,7 @@ namespace Core {
       if (urlsToLoad === 0) {
         loadScripts();
       } else {
-        var urlLoaded = function () {
+        let urlLoaded = function () {
           urlsToLoad = urlsToLoad - 1;
           if (lcb) {
             lcb.urlLoaderCallback(lcb, totalUrls, urlsToLoad + 1);
@@ -325,31 +313,31 @@ namespace Core {
           }
         };
 
-        var regex = new RegExp(/^jolokia:/);
+        let regex = new RegExp(/^jolokia:/);
 
         $.each(this.urls, function (index, url) {
 
           if (regex.test(url)) {
-            var parts = url.split(':');
+            let parts = url.split(':');
             parts = parts.reverse();
             parts.pop();
 
             url = parts.pop();
-            var attribute = parts.reverse().join(':');
-            var jolokia = new Jolokia(url);
+            let attribute = parts.reverse().join(':');
+            let jolokia = new Jolokia(url);
 
             try {
-              var data = jolokia.getAttribute(attribute, null);
+              let data = jolokia.getAttribute(attribute, null);
               $.extend(plugins, data);
             } catch (Exception) {
-              // console.error("Error fetching data: " + Exception);
+              // ignore
             }
             urlLoaded();
           } else {
 
-            log.debug("Trying url: ", url);
+            log.debug("Trying url:", url);
 
-            $.get(url, function (data) {
+            $.get(url, (data) => {
               if (angular.isString(data)) {
                 try {
                   data = angular.fromJson(data);
@@ -358,7 +346,6 @@ namespace Core {
                   return;
                 }
               }
-              // log.debug("got data: ", data);
               $.extend(plugins, data);
             }).always(function () {
               urlLoaded();
@@ -366,12 +353,12 @@ namespace Core {
           }
         });
       }
-    };
+    }
 
     /**
      * Dumps the current list of configured modules and URLs to the console
      */
-    debug() {
+    debug(): void {
       log.debug("urls and modules");
       log.debug(this.urls);
       log.debug(this.modules);

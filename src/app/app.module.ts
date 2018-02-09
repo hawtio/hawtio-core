@@ -27,11 +27,11 @@ namespace Core {
       templateCache.pluginName
     ])
     .name;
-    
+
   export const log = Logger.get(appModule);
 
   hawtioPluginLoader.addModule(appModule);
 
   hawtioPluginLoader.registerPreBootstrapTask(configLoader);
-  
+
 }

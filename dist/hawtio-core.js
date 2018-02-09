@@ -131,17 +131,20 @@ var Core;
 /// <reference path="config-manager.ts"/>
 var Core;
 (function (Core) {
+    initConfigManager.$inject = ["$provide", "$routeProvider"];
     Core.configModule = angular
         .module('hawtio-config', [])
-        .config(["$provide", "$routeProvider", function ($provide, $routeProvider) {
+        .config(initConfigManager)
+        .component('hawtioBrandingImage', Core.brandingImageComponent)
+        .component('hawtioBrandingText', Core.brandingTextComponent)
+        .name;
+    function initConfigManager($provide, $routeProvider) {
+        'ngInject';
         var config = window['hawtconfig'];
         var configManager = new Core.ConfigManager(config, $routeProvider);
         $provide.constant('configManager', configManager);
         delete window['hawtconfig'];
-    }])
-        .component('hawtioBrandingImage', Core.brandingImageComponent)
-        .component('hawtioBrandingText', Core.brandingTextComponent)
-        .name;
+    }
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -393,12 +396,10 @@ var Core;
             /**
              * List of URLs that the plugin loader will try and discover
              * plugins from
-             * @type {Array}
              */
             this.urls = [];
             /**
              * Holds all of the angular modules that need to be bootstrapped
-             * @type {Array}
              */
             this.modules = [];
             /**
@@ -406,16 +407,14 @@ var Core;
              * Supply a function that takes the next task to be
              * executed as an argument and be sure to call the passed
              * in function.
-             *
-             * @type {Array}
              */
             this.tasks = [];
             this.setLoaderCallback({
                 scriptLoaderCallback: function (self, total, remaining) {
-                    Core.log.debug("Total scripts: ", total, " Remaining: ", remaining);
+                    Core.log.debug("Total scripts:", total, "Remaining:", remaining);
                 },
                 urlLoaderCallback: function (self, total, remaining) {
-                    Core.log.debug("Total URLs: ", total, " Remaining: ", remaining);
+                    Core.log.debug("Total URLs:", total, "Remaining:", remaining);
                 }
             });
         }
@@ -423,7 +422,7 @@ var Core;
          * Set the HTML element that the plugin loader will pass to angular.bootstrap
          */
         PluginLoader.prototype.setBootstrapElement = function (el) {
-            Core.log.debug("Setting bootstrap element to: ", el);
+            Core.log.debug("Setting bootstrap element to:", el);
             this.bootstrapEl = el;
         };
         /**
@@ -464,12 +463,11 @@ var Core;
                 this.tasks.unshift(task);
             }
         };
-        ;
         /**
          * Add an angular module to the list of modules to bootstrap
          */
         PluginLoader.prototype.addModule = function (module) {
-            Core.log.debug("Adding module: " + module);
+            Core.log.debug("Adding module:", module);
             this.modules.push(module);
         };
         ;
@@ -477,7 +475,7 @@ var Core;
          * Add a URL for discovering plugins.
          */
         PluginLoader.prototype.addUrl = function (url) {
-            Core.log.debug("Adding URL: " + url);
+            Core.log.debug("Adding URL:", url);
             this.urls.push(url);
         };
         ;
@@ -487,22 +485,17 @@ var Core;
         PluginLoader.prototype.getModules = function () {
             return this.modules;
         };
-        ;
         /**
          * Set a callback to be notified as URLs are checked and plugin
          * scripts are downloaded
          */
         PluginLoader.prototype.setLoaderCallback = function (cb) {
             this.loaderCallback = cb;
-            // log.debug("Setting callback to : ", this.loaderCallback);
         };
-        ;
         PluginLoader.prototype.intersection = function (search, needle) {
             if (!angular.isArray(needle)) {
                 needle = [needle];
             }
-            //log.debug("Search: ", search);
-            //log.debug("Needle: ", needle);
             var answer = [];
             needle.forEach(function (n) {
                 search.forEach(function (s) {
@@ -532,16 +525,16 @@ var Core;
                     task: function (next) {
                         function listTasks() {
                             deferredTasks.forEach(function (task) {
-                                Core.log.info("  name: " + task.name + " depends: ", task.depends);
+                                Core.log.info("  name:", task.name, "depends:", task.depends);
                             });
                         }
                         if (deferredTasks.length > 0) {
-                            Core.log.info("tasks yet to run: ");
+                            Core.log.info("tasks yet to run:");
                             listTasks();
                             bootstrapTask.runs = bootstrapTask.runs + 1;
-                            Core.log.info("Task list restarted : ", bootstrapTask.runs, " times");
+                            Core.log.info("Task list restarted:", bootstrapTask.runs, "times");
                             if (bootstrapTask.runs === 5) {
-                                Core.log.info("Orphaned tasks: ");
+                                Core.log.info("Orphaned tasks:");
                                 listTasks();
                                 deferredTasks.length = 0;
                             }
@@ -549,7 +542,7 @@ var Core;
                                 deferredTasks.push(bootstrapTask);
                             }
                         }
-                        Core.log.debug("Executed tasks: ", executedTasks);
+                        Core.log.debug("Executed tasks:", executedTasks);
                         next();
                     }
                 };
@@ -585,9 +578,7 @@ var Core;
                         }
                     }
                     if (tmp.length > 0) {
-                        tmp.forEach(function (task) {
-                            deferredTasks.push(task);
-                        });
+                        tmp.forEach(function (task) { return deferredTasks.push(task); });
                     }
                     // no deferred tasks to execute, let's get a new task
                     if (!tObj) {
@@ -595,7 +586,7 @@ var Core;
                     }
                     // check if task has dependencies
                     if (tObj && tObj.depends && _this.tasks.length > 0) {
-                        Core.log.debug("Task '" + tObj.name + "' has dependencies: ", tObj.depends);
+                        Core.log.debug("Task '" + tObj.name + "' has dependencies:", tObj.depends);
                         if (tObj.depends === '*') {
                             if (_this.tasks.length > 0) {
                                 Core.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
@@ -618,15 +609,15 @@ var Core;
                         Core.log.debug("Executing task: '" + tObj.name + "'");
                         //log.debug("ExecutedTasks: ", executedTasks);
                         var called = false;
-                        var next = function () {
-                            if (next['notFired']) {
-                                next['notFired'] = false;
+                        var next_1 = function () {
+                            if (next_1['notFired']) {
+                                next_1['notFired'] = false;
                                 executedTasks.push(tObj.name);
                                 setTimeout(executeTask, 1);
                             }
                         };
-                        next['notFired'] = true;
-                        tObj.task(next);
+                        next_1['notFired'] = true;
+                        tObj.task(next_1);
                     }
                     else {
                         Core.log.debug("All tasks executed");
@@ -655,13 +646,12 @@ var Core;
                 if (loaded > 0) {
                     $.each(plugins, function (key, data) {
                         data.Scripts.forEach(function (script) {
-                            // log.debug("Loading script: ", data.Name + " script: " + script);
                             var scriptName = data.Context + "/" + script;
                             Core.log.debug("Fetching script: ", scriptName);
                             $.ajaxSetup({ async: false });
                             $.getScript(scriptName)
                                 .done(function (textStatus) {
-                                Core.log.debug("Loaded script: ", scriptName);
+                                Core.log.debug("Loaded script:", scriptName);
                             })
                                 .fail(function (jqxhr, settings, exception) {
                                 Core.log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
@@ -680,7 +670,7 @@ var Core;
                 loadScripts();
             }
             else {
-                var urlLoaded = function () {
+                var urlLoaded_1 = function () {
                     urlsToLoad = urlsToLoad - 1;
                     if (lcb) {
                         lcb.urlLoaderCallback(lcb, totalUrls, urlsToLoad + 1);
@@ -689,9 +679,9 @@ var Core;
                         loadScripts();
                     }
                 };
-                var regex = new RegExp(/^jolokia:/);
+                var regex_1 = new RegExp(/^jolokia:/);
                 $.each(this.urls, function (index, url) {
-                    if (regex.test(url)) {
+                    if (regex_1.test(url)) {
                         var parts = url.split(':');
                         parts = parts.reverse();
                         parts.pop();
@@ -703,12 +693,12 @@ var Core;
                             $.extend(plugins, data);
                         }
                         catch (Exception) {
-                            // console.error("Error fetching data: " + Exception);
+                            // ignore
                         }
-                        urlLoaded();
+                        urlLoaded_1();
                     }
                     else {
-                        Core.log.debug("Trying url: ", url);
+                        Core.log.debug("Trying url:", url);
                         $.get(url, function (data) {
                             if (angular.isString(data)) {
                                 try {
@@ -719,16 +709,14 @@ var Core;
                                     return;
                                 }
                             }
-                            // log.debug("got data: ", data);
                             $.extend(plugins, data);
                         }).always(function () {
-                            urlLoaded();
+                            urlLoaded_1();
                         });
                     }
                 });
             }
         };
-        ;
         /**
          * Dumps the current list of configured modules and URLs to the console
          */
@@ -775,7 +763,8 @@ var HawtioCore = (function () {
      * This plugins logger instance
      */
     var log = Logger.get(HawtioCore.pluginName);
-    var _module = angular.module(HawtioCore.pluginName, []);
+    var _module = angular
+        .module(HawtioCore.pluginName, []);
     _module.config(["$locationProvider", function ($locationProvider) {
             $locationProvider.html5Mode(true);
         }]);

@@ -7,7 +7,7 @@
 const hawtioPluginLoader = new Core.PluginLoader();
 
 // Hawtio core plugin responsible for bootstrapping a hawtio app
-var HawtioCore: HawtioCore = (function () {
+let HawtioCore: HawtioCore = (function () {
   'use strict';
 
   function HawtioCoreClass() {
@@ -28,7 +28,7 @@ var HawtioCore: HawtioCore = (function () {
     configurable: true
   });
 
-  var HawtioCore = new HawtioCoreClass();
+  let HawtioCore = new HawtioCoreClass();
 
   /**
    * This plugin's name and angular module
@@ -37,9 +37,11 @@ var HawtioCore: HawtioCore = (function () {
   /**
    * This plugins logger instance
    */
-  var log = Logger.get(HawtioCore.pluginName);
+  let log = Logger.get(HawtioCore.pluginName);
 
-  var _module = angular.module(HawtioCore.pluginName, []);
+  let _module = angular
+    .module(HawtioCore.pluginName, []);
+
   _module.config(["$locationProvider", function ($locationProvider) {
     $locationProvider.html5Mode(true);
   }]);
@@ -48,13 +50,13 @@ var HawtioCore: HawtioCore = (function () {
     log.debug("loaded");
   }]);
 
-  var dummyLocalStorage = {
+  let dummyLocalStorage = {
     length: 0,
     key: function (index) { return undefined; },
     getItem: function (key) { return dummyLocalStorage[key]; },
     setItem: function (key, data) { dummyLocalStorage[key] = data; },
     removeItem: function (key) {
-      var removed = dummyLocalStorage[key];
+      let removed = dummyLocalStorage[key];
       delete dummyLocalStorage[key];
       return removed;
     },
@@ -64,9 +66,9 @@ var HawtioCore: HawtioCore = (function () {
   };
   HawtioCore.dummyLocalStorage = dummyLocalStorage;
 
-  HawtioCore.documentBase = function () {
-    var base = $('head').find('base');
-    var answer = '/'
+  HawtioCore.documentBase = () => {
+    let base = $('head').find('base');
+    let answer = '/'
     if (base && base.length > 0) {
       answer = base.attr('href');
     } else {
@@ -113,7 +115,7 @@ var HawtioCore: HawtioCore = (function () {
 
   // service for the javascript object that does notifications
   _module.factory('toastr', ["$window", function ($window) {
-    var answer = $window.toastr;
+    let answer = $window.toastr;
     if (!answer) {
       // lets avoid any NPEs
       answer = {};
@@ -147,7 +149,7 @@ var HawtioCore: HawtioCore = (function () {
     jQuery['uaMatch'] = function (ua) {
       ua = ua.toLowerCase();
 
-      var match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
+      let match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
         /(webkit)[ \/]([\w.]+)/.exec(ua) ||
         /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
         /(msie) ([\w.]+)/.exec(ua) ||
@@ -162,8 +164,8 @@ var HawtioCore: HawtioCore = (function () {
 
     // Don't clobber any existing jQuery['browser'] in case it's different
     if (!jQuery['browser']) {
-      var matched = jQuery['uaMatch'](navigator.userAgent);
-      var browser = {};
+      let matched = jQuery['uaMatch'](navigator.userAgent);
+      let browser = {};
 
       if (matched.browser) {
         browser[matched.browser] = true;
@@ -193,7 +195,7 @@ var HawtioCore: HawtioCore = (function () {
         return;
       }
 
-      var bootstrapEl = hawtioPluginLoader.getBootstrapElement();
+      let bootstrapEl = hawtioPluginLoader.getBootstrapElement();
       log.debug("Using bootstrap element: ", bootstrapEl);
 
       // bootstrap in hybrid mode if angular2 is detected

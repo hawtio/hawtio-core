@@ -7,14 +7,17 @@ namespace Core {
 
   export const configModule = angular
     .module('hawtio-config', [])
-    .config(($provide: ng.auto.IProvideService, $routeProvider: ng.route.IRouteProvider) => {
-      const config: Config = window['hawtconfig'];
-      const configManager = new ConfigManager(config, $routeProvider);
-      $provide.constant('configManager', configManager);
-      delete window['hawtconfig'];
-    })
+    .config(initConfigManager)
     .component('hawtioBrandingImage', brandingImageComponent)
     .component('hawtioBrandingText', brandingTextComponent)
     .name;
+
+  function initConfigManager($provide: ng.auto.IProvideService, $routeProvider: ng.route.IRouteProvider): void {
+    'ngInject';
+    const config: Config = window['hawtconfig'];
+    const configManager = new ConfigManager(config, $routeProvider);
+    $provide.constant('configManager', configManager);
+    delete window['hawtconfig'];
+  }
 
 }

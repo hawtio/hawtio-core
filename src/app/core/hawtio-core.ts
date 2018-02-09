@@ -52,17 +52,15 @@ let HawtioCore: HawtioCore = (function () {
 
   let dummyLocalStorage = {
     length: 0,
-    key: function (index) { return undefined; },
-    getItem: function (key) { return dummyLocalStorage[key]; },
-    setItem: function (key, data) { dummyLocalStorage[key] = data; },
-    removeItem: function (key) {
+    key: (index) => undefined,
+    getItem: (key) => dummyLocalStorage[key],
+    setItem: (key, data) => dummyLocalStorage[key] = data,
+    removeItem: (key) => {
       let removed = dummyLocalStorage[key];
       delete dummyLocalStorage[key];
       return removed;
     },
-    clear: function () {
-
-    }
+    clear: () => { }
   };
   HawtioCore.dummyLocalStorage = dummyLocalStorage;
 
@@ -74,7 +72,6 @@ let HawtioCore: HawtioCore = (function () {
     } else {
       log.warn("Document is missing a 'base' tag, defaulting to '/'");
     }
-    //log.debug("Document base: ", answer);
     return answer;
   }
 
@@ -105,11 +102,11 @@ let HawtioCore: HawtioCore = (function () {
   // Placeholder service for the page title service
   _module.factory('pageTitle', function () {
     return {
-      addTitleElement: function () { },
-      getTitle: function () { return undefined; },
-      getTitleWithSeparator: function () { return undefined; },
-      getTitleExcluding: function () { return undefined; },
-      getTitleArrayExcluding: function () { return undefined; }
+      addTitleElement: () => { },
+      getTitle: () => undefined,
+      getTitleWithSeparator: () => undefined,
+      getTitleExcluding: () => undefined,
+      getTitleArrayExcluding: () => undefined
     };
   });
 
@@ -128,16 +125,14 @@ let HawtioCore: HawtioCore = (function () {
     return {
       hasDashboard: false,
       inDashboard: false,
-      getAddLink: function () {
-        return '';
-      }
+      getAddLink: () => ''
     };
   });
 
   // Placeholder user details service
   _module.factory('userDetails', function () {
     return {
-      logout: function () {
+      logout: () => {
         log.debug("Dummy userDetails.logout()");
       }
     };
@@ -146,7 +141,7 @@ let HawtioCore: HawtioCore = (function () {
   // bootstrap the app
   $(function () {
 
-    jQuery['uaMatch'] = function (ua) {
+    jQuery['uaMatch'] = (ua) => {
       ua = ua.toLowerCase();
 
       let match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
@@ -188,31 +183,34 @@ let HawtioCore: HawtioCore = (function () {
       HawtioCore.UpgradeAdapter = new ng['upgrade'].UpgradeAdapter();
     }
 
-    hawtioPluginLoader.loadPlugins(function () {
-
+    hawtioPluginLoader.loadPlugins(() => {
       if (HawtioCore.injector || HawtioCore.UpgradeAdapterRef) {
         log.debug("Application already bootstrapped");
         return;
       }
 
       let bootstrapEl = hawtioPluginLoader.getBootstrapElement();
-      log.debug("Using bootstrap element: ", bootstrapEl);
+      log.debug("Using bootstrap element:", bootstrapEl);
 
       // bootstrap in hybrid mode if angular2 is detected
       if (HawtioCore.UpgradeAdapter) {
         log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
-        HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(bootstrapEl,
-          hawtioPluginLoader.getModules(), { strictDi: true });
+        HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(
+          bootstrapEl,
+          hawtioPluginLoader.getModules(),
+          { strictDi: true });
         HawtioCore._injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
       } else {
-        HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), {
-          strictDi: true
-        });
+        HawtioCore._injector = angular.bootstrap(
+          bootstrapEl,
+          hawtioPluginLoader.getModules(),
+          { strictDi: true });
       }
 
       log.debug("Bootstrapped application");
     });
   });
+
   return HawtioCore;
 })();
 

@@ -72,6 +72,19 @@ declare namespace Core {
 declare namespace Bootstrap {
 }
 declare namespace Core {
+    type PluginLoaderCallback = {
+        scriptLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void;
+        urlLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void;
+    };
+    type HawtioPlugin = {
+        Name: string;
+        Context: string;
+        Domain: string;
+        Scripts: string[];
+    };
+    type HawtioPlugins = {
+        [key: string]: HawtioPlugin;
+    };
     class PluginLoader {
         private bootstrapEl;
         private loaderCallback;
@@ -129,12 +142,15 @@ declare namespace Core {
          * Set a callback to be notified as URLs are checked and plugin
          * scripts are downloaded
          */
-        setLoaderCallback(cb: any): void;
-        private intersection(search, needle);
+        setLoaderCallback(callback: PluginLoaderCallback): void;
         /**
          * Downloads plugins at any configured URLs and bootstraps the app
          */
-        loadPlugins(callback: any): void;
+        loadPlugins(callback: () => void): void;
+        private loadScripts(plugins, callback);
+        private bootstrap(callback);
+        private listTasks(tasks);
+        private intersection(search, needle);
         /**
          * Dumps the current list of configured modules and URLs to the console
          */

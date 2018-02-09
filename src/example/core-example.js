@@ -2,7 +2,7 @@ var log = Logger.get('test-code');
 log.setLevel(Logger.DEBUG);
 
 // Simple task that's just a function, no name, no dependencies
-hawtioPluginLoader.registerPreBootstrapTask(function(next) {
+hawtioPluginLoader.registerPreBootstrapTask(function (next) {
   next();
 });
 
@@ -10,8 +10,8 @@ hawtioPluginLoader.registerPreBootstrapTask(function(next) {
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "AsyncDependantTask",
   depends: ["AsyncTask"],
-  task: function(next) {
-    console.log("async task ran...");
+  task: function (next) {
+    log.info("Async task ran...");
     next();
   }
 });
@@ -19,14 +19,14 @@ hawtioPluginLoader.registerPreBootstrapTask({
 // setBootstrapElement can be used to change what element will be passed to angular.bootstrap
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "ChangeBootstrapEl",
-  task: function(next) {
+  task: function (next) {
     hawtioPluginLoader.setBootstrapElement(document.body);
     next();
   }
 });
 
 // another simple task, does nothing, not sure why there's a duplicate here :-)
-hawtioPluginLoader.registerPreBootstrapTask(function(next) {
+hawtioPluginLoader.registerPreBootstrapTask(function (next) {
   next();
 }, true);
 
@@ -34,13 +34,13 @@ hawtioPluginLoader.registerPreBootstrapTask(function(next) {
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "AsyncTask",
   depends: ["ParentTask1"],
-  task: function(next) {
-    console.log("Async task loading");
-    setTimeout(function() {
-      console.log("Async task executing");
+  task: function (next) {
+    log.info("Async task loading");
+    setTimeout(function () {
+      log.info("Async task executing");
       next();
-    }, 5000);
-    console.log("Async task exiting");
+    }, 1000);
+    log.info("Async task exiting");
   }
 });
 
@@ -48,7 +48,7 @@ hawtioPluginLoader.registerPreBootstrapTask({
 hawtioPluginLoader.registerPreBootstrapTask({
   name: 'other-child',
   depends: ['child-task', 'unnamed-task-2'],
-  task: function(next) {
+  task: function (next) {
     next();
   }
 });
@@ -57,26 +57,26 @@ hawtioPluginLoader.registerPreBootstrapTask({
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "Bunk Task 1",
   depends: ['pastry'],
-  task: function(next) {
+  task: function (next) {
     next();
   }
 });
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "child-task",
   depends: ["ParentTask1"],
-  task: function(next) {
+  task: function (next) {
     next();
   }
 });
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "Named Task",
-  task: function(next) {
+  task: function (next) {
     next();
   }
 });
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "ParentTask1",
-  task: function(next) {
+  task: function (next) {
     next();
   }
 });
@@ -85,7 +85,7 @@ hawtioPluginLoader.registerPreBootstrapTask({
 hawtioPluginLoader.registerPreBootstrapTask({
   name: "Bunk Task 2",
   depends: ['foo', 'bar'],
-  task: function(next) {
+  task: function (next) {
     next();
   }
 });

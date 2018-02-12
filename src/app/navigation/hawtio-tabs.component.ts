@@ -10,7 +10,8 @@ namespace Core {
     onChange: Function;
     activeTab: HawtioTab;
 
-    constructor(private $document: ng.IDocumentService, private $timeout: ng.ITimeoutService) {
+    constructor(private $document: ng.IDocumentService, private $timeout: ng.ITimeoutService,
+      private $location: ng.ILocationService) {
       'ngInject';      
     }
 
@@ -18,16 +19,17 @@ namespace Core {
       if (!this.tabs) {
         throw Error(`hawtioTabsComponent 'tabs' input is ${this.tabs}`);
       }
-      this.setActiveTab(changesObj);
+      this.activateTab(changesObj);
       this.adjustTabs();
     }
     
-    private setActiveTab(changesObj: ng.IOnChangesObject) {
+    private activateTab(changesObj: ng.IOnChangesObject) {
       if (changesObj.activeTab && changesObj.activeTab.currentValue) {
         this.activeTab = _.find(this.tabs, tab => tab === changesObj.activeTab.currentValue);
       } else if (this.tabs.length > 0) {
         this.activeTab = this.tabs[0];
       }
+      this.$location.path(this.activeTab.path);
     }
 
     private adjustTabs() {

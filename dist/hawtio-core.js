@@ -2665,11 +2665,12 @@ var Core;
 var Core;
 (function (Core) {
     var HawtioTabsController = /** @class */ (function () {
-        HawtioTabsController.$inject = ["$document", "$timeout"];
-        function HawtioTabsController($document, $timeout) {
+        HawtioTabsController.$inject = ["$document", "$timeout", "$location"];
+        function HawtioTabsController($document, $timeout, $location) {
             'ngInject';
             this.$document = $document;
             this.$timeout = $timeout;
+            this.$location = $location;
             this.tabs = [];
             this.moreTabs = [];
         }
@@ -2677,16 +2678,17 @@ var Core;
             if (!this.tabs) {
                 throw Error("hawtioTabsComponent 'tabs' input is " + this.tabs);
             }
-            this.setActiveTab(changesObj);
+            this.activateTab(changesObj);
             this.adjustTabs();
         };
-        HawtioTabsController.prototype.setActiveTab = function (changesObj) {
+        HawtioTabsController.prototype.activateTab = function (changesObj) {
             if (changesObj.activeTab && changesObj.activeTab.currentValue) {
                 this.activeTab = _.find(this.tabs, function (tab) { return tab === changesObj.activeTab.currentValue; });
             }
             else if (this.tabs.length > 0) {
                 this.activeTab = this.tabs[0];
             }
+            this.$location.path(this.activeTab.path);
         };
         HawtioTabsController.prototype.adjustTabs = function () {
             var _this = this;

@@ -447,14 +447,15 @@ declare namespace Core {
     class HawtioTabsController {
         private $document;
         private $timeout;
+        private $location;
         tabs: HawtioTab[];
         moreTabs: HawtioTab[];
         adjustingTabs: boolean;
         onChange: Function;
         activeTab: HawtioTab;
-        constructor($document: ng.IDocumentService, $timeout: ng.ITimeoutService);
+        constructor($document: ng.IDocumentService, $timeout: ng.ITimeoutService, $location: ng.ILocationService);
         $onChanges(changesObj: ng.IOnChangesObject): void;
-        private setActiveTab(changesObj);
+        private activateTab(changesObj);
         private adjustTabs();
         onClick(tab: HawtioTab): void;
     }

@@ -44,7 +44,8 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-typescript-preprocessor": "~0.3.1",
     "path": "~0.12.7",
-    "typescript": "^2.4.1"
+    "typescript": "^2.4.1",
+    "yargs": "^8.0.0"
   },
   "repository": {
     "type": "git",
@@ -152,6 +153,16 @@
     "etag": "1.7.0",
     "fresh": "0.3.0",
     "send": "0.13.2",
-    "serve-static": "1.10.3"
+    "serve-static": "1.10.3",
+    "yargs": "8.0.2",
+    "read-pkg-up": "2.0.0",
+    "find-up": "2.1.0",
+    "read-pkg": "2.0.0",
+    "path-exists": "3.0.0",
+    "load-json-file": "2.0.0",
+    "path-type": "2.0.0",
+    "cliui": "3.2.0",
+    "string-width": "2.1.1",
+    "is-fullwidth-code-point": "2.0.0"
   }
 }

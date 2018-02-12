@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var argv = require('yargs').argv;
 var concat = require('gulp-concat');
 var del = require('del');
 var eventStream = require('event-stream');
@@ -11,6 +12,10 @@ var ngAnnotate = require('gulp-ng-annotate');
 var Server = require('karma').Server;
 var hawtio = require('@hawtio/node-backend');
 
+var config = {
+  dist: argv.out || './dist/',
+};
+
 gulp.task('clean', function() {
   return del('dist/*');
 });
@@ -21,12 +26,12 @@ gulp.task('tsc', ['clean'], function() {
     tsResult.js.pipe(ngAnnotate()),
     tsResult.dts
   )
-  .pipe(gulp.dest('dist/'));
+  .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('templates', ['tsc'], function() {
   return eventStream.merge(
-    gulp.src(['dist/hawtio-core.js']),
+    gulp.src([config.dist + 'hawtio-core.js']),
     gulp
       .src(['src/app/**/*.html', 'src/app/**/*.md'])
       .pipe(templateCache({
@@ -34,12 +39,12 @@ gulp.task('templates', ['tsc'], function() {
       }))
   )
   .pipe(concat('hawtio-core.js'))
-  .pipe(gulp.dest('dist/'));
+  .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('copy-images', ['clean'], function() {
   return gulp.src('src/assets/img/**/*')
-    .pipe(gulp.dest('dist/img'));
+    .pipe(gulp.dest(config.dist + 'img'));
 });
 
 gulp.task('less', ['clean'], function () {
@@ -51,7 +56,7 @@ gulp.task('less', ['clean'], function () {
       ]
     }))
     .pipe(concat('hawtio-core.css'))
-    .pipe(gulp.dest('dist/'));
+    .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('connect', ['watch'], function() {
@@ -88,7 +93,7 @@ gulp.task('reload', function() {
 
 gulp.task('watch', function() {
   gulp.watch(['src/**/*'], ['build']);
-  gulp.watch(['index.html', 'dist/**/*'], ['reload']);
+  gulp.watch(['index.html', config.dist + '/**/*'], ['reload']);
 });
 
 gulp.task('test', function (done) {

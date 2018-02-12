@@ -1535,6 +1535,10 @@ var HawtioMainNav;
             $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
         }]);
     HawtioMainNav._module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
+            var locationChanged = false;
+            $scope.$on("$locationChangeStart", function (event, next, current) {
+                locationChanged = true;
+            });
             function gotoNavItem(item) {
                 if (item && item.href) {
                     var href = trimLeading(item.href(), documentBase($document));
@@ -1556,9 +1560,14 @@ var HawtioMainNav;
                     }
                 });
                 var rankedCandidates = sortByRank(candidates);
-                gotoNavItem(rankedCandidates[0]);
+                if (rankedCandidates.length > 0) {
+                    gotoNavItem(rankedCandidates[0]);
+                }
+                else if (!locationChanged) {
+                    $timeout(gotoBestCandidateNav, 500);
+                }
             }
-            $timeout(function () {
+            function gotoBestCandidateNav() {
                 var search = $location.search();
                 if (search.tab) {
                     var tab = search.tab;
@@ -1646,7 +1655,8 @@ var HawtioMainNav;
                     }
                 }
                 evalCandidates(candidates);
-            }, 500);
+            }
+            $timeout(gotoBestCandidateNav, 500);
         }]);
     HawtioMainNav._module.controller('HawtioNav.ViewController', ['$scope', '$route', '$location', 'layoutFull', 'viewRegistry', function ($scope, $route, $location, layoutFull, viewRegistry) {
             findViewPartial();

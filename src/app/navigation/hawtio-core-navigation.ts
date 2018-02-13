@@ -402,6 +402,7 @@ namespace HawtioMainNav {
 
   _module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
 
+    let backoffPeriod = 500;
     let locationChanged = false;
     $scope.$on("$locationChangeStart", function(event, next, current) { 
       locationChanged = true;
@@ -432,7 +433,9 @@ namespace HawtioMainNav {
       if (rankedCandidates.length > 0) {
         gotoNavItem(rankedCandidates[0]);
       } else if (!locationChanged) {
-        $timeout(gotoBestCandidateNav, 500);
+        log.debug('No default nav available, backing off for', backoffPeriod, 'ms');
+        $timeout(gotoBestCandidateNav, backoffPeriod);
+        backoffPeriod *= 1.25;
       }
     }
 

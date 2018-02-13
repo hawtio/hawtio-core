@@ -1535,6 +1535,7 @@ var HawtioMainNav;
             $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
         }]);
     HawtioMainNav._module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
+            var backoffPeriod = 500;
             var locationChanged = false;
             $scope.$on("$locationChangeStart", function (event, next, current) {
                 locationChanged = true;
@@ -1564,7 +1565,9 @@ var HawtioMainNav;
                     gotoNavItem(rankedCandidates[0]);
                 }
                 else if (!locationChanged) {
-                    $timeout(gotoBestCandidateNav, 500);
+                    log.debug('No default nav available, backing off for', backoffPeriod, 'ms');
+                    $timeout(gotoBestCandidateNav, backoffPeriod);
+                    backoffPeriod *= 1.25;
                 }
             }
             function gotoBestCandidateNav() {

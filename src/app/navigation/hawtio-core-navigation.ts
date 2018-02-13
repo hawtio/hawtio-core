@@ -479,6 +479,7 @@ namespace HawtioMainNav {
         if (welcome.pages.length === 0) {
           log.debug("No welcome pages, going to first available nav");
           gotoFirstAvailableNav();
+          return;
         }
         var sortedPages = _.sortBy(welcome.pages, function (page) { return page['rank']; });
         var page = _.find(sortedPages, function (page) {

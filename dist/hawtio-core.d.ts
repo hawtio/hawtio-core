@@ -76,6 +76,20 @@ declare namespace Core {
         scriptLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void;
         urlLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void;
     };
+    /**
+     * Task to be run before bootstrapping
+     *
+     * name: the task name
+     * depends: an array of task names this task needs to have executed first,
+     *          or '*'
+     * task: the function to be executed with 1 argument, which is a function
+     *       that will execute the next task in the queue
+     */
+    type PreBootstrapTask = {
+        name?: string;
+        depends?: string | string[];
+        task: (next: () => void) => void;
+    };
     type HawtioPlugin = {
         Name: string;
         Context: string;
@@ -104,6 +118,10 @@ declare namespace Core {
          * in function.
          */
         private tasks;
+        private runs;
+        private executedTasks;
+        private deferredTasks;
+        private readonly bootstrapTask;
         constructor();
         /**
          * Set the HTML element that the plugin loader will pass to angular.bootstrap
@@ -117,15 +135,9 @@ declare namespace Core {
          * Register a function to be executed after scripts are loaded but
          * before the app is bootstrapped.
          *
-         * 'task' can either be a simple function or an object with the
-         * following attributes:
-         *
-         * name: the task name
-         * depends: an array of task names this task needs to have executed first
-         * task: the function to be executed with 1 argument, which is a function
-         *       that will execute the next task in the queue
+         * 'task' can either be a simple function or a PreBootstrapTask object
          */
-        registerPreBootstrapTask(task: any, front?: any): PluginLoader;
+        registerPreBootstrapTask(task: (() => void) | PreBootstrapTask, front?: boolean): PluginLoader;
         /**
          * Add an angular module to the list of modules to bootstrap
          */
@@ -149,6 +161,7 @@ declare namespace Core {
         loadPlugins(callback: () => void): void;
         private loadScripts(plugins, callback);
         private bootstrap(callback);
+        private executeTasks(callback);
         private listTasks(tasks);
         private intersection(search, needle);
         /**

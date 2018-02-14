@@ -391,6 +391,7 @@ var Core;
     */
     var PluginLoader = /** @class */ (function () {
         function PluginLoader() {
+            var _this = this;
             this.bootstrapEl = document.documentElement;
             this.loaderCallback = null;
             /**
@@ -409,6 +410,31 @@ var Core;
              * in function.
              */
             this.tasks = [];
+            this.runs = 0;
+            this.executedTasks = [];
+            this.deferredTasks = [];
+            this.bootstrapTask = {
+                name: 'Hawtio Bootstrap',
+                depends: '*',
+                task: function (next) {
+                    if (_this.deferredTasks.length > 0) {
+                        Core.log.info("Tasks yet to run:");
+                        _this.listTasks(_this.deferredTasks);
+                        _this.runs = _this.runs + 1;
+                        Core.log.info("Task list restarted:", _this.runs, "times");
+                        if (_this.runs === 5) {
+                            Core.log.info("Orphaned tasks:");
+                            _this.listTasks(_this.deferredTasks);
+                            _this.deferredTasks.length = 0;
+                        }
+                        else {
+                            _this.deferredTasks.push(_this.bootstrapTask);
+                        }
+                    }
+                    Core.log.debug("Executed tasks:", _this.executedTasks);
+                    next();
+                }
+            };
             this.setLoaderCallback({
                 scriptLoaderCallback: function (self, total, remaining) {
                     Core.log.debug("Total scripts:", total, "Remaining:", remaining);
@@ -436,32 +462,30 @@ var Core;
          * Register a function to be executed after scripts are loaded but
          * before the app is bootstrapped.
          *
-         * 'task' can either be a simple function or an object with the
-         * following attributes:
-         *
-         * name: the task name
-         * depends: an array of task names this task needs to have executed first
-         * task: the function to be executed with 1 argument, which is a function
-         *       that will execute the next task in the queue
+         * 'task' can either be a simple function or a PreBootstrapTask object
          */
         PluginLoader.prototype.registerPreBootstrapTask = function (task, front) {
+            var taskToAdd;
             if (angular.isFunction(task)) {
                 Core.log.debug("Adding legacy task");
-                task = {
+                taskToAdd = {
                     task: task
                 };
             }
-            if (!task.name) {
-                task.name = 'unnamed-task-' + (this.tasks.length + 1);
+            else {
+                taskToAdd = task;
             }
-            if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
-                task.depends = [task.depends];
+            if (!taskToAdd.name) {
+                taskToAdd.name = 'unnamed-task-' + (this.tasks.length + 1);
+            }
+            if (taskToAdd.depends && !_.isArray(taskToAdd.depends) && taskToAdd.depends !== '*') {
+                taskToAdd.depends = [taskToAdd.depends];
             }
             if (!front) {
-                this.tasks.push(task);
+                this.tasks.push(taskToAdd);
             }
             else {
-                this.tasks.unshift(task);
+                this.tasks.unshift(taskToAdd);
             }
             return this;
         };
@@ -597,110 +621,85 @@ var Core;
         ;
         PluginLoader.prototype.bootstrap = function (callback) {
             var _this = this;
-            var executedTasks = [];
-            var deferredTasks = [];
-            var bootstrapTask = {
-                name: 'Hawtio Bootstrap',
-                depends: '*',
-                runs: 0,
-                task: function (next) {
-                    if (deferredTasks.length > 0) {
-                        Core.log.info("Tasks yet to run:");
-                        _this.listTasks(deferredTasks);
-                        bootstrapTask.runs = bootstrapTask.runs + 1;
-                        Core.log.info("Task list restarted:", bootstrapTask.runs, "times");
-                        if (bootstrapTask.runs === 5) {
-                            Core.log.info("Orphaned tasks:");
-                            _this.listTasks(deferredTasks);
-                            deferredTasks.length = 0;
-                        }
-                        else {
-                            deferredTasks.push(bootstrapTask);
-                        }
-                    }
-                    Core.log.debug("Executed tasks:", executedTasks);
-                    next();
-                }
-            };
-            this.registerPreBootstrapTask(bootstrapTask);
-            var executeTask = function () {
-                var tObj = null;
-                var tmp = [];
-                // if we've executed all of the tasks, let's drain any deferred tasks
-                // into the regular task queue
-                if (_this.tasks.length === 0) {
-                    tObj = deferredTasks.shift();
-                }
-                // first check and see what tasks have executed and see if we can pull a task
-                // from the deferred queue
-                while (!tObj && deferredTasks.length > 0) {
-                    var task = deferredTasks.shift();
-                    if (task.depends === '*') {
-                        if (_this.tasks.length > 0) {
-                            tmp.push(task);
-                        }
-                        else {
-                            tObj = task;
-                        }
+            this.registerPreBootstrapTask(this.bootstrapTask);
+            setTimeout(function () { return _this.executeTasks(callback); }, 1);
+        };
+        PluginLoader.prototype.executeTasks = function (callback) {
+            var _this = this;
+            var taskObject = null;
+            var tmp = [];
+            // if we've executed all of the tasks, let's drain any deferred tasks
+            // into the regular task queue
+            if (this.tasks.length === 0) {
+                taskObject = this.deferredTasks.shift();
+            }
+            // first check and see what tasks have executed and see if we can pull a task
+            // from the deferred queue
+            while (!taskObject && this.deferredTasks.length > 0) {
+                var task = this.deferredTasks.shift();
+                if (task.depends === '*') {
+                    if (this.tasks.length > 0) {
+                        tmp.push(task);
                     }
                     else {
-                        var intersect = _this.intersection(executedTasks, task.depends);
-                        if (intersect.length === task.depends.length) {
-                            tObj = task;
-                        }
-                        else {
-                            tmp.push(task);
-                        }
+                        taskObject = task;
                     }
-                }
-                if (tmp.length > 0) {
-                    tmp.forEach(function (task) { return deferredTasks.push(task); });
-                }
-                // no deferred tasks to execute, let's get a new task
-                if (!tObj) {
-                    tObj = _this.tasks.shift();
-                }
-                // check if task has dependencies
-                if (tObj && tObj.depends && _this.tasks.length > 0) {
-                    Core.log.debug("Task '" + tObj.name + "' has dependencies:", tObj.depends);
-                    if (tObj.depends === '*') {
-                        if (_this.tasks.length > 0) {
-                            Core.log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
-                            deferredTasks.push(tObj);
-                            executeTask();
-                            return;
-                        }
-                    }
-                    else {
-                        var intersect = _this.intersection(executedTasks, tObj.depends);
-                        if (intersect.length != tObj.depends.length) {
-                            Core.log.debug("Deferring task: '" + tObj.name + "'");
-                            deferredTasks.push(tObj);
-                            executeTask();
-                            return;
-                        }
-                    }
-                }
-                if (tObj) {
-                    Core.log.debug("Executing task: '" + tObj.name + "'");
-                    //log.debug("ExecutedTasks: ", executedTasks);
-                    var called = false;
-                    var next_1 = function () {
-                        if (next_1['notFired']) {
-                            next_1['notFired'] = false;
-                            executedTasks.push(tObj.name);
-                            setTimeout(executeTask, 1);
-                        }
-                    };
-                    next_1['notFired'] = true;
-                    tObj.task(next_1);
                 }
                 else {
-                    Core.log.debug("All tasks executed");
-                    setTimeout(callback, 1);
+                    var intersect = this.intersection(this.executedTasks, task.depends);
+                    if (intersect.length === task.depends.length) {
+                        taskObject = task;
+                    }
+                    else {
+                        tmp.push(task);
+                    }
                 }
-            };
-            setTimeout(executeTask, 1);
+            }
+            if (tmp.length > 0) {
+                tmp.forEach(function (task) { return _this.deferredTasks.push(task); });
+            }
+            // no deferred tasks to execute, let's get a new task
+            if (!taskObject) {
+                taskObject = this.tasks.shift();
+            }
+            // check if task has dependencies
+            if (taskObject && taskObject.depends && this.tasks.length > 0) {
+                Core.log.debug("Task '" + taskObject.name + "' has dependencies:", taskObject.depends);
+                if (taskObject.depends === '*') {
+                    if (this.tasks.length > 0) {
+                        Core.log.debug("Task '" + taskObject.name + "' wants to run after all other tasks, deferring");
+                        this.deferredTasks.push(taskObject);
+                        this.executeTasks(callback);
+                        return;
+                    }
+                }
+                else {
+                    var intersect = this.intersection(this.executedTasks, taskObject.depends);
+                    if (intersect.length != taskObject.depends.length) {
+                        Core.log.debug("Deferring task: '" + taskObject.name + "'");
+                        this.deferredTasks.push(taskObject);
+                        this.executeTasks(callback);
+                        return;
+                    }
+                }
+            }
+            if (taskObject) {
+                Core.log.debug("Executing task: '" + taskObject.name + "'");
+                var called = false;
+                var next_1 = function () {
+                    if (next_1['notFired']) {
+                        next_1['notFired'] = false;
+                        _this.executedTasks.push(taskObject.name);
+                        setTimeout(function () { return _this.executeTasks(callback); }, 1);
+                    }
+                };
+                next_1['notFired'] = true;
+                taskObject.task(next_1);
+            }
+            else {
+                Core.log.debug("All tasks executed");
+                setTimeout(callback, 1);
+            }
         };
         PluginLoader.prototype.listTasks = function (tasks) {
             tasks.forEach(function (task) {

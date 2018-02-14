@@ -28,8 +28,8 @@ namespace Core {
         this.activeTab = _.find(this.tabs, tab => tab === changesObj.activeTab.currentValue);
       } else if (this.tabs.length > 0) {
         this.activeTab = this.tabs[0];
+        this.$location.path(this.activeTab.path);
       }
-      this.$location.path(this.activeTab.path);
     }
 
     private adjustTabs() {

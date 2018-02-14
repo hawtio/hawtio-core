@@ -1,7 +1,10 @@
 ### Change Log
 
+#### 3.2.10
+* Add `PreBootstrapTask` type to `PluginLoader`
+
 #### 3.2.8
-* Make PluginLoader more type-friendly
+* Make `PluginLoader` more type-friendly
 * Add minimal plugin example
 
 ...

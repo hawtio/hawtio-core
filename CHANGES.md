@@ -1,7 +1,15 @@
 ### Change Log
 
-#### 3.2.10
+#### 3.2.11
 * Add `PreBootstrapTask` type to `PluginLoader`
+
+#### 3.2.10
+
+* Add exponential backoff to navigation config pulling
+
+#### 3.2.10
+
+* Pull navigation config when no default nav is available
 
 #### 3.2.8
 * Make `PluginLoader` more type-friendly

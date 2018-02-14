@@ -137,7 +137,7 @@ declare namespace Core {
          *
          * 'task' can either be a simple function or a PreBootstrapTask object
          */
-        registerPreBootstrapTask(task: (() => void) | PreBootstrapTask, front?: boolean): PluginLoader;
+        registerPreBootstrapTask(task: ((next: () => void) => void) | PreBootstrapTask, front?: boolean): PluginLoader;
         /**
          * Add an angular module to the list of modules to bootstrap
          */

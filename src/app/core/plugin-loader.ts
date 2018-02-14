@@ -118,7 +118,7 @@ namespace Core {
      * 'task' can either be a simple function or a PreBootstrapTask object
      */
     registerPreBootstrapTask(
-      task: (() => void) | PreBootstrapTask,
+      task: ((next: () => void) => void) | PreBootstrapTask,
       front?: boolean): PluginLoader {
       let taskToAdd: PreBootstrapTask;
       if (angular.isFunction(task)) {

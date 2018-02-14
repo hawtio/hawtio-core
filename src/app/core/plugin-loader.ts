@@ -290,10 +290,10 @@ namespace Core {
 
     private bootstrap(callback: () => void): void {
       this.registerPreBootstrapTask(this.bootstrapTask);
-      setTimeout(() => this.executeTask(callback), 1);
+      setTimeout(() => this.executeTasks(callback), 1);
     }
 
-    private executeTask(callback: () => void): void {
+    private executeTasks(callback: () => void): void {
       let taskObject: PreBootstrapTask = null;
       let tmp: PreBootstrapTask[] = [];
       // if we've executed all of the tasks, let's drain any deferred tasks
@@ -334,7 +334,7 @@ namespace Core {
           if (this.tasks.length > 0) {
             log.debug("Task '" + taskObject.name + "' wants to run after all other tasks, deferring");
             this.deferredTasks.push(taskObject);
-            this.executeTask(callback);
+            this.executeTasks(callback);
             return;
           }
         } else {
@@ -342,20 +342,19 @@ namespace Core {
           if (intersect.length != taskObject.depends.length) {
             log.debug("Deferring task: '" + taskObject.name + "'");
             this.deferredTasks.push(taskObject);
-            this.executeTask(callback);
+            this.executeTasks(callback);
             return;
           }
         }
       }
       if (taskObject) {
         log.debug("Executing task: '" + taskObject.name + "'");
-        //log.debug("ExecutedTasks: ", executedTasks);
         let called = false;
         let next = () => {
           if (next['notFired']) {
             next['notFired'] = false;
             this.executedTasks.push(taskObject.name);
-            setTimeout(() => this.executeTask(callback), 1);
+            setTimeout(() => this.executeTasks(callback), 1);
           }
         }
         next['notFired'] = true;

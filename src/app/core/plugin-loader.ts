@@ -5,6 +5,21 @@ namespace Core {
     urlLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void
   }
 
+  /**
+   * Task to be run before bootstrapping
+   * 
+   * name: the task name
+   * depends: an array of task names this task needs to have executed first,
+   *          or '*'
+   * task: the function to be executed with 1 argument, which is a function
+   *       that will execute the next task in the queue
+   */
+  export type PreBootstrapTask = {
+    name?: string,
+    depends?: string | string[],
+    task: (next: () => void) => void
+  }
+
   export type HawtioPlugin = {
     Name: string,
     Context: string,
@@ -41,7 +56,33 @@ namespace Core {
      * executed as an argument and be sure to call the passed
      * in function.
      */
-    private tasks = [];
+    private tasks: PreBootstrapTask[] = [];
+
+    private runs: number = 0;
+    private executedTasks: string[] = [];
+    private deferredTasks: PreBootstrapTask[] = [];
+
+    private readonly bootstrapTask: PreBootstrapTask = {
+      name: 'Hawtio Bootstrap',
+      depends: '*',
+      task: (next) => {
+        if (this.deferredTasks.length > 0) {
+          log.info("Tasks yet to run:");
+          this.listTasks(this.deferredTasks);
+          this.runs = this.runs + 1;
+          log.info("Task list restarted:", this.runs, "times");
+          if (this.runs === 5) {
+            log.info("Orphaned tasks:");
+            this.listTasks(this.deferredTasks);
+            this.deferredTasks.length = 0;
+          } else {
+            this.deferredTasks.push(this.bootstrapTask);
+          }
+        }
+        log.debug("Executed tasks:", this.executedTasks);
+        next();
+      }
+    }
 
     constructor() {
       this.setLoaderCallback({
@@ -74,34 +115,33 @@ namespace Core {
      * Register a function to be executed after scripts are loaded but
      * before the app is bootstrapped.
      *
-     * 'task' can either be a simple function or an object with the
-     * following attributes:
-     *
-     * name: the task name
-     * depends: an array of task names this task needs to have executed first
-     * task: the function to be executed with 1 argument, which is a function
-     *       that will execute the next task in the queue
+     * 'task' can either be a simple function or a PreBootstrapTask object
      */
-    registerPreBootstrapTask(task, front?): PluginLoader {
+    registerPreBootstrapTask(
+      task: (() => void) | PreBootstrapTask,
+      front?: boolean): PluginLoader {
+      let taskToAdd: PreBootstrapTask;
       if (angular.isFunction(task)) {
         log.debug("Adding legacy task");
-        task = {
+        taskToAdd = {
           task: task
         };
+      } else {
+        taskToAdd = task;
       }
 
-      if (!task.name) {
-        task.name = 'unnamed-task-' + (this.tasks.length + 1);
+      if (!taskToAdd.name) {
+        taskToAdd.name = 'unnamed-task-' + (this.tasks.length + 1);
       }
 
-      if (task.depends && !angular.isArray(task.depends) && task.depends !== '*') {
-        task.depends = [task.depends];
+      if (taskToAdd.depends && !_.isArray(taskToAdd.depends) && taskToAdd.depends !== '*') {
+        taskToAdd.depends = [taskToAdd.depends];
       }
 
       if (!front) {
-        this.tasks.push(task);
+        this.tasks.push(taskToAdd);
       } else {
-        this.tasks.unshift(task);
+        this.tasks.unshift(taskToAdd);
       }
 
       return this;
@@ -249,107 +289,81 @@ namespace Core {
     };
 
     private bootstrap(callback: () => void): void {
-      let executedTasks = [];
-      let deferredTasks = [];
+      this.registerPreBootstrapTask(this.bootstrapTask);
+      setTimeout(() => this.executeTask(callback), 1);
+    }
 
-      let bootstrapTask = {
-        name: 'Hawtio Bootstrap',
-        depends: '*',
-        runs: 0,
-        task: (next) => {
-          if (deferredTasks.length > 0) {
-            log.info("Tasks yet to run:");
-            this.listTasks(deferredTasks);
-            bootstrapTask.runs = bootstrapTask.runs + 1;
-            log.info("Task list restarted:", bootstrapTask.runs, "times");
-            if (bootstrapTask.runs === 5) {
-              log.info("Orphaned tasks:");
-              this.listTasks(deferredTasks);
-              deferredTasks.length = 0;
-            } else {
-              deferredTasks.push(bootstrapTask);
-            }
+    private executeTask(callback: () => void): void {
+      let taskObject: PreBootstrapTask = null;
+      let tmp: PreBootstrapTask[] = [];
+      // if we've executed all of the tasks, let's drain any deferred tasks
+      // into the regular task queue
+      if (this.tasks.length === 0) {
+        taskObject = this.deferredTasks.shift();
+      }
+      // first check and see what tasks have executed and see if we can pull a task
+      // from the deferred queue
+      while (!taskObject && this.deferredTasks.length > 0) {
+        let task = this.deferredTasks.shift();
+        if (task.depends === '*') {
+          if (this.tasks.length > 0) {
+            tmp.push(task);
+          } else {
+            taskObject = task;
           }
-          log.debug("Executed tasks:", executedTasks);
-          next();
+        } else {
+          let intersect = this.intersection(this.executedTasks, task.depends);
+          if (intersect.length === task.depends.length) {
+            taskObject = task;
+          } else {
+            tmp.push(task);
+          }
         }
       }
-
-      this.registerPreBootstrapTask(bootstrapTask);
-
-      let executeTask = () => {
-        let tObj = null;
-        let tmp = [];
-        // if we've executed all of the tasks, let's drain any deferred tasks
-        // into the regular task queue
-        if (this.tasks.length === 0) {
-          tObj = deferredTasks.shift();
-        }
-        // first check and see what tasks have executed and see if we can pull a task
-        // from the deferred queue
-        while (!tObj && deferredTasks.length > 0) {
-          let task = deferredTasks.shift();
-          if (task.depends === '*') {
-            if (this.tasks.length > 0) {
-              tmp.push(task);
-            } else {
-              tObj = task;
-            }
-          } else {
-            let intersect = this.intersection(executedTasks, task.depends);
-            if (intersect.length === task.depends.length) {
-              tObj = task;
-            } else {
-              tmp.push(task);
-            }
+      if (tmp.length > 0) {
+        tmp.forEach((task) => this.deferredTasks.push(task));
+      }
+      // no deferred tasks to execute, let's get a new task
+      if (!taskObject) {
+        taskObject = this.tasks.shift();
+      }
+      // check if task has dependencies
+      if (taskObject && taskObject.depends && this.tasks.length > 0) {
+        log.debug("Task '" + taskObject.name + "' has dependencies:", taskObject.depends);
+        if (taskObject.depends === '*') {
+          if (this.tasks.length > 0) {
+            log.debug("Task '" + taskObject.name + "' wants to run after all other tasks, deferring");
+            this.deferredTasks.push(taskObject);
+            this.executeTask(callback);
+            return;
           }
-        }
-        if (tmp.length > 0) {
-          tmp.forEach((task) => deferredTasks.push(task));
-        }
-        // no deferred tasks to execute, let's get a new task
-        if (!tObj) {
-          tObj = this.tasks.shift();
-        }
-        // check if task has dependencies
-        if (tObj && tObj.depends && this.tasks.length > 0) {
-          log.debug("Task '" + tObj.name + "' has dependencies:", tObj.depends);
-          if (tObj.depends === '*') {
-            if (this.tasks.length > 0) {
-              log.debug("Task '" + tObj.name + "' wants to run after all other tasks, deferring");
-              deferredTasks.push(tObj);
-              executeTask();
-              return;
-            }
-          } else {
-            let intersect = this.intersection(executedTasks, tObj.depends);
-            if (intersect.length != tObj.depends.length) {
-              log.debug("Deferring task: '" + tObj.name + "'");
-              deferredTasks.push(tObj);
-              executeTask();
-              return;
-            }
-          }
-        }
-        if (tObj) {
-          log.debug("Executing task: '" + tObj.name + "'");
-          //log.debug("ExecutedTasks: ", executedTasks);
-          let called = false;
-          let next = () => {
-            if (next['notFired']) {
-              next['notFired'] = false;
-              executedTasks.push(tObj.name);
-              setTimeout(executeTask, 1);
-            }
-          }
-          next['notFired'] = true;
-          tObj.task(next);
         } else {
-          log.debug("All tasks executed");
-          setTimeout(callback, 1);
+          let intersect = this.intersection(this.executedTasks, taskObject.depends);
+          if (intersect.length != taskObject.depends.length) {
+            log.debug("Deferring task: '" + taskObject.name + "'");
+            this.deferredTasks.push(taskObject);
+            this.executeTask(callback);
+            return;
+          }
         }
-      };
-      setTimeout(executeTask, 1);
+      }
+      if (taskObject) {
+        log.debug("Executing task: '" + taskObject.name + "'");
+        //log.debug("ExecutedTasks: ", executedTasks);
+        let called = false;
+        let next = () => {
+          if (next['notFired']) {
+            next['notFired'] = false;
+            this.executedTasks.push(taskObject.name);
+            setTimeout(() => this.executeTask(callback), 1);
+          }
+        }
+        next['notFired'] = true;
+        taskObject.task(next);
+      } else {
+        log.debug("All tasks executed");
+        setTimeout(callback, 1);
+      }
     }
 
     private listTasks(tasks): void {
@@ -357,7 +371,7 @@ namespace Core {
         log.info("  name:", task.name, "depends:", task.depends));
     }
 
-    private intersection(search, needle) {
+    private intersection(search: string[], needle: string | string[]): string[] {
       if (!Array.isArray(needle)) {
         needle = [needle];
       }

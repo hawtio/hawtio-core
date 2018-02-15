@@ -10,7 +10,7 @@
   if (typeof window['CustomEvent'] !== "function") {
     function CustomEvent(event, params) {
       params = params || { bubbles: false, cancelable: false, detail: undefined };
-      var evt = document.createEvent('CustomEvent');
+      let evt = document.createEvent('CustomEvent');
       evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
       return evt;
     }
@@ -56,12 +56,12 @@ namespace HawtioMainNav {
     }
 
     add(item) {
-      var _this = this;
-      var items = [];
-      for (var _i = 1; _i < arguments.length; _i++) {
+      let _this = this;
+      let items = [];
+      for (let _i = 1; _i < arguments.length; _i++) {
         items[_i - 1] = arguments[_i];
       }
-      var toAdd = _.union([item], items);
+      let toAdd = _.union([item], items);
       this.items = _.union(this.items, toAdd);
       toAdd.forEach(function (item) {
         _this.root.dispatchEvent(new CustomEvent(Actions.ADD, {
@@ -81,8 +81,8 @@ namespace HawtioMainNav {
     }
 
     remove(search) {
-      var _this = this;
-      var removed = _.remove(this.items, search);
+      let _this = this;
+      let removed = _.remove(this.items, search);
       removed.forEach(function (item) {
         _this.root.dispatchEvent(new CustomEvent(Actions.REMOVE, {
           detail: {
@@ -106,13 +106,13 @@ namespace HawtioMainNav {
     }
 
     selected() {
-      var valid = _.filter(this.items, function (item) {
+      let valid = _.filter(this.items, function (item) {
         if (!item['isValid']) {
           return true;
         }
         return item['isValid']()
       });
-      var answer = _.find(valid, function (item) {
+      let answer = _.find(valid, function (item) {
         if (!item['isSelected']) {
           return false;
         }
@@ -122,7 +122,7 @@ namespace HawtioMainNav {
     }
 
     on(action, key, fn) {
-      var _this = this;
+      let _this = this;
       switch (action) {
         case Actions.ADD:
           this.root.addEventListener(Actions.ADD, function (event) {
@@ -163,7 +163,7 @@ namespace HawtioMainNav {
             //log.debug("event key: ", key, " event: ", event);
             fn(event);
           });
-          var event = new CustomEvent(Actions.REDRAW, {
+          let event = new CustomEvent(Actions.REDRAW, {
             detail: {
               text: ''
             }
@@ -182,12 +182,12 @@ namespace HawtioMainNav {
   }
 
   function join(...args) {
-    var paths = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
+    let paths = [];
+    for (let _i = 0; _i < arguments.length; _i++) {
       paths[_i - 0] = arguments[_i];
     }
-    var tmp = [];
-    var length = paths.length - 1;
+    let tmp = [];
+    let length = paths.length - 1;
     paths.forEach(function (path, index) {
       if (!path || path === '') {
         return;
@@ -202,7 +202,7 @@ namespace HawtioMainNav {
         tmp.push(path);
       }
     });
-    var rc = tmp.join('/');
+    let rc = tmp.join('/');
     return rc;
   }
 
@@ -324,8 +324,8 @@ namespace HawtioMainNav {
     }
 
     tabs(item) {
-      var items = [];
-      for (var _i = 1; _i < arguments.length; _i++) {
+      let items = [];
+      for (let _i = 1; _i < arguments.length; _i++) {
         items[_i - 1] = arguments[_i];
       }
       this.self.tabs = _.union(this.self.tabs, [item], items);
@@ -333,11 +333,11 @@ namespace HawtioMainNav {
     }
 
     subPath(title: string, path: string, page?: string, rank?: number, reload?: boolean, isValid?: boolean) {
-      var parent = this.self;
+      let parent = this.self;
       if (!this.self.tabs) {
         this.self.tabs = [];
       }
-      var tab = {
+      let tab = {
         id: parent.id + '-' + path,
         title: function () {
           return title;
@@ -368,7 +368,7 @@ namespace HawtioMainNav {
     }
 
     build(): NavItem {
-      var answer = _.cloneDeep(this.self);
+      let answer = _.cloneDeep(this.self);
       this.self = {
         id: ''
       };
@@ -408,9 +408,9 @@ namespace HawtioMainNav {
 
     function gotoNavItem(item) {
       if (item && item.href) {
-        var href = trimLeading(item.href(), documentBase);
-        var uri = new URI(href);
-        var search = _.merge($location.search(), uri.query(true));
+        let href = trimLeading(item.href(), documentBase);
+        let uri = new URI(href);
+        let search = _.merge($location.search(), uri.query(true));
         log.debug("Going to item id: ", item.id, " href: ", uri.path(), " query: ", search);
         $timeout(function () {
           $location.path(uri.path()).search(search);
@@ -419,15 +419,15 @@ namespace HawtioMainNav {
     }
 
     function gotoFirstAvailableNav() {
-      var candidates = [];
+      let candidates = [];
       HawtioNav.iterate(function (item) {
-        var isValid = item['isValid'] || function () { return true; };
-        var show = item.show || function () { return true; };
+        let isValid = item['isValid'] || function () { return true; };
+        let show = item.show || function () { return true; };
         if (isValid() && show()) {
           candidates.push(item);
         }
       });
-      var rankedCandidates = sortByRank(candidates);
+      let rankedCandidates = sortByRank(candidates);
       if (rankedCandidates.length > 0) {
         gotoNavItem(rankedCandidates[0]);
       } else if (!locationChanged) {
@@ -438,10 +438,10 @@ namespace HawtioMainNav {
     }
 
     function gotoBestCandidateNav() {
-      var search = $location.search();
+      let search = $location.search();
       if (search.tab) {
-        var tab = search.tab;
-        var selected;
+        let tab = search.tab;
+        let selected;
         HawtioNav.iterate(function (item) {
           if (!selected && item.id === tab) {
             selected = item;
@@ -452,15 +452,15 @@ namespace HawtioMainNav {
           return;
         }
       }
-      var candidates = [];
+      let candidates = [];
       HawtioNav.iterate(function (item) {
         if ('defaultPage' in item) {
-          var page = item.defaultPage;
+          let page = item.defaultPage;
           if (!('rank' in page)) {
             candidates.push(item);
             return;
           }
-          var index = _.findIndex(candidates, function (i) {
+          let index = _.findIndex(candidates, function (i) {
             if ('rank' in i && item.rank > i.rank) {
               return true;
             }
@@ -479,8 +479,8 @@ namespace HawtioMainNav {
           gotoFirstAvailableNav();
           return;
         }
-        var sortedPages = _.sortBy(WelcomePageRegistry.pages, function (page) { return page['rank']; });
-        var page = _.find(sortedPages, function (page) {
+        let sortedPages = _.sortBy(WelcomePageRegistry.pages, function (page) { return page['rank']; });
+        let page = _.find(sortedPages, function (page) {
           if ('isValid' in page) {
             return page['isValid']();
           }
@@ -498,19 +498,19 @@ namespace HawtioMainNav {
           welcomePageFallback();
           return;
         }
-        var item = candidates.pop();
-        var remaining = candidates;
+        let item = candidates.pop();
+        let remaining = candidates;
         log.debug("Trying candidate: ", item, " remaining: ", remaining);
         if (!item) {
           welcomePageFallback();
           return;
         }
-        var func = item.defaultPage.isValid;
+        let func = item.defaultPage.isValid;
         if (func) {
-          var yes = function () {
+          let yes = function () {
             gotoNavItem(item);
           };
-          var no = function () {
+          let no = function () {
             evalCandidates(remaining);
           };
           try {
@@ -540,17 +540,17 @@ namespace HawtioMainNav {
     });
 
     function searchRegistryViaQuery(query) {
-      var answer = undefined;
+      let answer = undefined;
       if (!query || _.keys(query).length === 0) {
         log.debug("No query, skipping query matching");
         return;
       }
-      var keys = _.keys(viewRegistry);
-      var candidates = _.filter(keys, function (key) { return key.charAt(0) === '{'; });
+      let keys = _.keys(viewRegistry);
+      let candidates = _.filter(keys, function (key) { return key.charAt(0) === '{'; });
       candidates.forEach(function (candidate) {
         if (!answer) {
           try {
-            var obj = angular.fromJson(candidate);
+            let obj = angular.fromJson(candidate);
             if (_.isObject(obj)) {
               _.mergeWith(obj, query, function (a, b) {
                 if (a) {
@@ -572,11 +572,11 @@ namespace HawtioMainNav {
     }
 
     function searchRegistry(path) {
-      var answer = undefined;
+      let answer = undefined;
       _.forIn(viewRegistry, function (value, key) {
         if (!answer) {
           try {
-            var reg = new RegExp(key, "");
+            let reg = new RegExp(key, "");
             if (reg.exec(path)) {
               answer = value;
             }
@@ -589,14 +589,14 @@ namespace HawtioMainNav {
     }
 
     function findViewPartial() {
-      var answer = null;
-      var hash = $location.search();
+      let answer = null;
+      let hash = $location.search();
       answer = searchRegistryViaQuery(hash);
       if (answer) {
         log.debug("View partial matched on query");
       }
       if (!answer) {
-        var path = $location.path();
+        let path = $location.path();
         if (path) {
           answer = searchRegistry(path);
           if (answer) {
@@ -632,7 +632,7 @@ namespace HawtioMainNav {
         item.preBase = item.href;
         item.href = () => {
           if (href) {
-            var preBase = item.preBase();
+            let preBase = item.preBase();
             if (preBase && preBase.charAt(0) === '/') {
               preBase = preBase.substr(1);
               return href + preBase;
@@ -681,7 +681,7 @@ namespace HawtioMainNav {
   }
 
   // Construct once and share between invocations to avoid memory leaks
-  var tmpLink = $('<a>');
+  let tmpLink = $('<a>');
   function addIsSelected($location, item) {
     if (!('isSelected' in item) && 'href' in item) {
       item['isSelected'] = function () {
@@ -689,23 +689,23 @@ namespace HawtioMainNav {
         // case we should let the browser resolve
         // what the full path should be
         tmpLink.attr("href", item.href());
-        var href = new URI(tmpLink[0]['href']);
-        var itemPath = trimLeading(href.path(), '/');
+        let href = new URI(tmpLink[0]['href']);
+        let itemPath = trimLeading(href.path(), '/');
         if (itemPath === '') {
           // log.debug("nav item: ", item.id, " returning empty href, can't be selected");
           return false;
         }
-        var current = new URI();
-        var path = trimLeading(current.path(), '/');
-        var query = current.query(true);
-        var mainTab = query['main-tab'];
-        var subTab = query['sub-tab'];
+        let current = new URI();
+        let path = trimLeading(current.path(), '/');
+        let query = current.query(true);
+        let mainTab = query['main-tab'];
+        let subTab = query['sub-tab'];
         if (itemPath !== '' && !mainTab && !subTab) {
           if (item.isSubTab && _.startsWith(path, itemPath)) {
             return true;
           }
           if (item.tabs) {
-            var answer = _.some(item.tabs, function (subTab) {
+            let answer = _.some(item.tabs, function (subTab) {
               return subTab['isSelected']();
             });
             if (answer) {
@@ -713,7 +713,7 @@ namespace HawtioMainNav {
             }
           }
         }
-        var answer = false;
+        let answer = false;
         if (item.isSubTab) {
           if (!subTab) {
             answer = _.startsWith(path, itemPath);
@@ -736,17 +736,17 @@ namespace HawtioMainNav {
     if (!itemIsValid(item)) {
       return;
     }
-    var newScope = scope.$new();
+    let newScope = scope.$new();
     item.hide = function () { return item.show && !item.show(); };
     newScope.item = item;
-    var template = null;
+    let template = null;
     if (_.isFunction(item.template)) {
       template = item.template();
     } else {
       template = $templateCache.get('navigation/templates/navItem.html');
     }
     if (item.attributes || item.linkAttributes) {
-      var tmpEl = $(template);
+      let tmpEl = $(template);
       if (item.attributes) {
         tmpEl.attr(item.attributes);
       }
@@ -759,7 +759,7 @@ namespace HawtioMainNav {
   }
 
   function sortByRank(collection) {
-    var answer = [];
+    let answer = [];
     collection.forEach(function (item) {
       rankItem(item, answer);
     });
@@ -771,7 +771,7 @@ namespace HawtioMainNav {
       collection.push(item);
       return;
     }
-    var index = _.findIndex(collection, function (i) {
+    let index = _.findIndex(collection, function (i) {
       if ('rank' in i && item.rank > i['rank']) {
         return true;
       }
@@ -793,7 +793,7 @@ namespace HawtioMainNav {
         item: '<'
       },
       link: function (scope: any, element) {
-        var rankedTabs = sortByRank(scope.item.tabs);
+        let rankedTabs = sortByRank(scope.item.tabs);
         rankedTabs.forEach(function (item) {
           drawNavItem($templateCache, $compile, scope, element, item);
         });
@@ -802,12 +802,12 @@ namespace HawtioMainNav {
   }]);
 
   _module.directive("hawtioMainNav", ["HawtioNav", "$templateCache", "$compile", "$location", "$rootScope", function (HawtioNav, $templateCache, $compile, $location, $rootScope) {
-    var config = {
+    let config = {
       nav: {},
       numKeys: 0,
       numValid: 0
     };
-    var iterationFunc = function (item) {
+    let iterationFunc = function (item) {
       if (itemIsValid(item)) {
         config.numValid = config.numValid + 1;
       }
@@ -819,7 +819,7 @@ namespace HawtioMainNav {
           if (!subItem.oldHref) {
             subItem.oldHref = subItem.href;
             subItem.href = function () {
-              var uri = new URI(subItem.oldHref());
+              let uri = new URI(subItem.oldHref());
               if (uri.path() === "") {
                 return "";
               }
@@ -839,12 +839,12 @@ namespace HawtioMainNav {
       if (item.href && !item.oldHref) {
         item.oldHref = item.href;
         item.href = function () {
-          var oldHref = item.oldHref();
+          let oldHref = item.oldHref();
           if (!oldHref) {
             log.debug("Item: ", item.id, " returning null for href()");
             return "";
           }
-          var uri = new URI(oldHref);
+          let uri = new URI(oldHref);
           if (uri.path() === "") {
             return "";
           }
@@ -854,7 +854,7 @@ namespace HawtioMainNav {
             }
             _.merge(search, uri.query(true));
             if (!search['sub-tab'] && item.tabs && item.tabs.length > 0) {
-              var sorted = sortByRank(item.tabs);
+              let sorted = sortByRank(item.tabs);
               search['sub-tab'] = sorted[0].id;
             }
           });
@@ -888,7 +888,7 @@ namespace HawtioMainNav {
           log.debug("Redrawing main nav");
           $element.empty();
 
-          var rankedContexts = [];
+          let rankedContexts = [];
           // first add any contextual menus (like perspectives)
           HawtioNav.iterate(function (item) {
             if (!('context' in item)) {
@@ -903,7 +903,7 @@ namespace HawtioMainNav {
             drawNavItem($templateCache, $compile, $scope, $element, item);
           });
           // then add the rest of the nav items
-          var rankedTabs = [];
+          let rankedTabs = [];
           HawtioNav.iterate(function (item) {
             if (item.context) {
               return;
@@ -917,8 +917,8 @@ namespace HawtioMainNav {
       }],
       link: function (scope, element, attr) {
         scope.$watch(_.debounce(function () {
-          var oldValid = config.numValid;
-          var oldKeys = config.numKeys;
+          let oldValid = config.numValid;
+          let oldKeys = config.numKeys;
           config.numValid = 0;
           config.numKeys = 0;
           HawtioNav.iterate(iterationFunc);
@@ -948,7 +948,7 @@ namespace HawtioMainNav {
 
     setRoute($routeProvider, tab) {
       log.debug("Setting route: ", tab.href(), " to template URL: ", tab['page']());
-      var config = {
+      let config = {
         templateUrl: tab['page']()
       };
       if (!_.isUndefined(tab['reload'])) {
@@ -960,7 +960,7 @@ namespace HawtioMainNav {
     configureRouting($routeProvider: angular.route.IRouteProvider, tab: NavItem): any {
       if (_.isUndefined(tab['page'])) {
         if (tab.tabs) {
-          var target = _.first(tab.tabs)['href'];
+          let target = _.first(tab.tabs)['href'];
           if (target) {
             log.debug("Setting route: ", tab.href(), " to redirect to ", target());
             $routeProvider.when(tab.href(), {
@@ -983,7 +983,7 @@ namespace HawtioMainNav {
   _module.provider('HawtioNavBuilder', BuilderFactory);
 
   _module.factory('HawtioPerspective', [function () {
-    var log = Logger.get('hawtio-dummy-perspective');
+    let log = Logger.get('hawtio-dummy-perspective');
     return {
       add: function (id, perspective) {
         log.debug("add called for id: ", id);
@@ -1012,7 +1012,7 @@ namespace HawtioMainNav {
   }]);
 
   _module.factory('HawtioNav', ['$window', '$rootScope', function ($window, $rootScope) {
-    var registry = createRegistry(window);
+    let registry = createRegistry(window);
     return registry;
   }]);
 

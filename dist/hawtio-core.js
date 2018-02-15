@@ -414,7 +414,7 @@ var Core;
             this.executedTasks = [];
             this.deferredTasks = [];
             this.bootstrapTask = {
-                name: 'Hawtio Bootstrap',
+                name: 'HawtioBootstrap',
                 depends: '*',
                 task: function (next) {
                     if (_this.deferredTasks.length > 0) {
@@ -1210,10 +1210,9 @@ var Core;
 })();
 var HawtioMainNav;
 (function (HawtioMainNav) {
-    function documentBase($document) {
-        var base = $document.find('base');
-        return base.attr('href');
-    }
+    welcomeController.$inject = ["$scope", "$location", "WelcomePageRegistry", "HawtioNav", "$timeout", "documentBase"];
+    viewController.$inject = ["$scope", "$route", "$location", "layoutFull", "viewRegistry", "documentBase"];
+    configureHtmlBase.$inject = ["HawtioNav", "$rootScope", "$route", "documentBase"];
     function trimLeading(text, prefix) {
         if (text && prefix) {
             if (_.startsWith(text, prefix) || text.indexOf(prefix) === 0) {
@@ -1347,12 +1346,12 @@ var HawtioMainNav;
                         //log.debug("event key: ", key, " event: ", event);
                         fn(event);
                     });
-                    var event = new CustomEvent(Actions.REDRAW, {
+                    var event_1 = new CustomEvent(Actions.REDRAW, {
                         detail: {
                             text: ''
                         }
                     });
-                    this.root.dispatchEvent(event);
+                    this.root.dispatchEvent(event_1);
                     break;
                 default:
             }
@@ -1533,263 +1532,269 @@ var HawtioMainNav;
             });
             $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
         }]);
-    HawtioMainNav._module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
-            var backoffPeriod = 500;
-            var locationChanged = false;
-            $scope.$on("$locationChangeStart", function (event, next, current) {
-                locationChanged = true;
-            });
-            function gotoNavItem(item) {
-                if (item && item.href) {
-                    var href = trimLeading(item.href(), documentBase($document));
-                    var uri = new URI(href);
-                    var search = _.merge($location.search(), uri.query(true));
-                    log.debug("Going to item id: ", item.id, " href: ", uri.path(), " query: ", search);
-                    $timeout(function () {
-                        $location.path(uri.path()).search(search);
-                    }, 10);
-                }
+    HawtioMainNav._module.controller('HawtioNav.WelcomeController', welcomeController);
+    function welcomeController($scope, $location, WelcomePageRegistry, HawtioNav, $timeout, documentBase) {
+        'ngInject';
+        var backoffPeriod = 500;
+        var locationChanged = false;
+        $scope.$on("$locationChangeStart", function (event, next, current) {
+            locationChanged = true;
+        });
+        function gotoNavItem(item) {
+            if (item && item.href) {
+                var href = trimLeading(item.href(), documentBase);
+                var uri_1 = new URI(href);
+                var search_1 = _.merge($location.search(), uri_1.query(true));
+                log.debug("Going to item id: ", item.id, " href: ", uri_1.path(), " query: ", search_1);
+                $timeout(function () {
+                    $location.path(uri_1.path()).search(search_1);
+                }, 10);
             }
-            function gotoFirstAvailableNav() {
-                var candidates = [];
-                nav.iterate(function (item) {
-                    var isValid = item['isValid'] || function () { return true; };
-                    var show = item.show || function () { return true; };
-                    if (isValid() && show()) {
-                        candidates.push(item);
+        }
+        function gotoFirstAvailableNav() {
+            var candidates = [];
+            HawtioNav.iterate(function (item) {
+                var isValid = item['isValid'] || function () { return true; };
+                var show = item.show || function () { return true; };
+                if (isValid() && show()) {
+                    candidates.push(item);
+                }
+            });
+            var rankedCandidates = sortByRank(candidates);
+            if (rankedCandidates.length > 0) {
+                gotoNavItem(rankedCandidates[0]);
+            }
+            else if (!locationChanged) {
+                log.debug('No default nav available, backing off for', backoffPeriod, 'ms');
+                $timeout(gotoBestCandidateNav, backoffPeriod);
+                backoffPeriod *= 1.25;
+            }
+        }
+        function gotoBestCandidateNav() {
+            var search = $location.search();
+            if (search.tab) {
+                var tab_1 = search.tab;
+                var selected_1;
+                HawtioNav.iterate(function (item) {
+                    if (!selected_1 && item.id === tab_1) {
+                        selected_1 = item;
                     }
                 });
-                var rankedCandidates = sortByRank(candidates);
-                if (rankedCandidates.length > 0) {
-                    gotoNavItem(rankedCandidates[0]);
-                }
-                else if (!locationChanged) {
-                    log.debug('No default nav available, backing off for', backoffPeriod, 'ms');
-                    $timeout(gotoBestCandidateNav, backoffPeriod);
-                    backoffPeriod *= 1.25;
-                }
-            }
-            function gotoBestCandidateNav() {
-                var search = $location.search();
-                if (search.tab) {
-                    var tab = search.tab;
-                    var selected;
-                    nav.iterate(function (item) {
-                        if (!selected && item.id === tab) {
-                            selected = item;
-                        }
-                    });
-                    if (selected) {
-                        gotoNavItem(selected);
-                        return;
-                    }
-                }
-                var candidates = [];
-                nav.iterate(function (item) {
-                    if ('defaultPage' in item) {
-                        var page = item.defaultPage;
-                        if (!('rank' in page)) {
-                            candidates.push(item);
-                            return;
-                        }
-                        var index = _.findIndex(candidates, function (i) {
-                            if ('rank' in i && item.rank > i.rank) {
-                                return true;
-                            }
-                        });
-                        if (index < 0) {
-                            candidates.push(item);
-                        }
-                        else {
-                            candidates.splice(index, 0, item);
-                        }
-                    }
-                });
-                function welcomePageFallback() {
-                    if (welcome.pages.length === 0) {
-                        log.debug("No welcome pages, going to first available nav");
-                        gotoFirstAvailableNav();
-                        return;
-                    }
-                    var sortedPages = _.sortBy(welcome.pages, function (page) { return page['rank']; });
-                    var page = _.find(sortedPages, function (page) {
-                        if ('isValid' in page) {
-                            return page['isValid']();
-                        }
-                        return true;
-                    });
-                    if (page) {
-                        gotoNavItem(page);
-                    }
-                    else {
-                        gotoFirstAvailableNav();
-                    }
-                }
-                function evalCandidates(candidates) {
-                    if (candidates.length === 0) {
-                        welcomePageFallback();
-                        return;
-                    }
-                    var item = candidates.pop();
-                    var remaining = candidates;
-                    log.debug("Trying candidate: ", item, " remaining: ", remaining);
-                    if (!item) {
-                        welcomePageFallback();
-                        return;
-                    }
-                    var func = item.defaultPage.isValid;
-                    if (func) {
-                        var yes = function () {
-                            gotoNavItem(item);
-                        };
-                        var no = function () {
-                            evalCandidates(remaining);
-                        };
-                        try {
-                            func(yes, no);
-                        }
-                        catch (err) {
-                            log.debug("Failed to eval item: ", item.id, " error: ", err);
-                            no();
-                        }
-                    }
-                    else {
-                        evalCandidates(remaining);
-                    }
-                }
-                evalCandidates(candidates);
-            }
-            $timeout(gotoBestCandidateNav, 500);
-        }]);
-    HawtioMainNav._module.controller('HawtioNav.ViewController', ['$scope', '$route', '$location', 'layoutFull', 'viewRegistry', function ($scope, $route, $location, layoutFull, viewRegistry) {
-            findViewPartial();
-            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-                findViewPartial();
-            });
-            function searchRegistryViaQuery(query) {
-                var answer = undefined;
-                if (!query || _.keys(query).length === 0) {
-                    log.debug("No query, skipping query matching");
+                if (selected_1) {
+                    gotoNavItem(selected_1);
                     return;
                 }
-                var keys = _.keys(viewRegistry);
-                var candidates = _.filter(keys, function (key) { return key.charAt(0) === '{'; });
-                candidates.forEach(function (candidate) {
-                    if (!answer) {
-                        try {
-                            var obj = angular.fromJson(candidate);
-                            if (_.isObject(obj)) {
-                                _.mergeWith(obj, query, function (a, b) {
-                                    if (a) {
-                                        if (a === b) {
-                                            answer = viewRegistry[candidate];
-                                        }
-                                        else {
-                                            answer = undefined;
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                        catch (e) {
-                            // ignore and move on...
-                            log.debug("Unable to parse json: ", candidate);
-                        }
-                    }
-                });
-                return answer;
             }
-            function searchRegistry(path) {
-                var answer = undefined;
-                _.forIn(viewRegistry, function (value, key) {
-                    if (!answer) {
-                        try {
-                            var reg = new RegExp(key, "");
-                            if (reg.exec(path)) {
-                                answer = value;
-                            }
-                        }
-                        catch (e) {
-                            log.debug("Invalid RegExp " + key + " for viewRegistry value: " + value);
-                        }
+            var candidates = [];
+            HawtioNav.iterate(function (item) {
+                if ('defaultPage' in item) {
+                    var page = item.defaultPage;
+                    if (!('rank' in page)) {
+                        candidates.push(item);
+                        return;
                     }
-                });
-                return answer;
-            }
-            function findViewPartial() {
-                var answer = null;
-                var hash = $location.search();
-                answer = searchRegistryViaQuery(hash);
-                if (answer) {
-                    log.debug("View partial matched on query");
-                }
-                if (!answer) {
-                    var path = $location.path();
-                    if (path) {
-                        answer = searchRegistry(path);
-                        if (answer) {
-                            log.debug("View partial matched on path name");
+                    var index = _.findIndex(candidates, function (i) {
+                        if ('rank' in i && item.rank > i.rank) {
+                            return true;
                         }
+                    });
+                    if (index < 0) {
+                        candidates.push(item);
                     }
-                }
-                if (!answer) {
-                    answer = layoutFull;
-                    log.debug("Using default view partial");
-                }
-                $scope.viewPartial = answer;
-                log.debug("Using view partial: " + answer);
-                return answer;
-            }
-        }]);
-    HawtioMainNav._module.run(['HawtioNav', '$rootScope', '$route', '$document', function (HawtioNav, $rootScope, $route, $document) {
-            HawtioNav.on(Actions.CHANGED, "$apply", function (item) {
-                if (!$rootScope.$$phase) {
-                    $rootScope.$apply();
+                    else {
+                        candidates.splice(index, 0, item);
+                    }
                 }
             });
-            var href = documentBase($document);
-            function applyBaseHref(item) {
-                if (!item.preBase) {
-                    item.preBase = item.href;
-                    item.href = function () {
-                        if (href) {
-                            var preBase = item.preBase();
-                            if (preBase && preBase.charAt(0) === '/') {
-                                preBase = preBase.substr(1);
-                                return href + preBase;
-                            }
-                        }
-                        return item.preBase();
+            function welcomePageFallback() {
+                if (WelcomePageRegistry.pages.length === 0) {
+                    log.debug("No welcome pages, going to first available nav");
+                    gotoFirstAvailableNav();
+                    return;
+                }
+                var sortedPages = _.sortBy(WelcomePageRegistry.pages, function (page) { return page['rank']; });
+                var page = _.find(sortedPages, function (page) {
+                    if ('isValid' in page) {
+                        return page['isValid']();
+                    }
+                    return true;
+                });
+                if (page) {
+                    gotoNavItem(page);
+                }
+                else {
+                    gotoFirstAvailableNav();
+                }
+            }
+            function evalCandidates(candidates) {
+                if (candidates.length === 0) {
+                    welcomePageFallback();
+                    return;
+                }
+                var item = candidates.pop();
+                var remaining = candidates;
+                log.debug("Trying candidate: ", item, " remaining: ", remaining);
+                if (!item) {
+                    welcomePageFallback();
+                    return;
+                }
+                var func = item.defaultPage.isValid;
+                if (func) {
+                    var yes = function () {
+                        gotoNavItem(item);
                     };
+                    var no = function () {
+                        evalCandidates(remaining);
+                    };
+                    try {
+                        func(yes, no);
+                    }
+                    catch (err) {
+                        log.debug("Failed to eval item: ", item.id, " error: ", err);
+                        no();
+                    }
+                }
+                else {
+                    evalCandidates(remaining);
                 }
             }
-            HawtioNav.on(Actions.ADD, "htmlBaseRewriter", function (item) {
-                if (item.href) {
-                    applyBaseHref(item);
-                    _.forEach(item.tabs, applyBaseHref);
+            evalCandidates(candidates);
+        }
+        $timeout(gotoBestCandidateNav, 500);
+    }
+    HawtioMainNav._module.controller('HawtioNav.ViewController', viewController);
+    function viewController($scope, $route, $location, layoutFull, viewRegistry, documentBase) {
+        'ngInject';
+        findViewPartial();
+        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+            findViewPartial();
+        });
+        function searchRegistryViaQuery(query) {
+            var answer = undefined;
+            if (!query || _.keys(query).length === 0) {
+                log.debug("No query, skipping query matching");
+                return;
+            }
+            var keys = _.keys(viewRegistry);
+            var candidates = _.filter(keys, function (key) { return key.charAt(0) === '{'; });
+            candidates.forEach(function (candidate) {
+                if (!answer) {
+                    try {
+                        var obj = angular.fromJson(candidate);
+                        if (_.isObject(obj)) {
+                            _.mergeWith(obj, query, function (a, b) {
+                                if (a) {
+                                    if (a === b) {
+                                        answer = viewRegistry[candidate];
+                                    }
+                                    else {
+                                        answer = undefined;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    catch (e) {
+                        // ignore and move on...
+                        log.debug("Unable to parse json: ", candidate);
+                    }
                 }
             });
-            HawtioNav.on(Actions.ADD, "$apply", function (item) {
-                var oldClick = item.click;
-                item.click = function ($event) {
-                    if (!($event instanceof jQuery.Event)) {
-                        try {
-                            if (!$rootScope.$$phase) {
-                                $rootScope.$apply();
-                            }
-                        }
-                        catch (e) {
-                            // ignore
+            return answer;
+        }
+        function searchRegistry(path) {
+            var answer = undefined;
+            _.forIn(viewRegistry, function (value, key) {
+                if (!answer) {
+                    try {
+                        var reg = new RegExp(key, "");
+                        if (reg.exec(path)) {
+                            answer = value;
                         }
                     }
-                    if (oldClick) {
-                        oldClick($event);
+                    catch (e) {
+                        log.debug("Invalid RegExp " + key + " for viewRegistry value: " + value);
                     }
-                };
+                }
             });
-            $route.reload();
-            log.debug("loaded");
-        }]);
+            return answer;
+        }
+        function findViewPartial() {
+            var answer = null;
+            var hash = $location.search();
+            answer = searchRegistryViaQuery(hash);
+            if (answer) {
+                log.debug("View partial matched on query");
+            }
+            if (!answer) {
+                var path = $location.path();
+                if (path) {
+                    answer = searchRegistry(path);
+                    if (answer) {
+                        log.debug("View partial matched on path name");
+                    }
+                }
+            }
+            if (!answer) {
+                answer = layoutFull;
+                log.debug("Using default view partial");
+            }
+            $scope.viewPartial = answer;
+            log.debug("Using view partial: " + answer);
+            return answer;
+        }
+    }
+    HawtioMainNav._module.run(configureHtmlBase);
+    function configureHtmlBase(HawtioNav, $rootScope, $route, documentBase) {
+        'ngInject';
+        HawtioNav.on(Actions.CHANGED, "$apply", function (item) {
+            if (!$rootScope.$$phase) {
+                $rootScope.$apply();
+            }
+        });
+        var href = documentBase;
+        var applyBaseHref = function (item) {
+            if (!item.preBase) {
+                item.preBase = item.href;
+                item.href = function () {
+                    if (href) {
+                        var preBase = item.preBase();
+                        if (preBase && preBase.charAt(0) === '/') {
+                            preBase = preBase.substr(1);
+                            return href + preBase;
+                        }
+                    }
+                    return item.preBase();
+                };
+            }
+        };
+        HawtioNav.on(Actions.ADD, "htmlBaseRewriter", function (item) {
+            if (item.href) {
+                applyBaseHref(item);
+                _.forEach(item.tabs, applyBaseHref);
+            }
+        });
+        HawtioNav.on(Actions.ADD, "$apply", function (item) {
+            var oldClick = item.click;
+            item.click = function ($event) {
+                if (!($event instanceof jQuery.Event)) {
+                    try {
+                        if (!$rootScope.$$phase) {
+                            $rootScope.$apply();
+                        }
+                    }
+                    catch (e) {
+                        // ignore
+                    }
+                }
+                if (oldClick) {
+                    oldClick($event);
+                }
+            };
+        });
+        $route.reload();
+        log.debug("loaded");
+    }
     // helper function for testing nav items
     function itemIsValid(item) {
         if (!('isValid' in item)) {
@@ -1825,10 +1830,10 @@ var HawtioMainNav;
                         return true;
                     }
                     if (item.tabs) {
-                        var answer = _.some(item.tabs, function (subTab) {
+                        var answer_1 = _.some(item.tabs, function (subTab) {
                             return subTab['isSelected']();
                         });
-                        if (answer) {
+                        if (answer_1) {
                             return true;
                         }
                     }

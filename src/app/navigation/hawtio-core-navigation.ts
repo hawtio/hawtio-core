@@ -22,11 +22,6 @@
 
 namespace HawtioMainNav {
 
-  function documentBase($document) {
-    var base = $document.find('base');
-    return base.attr('href');
-  }
-
   function trimLeading(text, prefix) {
     if (text && prefix) {
       if (_.startsWith(text, prefix) || text.indexOf(prefix) === 0) {
@@ -400,17 +395,20 @@ namespace HawtioMainNav {
     $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
   }]);
 
-  _module.controller('HawtioNav.WelcomeController', ['$scope', '$location', 'WelcomePageRegistry', 'HawtioNav', '$timeout', '$document', function ($scope, $location, welcome, nav, $timeout, $document) {
+  _module.controller('HawtioNav.WelcomeController', welcomeController);
+
+  function welcomeController($scope, $location, WelcomePageRegistry, HawtioNav, $timeout, documentBase: string): void {
+    'ngInject';
 
     let backoffPeriod = 500;
     let locationChanged = false;
-    $scope.$on("$locationChangeStart", function(event, next, current) { 
+    $scope.$on("$locationChangeStart", function (event, next, current) {
       locationChanged = true;
     });
 
     function gotoNavItem(item) {
       if (item && item.href) {
-        var href = trimLeading(item.href(), documentBase($document));
+        var href = trimLeading(item.href(), documentBase);
         var uri = new URI(href);
         var search = _.merge($location.search(), uri.query(true));
         log.debug("Going to item id: ", item.id, " href: ", uri.path(), " query: ", search);
@@ -422,7 +420,7 @@ namespace HawtioMainNav {
 
     function gotoFirstAvailableNav() {
       var candidates = [];
-      nav.iterate(function (item) {
+      HawtioNav.iterate(function (item) {
         var isValid = item['isValid'] || function () { return true; };
         var show = item.show || function () { return true; };
         if (isValid() && show()) {
@@ -444,7 +442,7 @@ namespace HawtioMainNav {
       if (search.tab) {
         var tab = search.tab;
         var selected;
-        nav.iterate(function (item) {
+        HawtioNav.iterate(function (item) {
           if (!selected && item.id === tab) {
             selected = item;
           }
@@ -455,7 +453,7 @@ namespace HawtioMainNav {
         }
       }
       var candidates = [];
-      nav.iterate(function (item) {
+      HawtioNav.iterate(function (item) {
         if ('defaultPage' in item) {
           var page = item.defaultPage;
           if (!('rank' in page)) {
@@ -476,12 +474,12 @@ namespace HawtioMainNav {
       });
 
       function welcomePageFallback() {
-        if (welcome.pages.length === 0) {
+        if (WelcomePageRegistry.pages.length === 0) {
           log.debug("No welcome pages, going to first available nav");
           gotoFirstAvailableNav();
           return;
         }
-        var sortedPages = _.sortBy(welcome.pages, function (page) { return page['rank']; });
+        var sortedPages = _.sortBy(WelcomePageRegistry.pages, function (page) { return page['rank']; });
         var page = _.find(sortedPages, function (page) {
           if ('isValid' in page) {
             return page['isValid']();
@@ -528,9 +526,12 @@ namespace HawtioMainNav {
       evalCandidates(candidates);
     }
     $timeout(gotoBestCandidateNav, 500);
-  }]);
+  }
 
-  _module.controller('HawtioNav.ViewController', ['$scope', '$route', '$location', 'layoutFull', 'viewRegistry', function ($scope, $route, $location, layoutFull, viewRegistry) {
+  _module.controller('HawtioNav.ViewController', viewController);
+
+  function viewController($scope, $route, $location, layoutFull, viewRegistry, documentBase: string): void {
+    'ngInject';
 
     findViewPartial();
 
@@ -612,21 +613,24 @@ namespace HawtioMainNav {
       log.debug("Using view partial: " + answer);
       return answer;
     }
-  }]);
+  }
 
-  _module.run(['HawtioNav', '$rootScope', '$route', '$document', function (HawtioNav, $rootScope, $route, $document) {
-    HawtioNav.on(Actions.CHANGED, "$apply", function (item) {
+  _module.run(configureHtmlBase);
+
+  function configureHtmlBase(HawtioNav, $rootScope, $route, documentBase: string): void {
+    'ngInject';
+    HawtioNav.on(Actions.CHANGED, "$apply", (item) => {
       if (!$rootScope.$$phase) {
         $rootScope.$apply();
       }
     });
 
-    var href = documentBase($document);
+    let href = documentBase;
 
-    function applyBaseHref(item) {
+    let applyBaseHref = (item) => {
       if (!item.preBase) {
         item.preBase = item.href;
-        item.href = function () {
+        item.href = () => {
           if (href) {
             var preBase = item.preBase();
             if (preBase && preBase.charAt(0) === '/') {
@@ -637,16 +641,16 @@ namespace HawtioMainNav {
           return item.preBase();
         };
       }
-    }
-    HawtioNav.on(Actions.ADD, "htmlBaseRewriter", function (item) {
+    };
+    HawtioNav.on(Actions.ADD, "htmlBaseRewriter", (item) => {
       if (item.href) {
         applyBaseHref(item);
         _.forEach(item.tabs, applyBaseHref);
       }
     });
-    HawtioNav.on(Actions.ADD, "$apply", function (item) {
-      var oldClick = item.click;
-      item.click = function ($event) {
+    HawtioNav.on(Actions.ADD, "$apply", (item) => {
+      let oldClick = item.click;
+      item.click = ($event) => {
         if (!($event instanceof jQuery.Event)) {
           try {
             if (!$rootScope.$$phase) {
@@ -663,7 +667,7 @@ namespace HawtioMainNav {
     });
     $route.reload();
     log.debug("loaded");
-  }]);
+  }
 
   // helper function for testing nav items
   function itemIsValid(item) {

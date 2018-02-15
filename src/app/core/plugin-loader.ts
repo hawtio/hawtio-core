@@ -63,7 +63,7 @@ namespace Core {
     private deferredTasks: PreBootstrapTask[] = [];
 
     private readonly bootstrapTask: PreBootstrapTask = {
-      name: 'Hawtio Bootstrap',
+      name: 'HawtioBootstrap',
       depends: '*',
       task: (next) => {
         if (this.deferredTasks.length > 0) {

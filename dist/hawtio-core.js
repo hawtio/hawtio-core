@@ -526,6 +526,7 @@ var Core;
          */
         PluginLoader.prototype.loadPlugins = function (callback) {
             var _this = this;
+            Core.log.info("Bootstrapping hawtio app...");
             var plugins = {};
             var urlsToLoad = this.urls.length;
             var totalUrls = urlsToLoad;

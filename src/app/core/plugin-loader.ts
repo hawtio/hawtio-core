@@ -185,6 +185,8 @@ namespace Core {
      * Downloads plugins at any configured URLs and bootstraps the app
      */
     loadPlugins(callback: () => void): void {
+      log.info("Bootstrapping hawtio app...");
+
       let plugins: HawtioPlugins = {};
 
       let urlsToLoad = this.urls.length;

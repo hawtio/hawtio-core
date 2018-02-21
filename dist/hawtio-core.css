@@ -1,7 +1,3 @@
-.help-secondary-tabs {
-  text-transform: capitalize;
-}
-
 .nav-tabs-main {
   display: flex;
   flex-direction: column;
@@ -20,6 +16,10 @@
   position: relative;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+.help-secondary-tabs {
+  text-transform: capitalize;
 }
 
 .navbar-brand-icon,

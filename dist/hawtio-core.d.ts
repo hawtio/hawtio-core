@@ -32,17 +32,6 @@ declare namespace Core {
     const authModule: string;
 }
 declare namespace Core {
-    class HumanizeService {
-        toUpperCase(str: string): string;
-        toLowerCase(str: string): string;
-        toSentenceCase(str: string): string;
-        toTitleCase(str: string): string;
-    }
-}
-declare namespace Core {
-    const commonModule: string;
-}
-declare namespace Core {
     interface Config {
         branding?: {
             [key: string]: string;
@@ -88,6 +77,19 @@ declare namespace Core {
 }
 declare namespace Core {
     function configLoader(next: () => void): void;
+}
+declare namespace Core {
+    class HumanizeService {
+        toUpperCase(str: string): string;
+        toLowerCase(str: string): string;
+        toSentenceCase(str: string): string;
+        toTitleCase(str: string): string;
+    }
+}
+declare namespace Core {
+    const _module: angular.IModule;
+    const coreModule: string;
+    const log: Logging.Logger;
 }
 declare namespace Bootstrap {
 }
@@ -504,7 +506,6 @@ declare namespace Core {
 declare var templateCache: any;
 declare namespace Core {
     const appModule: string;
-    const log: Logging.Logger;
 }
 declare namespace Core {
     class HawtioTabsController {

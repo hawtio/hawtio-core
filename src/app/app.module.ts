@@ -1,7 +1,7 @@
 /// <reference path="auth/auth.module.ts"/>
-/// <reference path="common/common.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="config/config-loader.ts"/>
+/// <reference path="core/core.module.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
 /// <reference path="event-services/event-services.module.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
@@ -18,9 +18,8 @@ namespace Core {
       'ngRoute',
       'ngSanitize',
       authModule,
-      commonModule,
       configModule,
-      HawtioCore.pluginName,
+      coreModule,
       eventServicesModule,
       hawtioExtensionModule,
       helpModule,
@@ -29,8 +28,6 @@ namespace Core {
       templateCache.pluginName
     ])
     .name;
-
-  export const log: Logging.Logger = Logger.get(HawtioCore.pluginName);
 
   hawtioPluginLoader
     .addModule(appModule)

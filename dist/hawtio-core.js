@@ -90,35 +90,6 @@ var Core;
         .service('userDetails', Core.UserDetails)
         .name;
 })(Core || (Core = {}));
-var Core;
-(function (Core) {
-    var HumanizeService = /** @class */ (function () {
-        function HumanizeService() {
-        }
-        HumanizeService.prototype.toUpperCase = function (str) {
-            return _.upperCase(str);
-        };
-        HumanizeService.prototype.toLowerCase = function (str) {
-            return _.lowerCase(str);
-        };
-        HumanizeService.prototype.toSentenceCase = function (str) {
-            return _.capitalize(_.lowerCase(str));
-        };
-        HumanizeService.prototype.toTitleCase = function (str) {
-            return _.startCase(_.lowerCase(str));
-        };
-        return HumanizeService;
-    }());
-    Core.HumanizeService = HumanizeService;
-})(Core || (Core = {}));
-/// <reference path="humanize/humanize.service.ts"/>
-var Core;
-(function (Core) {
-    Core.commonModule = angular
-        .module('hawtio-common', [])
-        .service('humanizeService', Core.HumanizeService)
-        .name;
-})(Core || (Core = {}));
 /// <reference path="config.ts"/>
 var Core;
 (function (Core) {
@@ -235,6 +206,36 @@ var Core;
         });
     }
     Core.configLoader = configLoader;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    var HumanizeService = /** @class */ (function () {
+        function HumanizeService() {
+        }
+        HumanizeService.prototype.toUpperCase = function (str) {
+            return _.upperCase(str);
+        };
+        HumanizeService.prototype.toLowerCase = function (str) {
+            return _.lowerCase(str);
+        };
+        HumanizeService.prototype.toSentenceCase = function (str) {
+            return _.capitalize(_.lowerCase(str));
+        };
+        HumanizeService.prototype.toTitleCase = function (str) {
+            return _.startCase(_.lowerCase(str));
+        };
+        return HumanizeService;
+    }());
+    Core.HumanizeService = HumanizeService;
+})(Core || (Core = {}));
+/// <reference path="humanize/humanize.service.ts"/>
+var Core;
+(function (Core) {
+    Core._module = angular
+        .module('hawtio-core', [])
+        .service('humanizeService', Core.HumanizeService);
+    Core.coreModule = Core._module.name;
+    Core.log = Logger.get(Core.coreModule);
 })(Core || (Core = {}));
 var Bootstrap;
 (function (Bootstrap) {
@@ -810,6 +811,7 @@ var Core;
     }());
     Core.PluginLoader = PluginLoader;
 })(Core || (Core = {}));
+/// <reference path="core.module.ts"/>
 /// <reference path="logging-init.ts"/>
 /// <reference path="plugin-loader.ts"/>
 /*
@@ -835,16 +837,7 @@ var HawtioCore = (function () {
         configurable: true
     });
     var HawtioCore = new HawtioCoreClass();
-    /**
-     * This plugin's name and angular module
-     */
-    HawtioCore.pluginName = "hawtio-core";
-    /**
-     * This plugins logger instance
-     */
-    var log = Logger.get(HawtioCore.pluginName);
-    var _module = angular
-        .module(HawtioCore.pluginName, [])
+    Core._module
         .config(["$locationProvider", function ($locationProvider) {
             $locationProvider.html5Mode(true);
         }])
@@ -869,7 +862,7 @@ var HawtioCore = (function () {
             answer = base.attr('href');
         }
         else {
-            log.warn("Document is missing a 'base' tag, defaulting to '/'");
+            Core.log.warn("Document is missing a 'base' tag, defaulting to '/'");
         }
         return answer;
     };
@@ -945,21 +938,21 @@ var HawtioCore = (function () {
         }
         hawtioPluginLoader.loadPlugins(function () {
             if (HawtioCore.injector || HawtioCore.UpgradeAdapterRef) {
-                log.debug("Application already bootstrapped");
+                Core.log.debug("Application already bootstrapped");
                 return;
             }
             var bootstrapEl = hawtioPluginLoader.getBootstrapElement();
-            log.debug("Using bootstrap element:", bootstrapEl);
+            Core.log.debug("Using bootstrap element:", bootstrapEl);
             // bootstrap in hybrid mode if angular2 is detected
             if (HawtioCore.UpgradeAdapter) {
-                log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
+                Core.log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
                 HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), { strictDi: true });
                 HawtioCore._injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
             }
             else {
                 HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), { strictDi: true });
             }
-            log.debug("Bootstrapped application");
+            Core.log.debug("Bootstrapped application");
         });
     });
     return HawtioCore;
@@ -2784,9 +2777,9 @@ var templateCache;
         }]);
 })(templateCache || (templateCache = {}));
 /// <reference path="auth/auth.module.ts"/>
-/// <reference path="common/common.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="config/config-loader.ts"/>
+/// <reference path="core/core.module.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
 /// <reference path="event-services/event-services.module.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
@@ -2802,7 +2795,6 @@ var Core;
         'ngRoute',
         'ngSanitize',
         Core.authModule,
-        Core.commonModule,
         Core.configModule,
         HawtioCore.pluginName,
         Core.eventServicesModule,

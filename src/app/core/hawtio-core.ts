@@ -1,3 +1,4 @@
+/// <reference path="core.module.ts"/>
 /// <reference path="logging-init.ts"/>
 /// <reference path="plugin-loader.ts"/>
 
@@ -30,17 +31,7 @@ let HawtioCore: HawtioCore = (function () {
 
   let HawtioCore = new HawtioCoreClass();
 
-  /**
-   * This plugin's name and angular module
-   */
-  HawtioCore.pluginName = "hawtio-core";
-  /**
-   * This plugins logger instance
-   */
-  const log = Logger.get(HawtioCore.pluginName);
-
-  const _module = angular
-    .module(HawtioCore.pluginName, [])
+  Core._module = angular
     .config(["$locationProvider", ($locationProvider) => {
       $locationProvider.html5Mode(true);
     }])
@@ -66,7 +57,7 @@ let HawtioCore: HawtioCore = (function () {
     if (base && base.length > 0) {
       answer = base.attr('href');
     } else {
-      log.warn("Document is missing a 'base' tag, defaulting to '/'");
+      Core.log.warn("Document is missing a 'base' tag, defaulting to '/'");
     }
     return answer;
   }
@@ -75,7 +66,7 @@ let HawtioCore: HawtioCore = (function () {
    * services, mostly stubs
    */
 
-  _module
+  Core._module
     // localStorage service, returns a dummy impl
     // if for some reason it's not in the window
     // object
@@ -163,16 +154,16 @@ let HawtioCore: HawtioCore = (function () {
 
     hawtioPluginLoader.loadPlugins(() => {
       if (HawtioCore.injector || HawtioCore.UpgradeAdapterRef) {
-        log.debug("Application already bootstrapped");
+        Core.log.debug("Application already bootstrapped");
         return;
       }
 
       let bootstrapEl = hawtioPluginLoader.getBootstrapElement();
-      log.debug("Using bootstrap element:", bootstrapEl);
+      Core.log.debug("Using bootstrap element:", bootstrapEl);
 
       // bootstrap in hybrid mode if angular2 is detected
       if (HawtioCore.UpgradeAdapter) {
-        log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
+        Core.log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
         HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(
           bootstrapEl,
           hawtioPluginLoader.getModules(),
@@ -185,7 +176,7 @@ let HawtioCore: HawtioCore = (function () {
           { strictDi: true });
       }
 
-      log.debug("Bootstrapped application");
+      Core.log.debug("Bootstrapped application");
     });
   });
 

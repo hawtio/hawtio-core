@@ -4,35 +4,30 @@ namespace Core {
 
   export class HelpController {
 
-    breadcrumbs: HelpTopic[];
-    sections: HelpTopic[];
+    topics: HelpTopic[];
     selectedTopic: HelpTopic;
-    selectedBreadcrumb: HelpTopic;
+    subTopics: HelpTopic[];
+    selectedSubTopic: HelpTopic;
     html: any;
 
     constructor($rootScope, private helpService: HelpService, private $sce: ng.ISCEService) {
       'ngInject';
-      $rootScope.$on('hawtioNewHelpTopic', function () {
-        this.breadcrumbs = this.helpService.getBreadcrumbs();
-        this.sections = this.helpService.getSections();
-      });
     }
 
     $onInit() {
-      this.breadcrumbs = this.helpService.getBreadcrumbs();
-      this.sections = this.helpService.getSections();
-      this.onSelectBreadcrumb(this.helpService.getTopic('index', 'user'));
+      this.topics = this.helpService.getTopics();
+      this.onSelectTopic(this.helpService.getTopic('index', 'user'));
     }
 
     onSelectTopic(topic: HelpTopic) {
       this.selectedTopic = topic;
-      this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(topic));
+      this.subTopics = this.helpService.getSubTopics(topic);
+      this.onSelectSubTopic(this.subTopics[0]);
     }
 
-    onSelectBreadcrumb(topic: HelpTopic) {
-      this.selectedBreadcrumb = topic;
-      this.selectedTopic = null;
-      this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(topic));
+    onSelectSubTopic(subTopic: HelpTopic) {
+      this.selectedSubTopic = subTopic;
+      this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(subTopic));
     }
   }
 

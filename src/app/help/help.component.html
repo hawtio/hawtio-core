@@ -1,13 +1,15 @@
 <div>
   <h1>Help</h1>
   <ul class="nav nav-tabs">
-    <li ng-repeat="breadcrumb in $ctrl.breadcrumbs" ng-class="{active : breadcrumb === $ctrl.selectedBreadcrumb}">
-      <a href="#" ng-click="$ctrl.onSelectBreadcrumb(breadcrumb)">{{breadcrumb.label}}</a>
+    <li ng-repeat="topic in $ctrl.topics" ng-class="{active : topic === $ctrl.selectedTopic}">
+      <a href="#" ng-click="$ctrl.onSelectTopic(topic)">{{topic.label}}</a>
     </li>
   </ul>
-  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs">
-    <li ng-repeat="section in $ctrl.sections" ng-class="{active : section === $ctrl.selectedTopic}">
-      <a ng-href="#" ng-click="$ctrl.onSelectTopic(section)">{{section.label}}</a>
+  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs" ng-if="$ctrl.subTopics.length > 1">
+    <li ng-repeat="subTopic in $ctrl.subTopics" ng-class="{active : subTopic === $ctrl.selectedSubTopic}">
+      <a ng-href="#" ng-click="$ctrl.onSelectSubTopic(subTopic)">
+        {{subTopic.label === $ctrl.selectedTopic.label ? 'Home' : subTopic.label}}
+      </a>
     </li>
   </ul>
   <div ng-bind-html="$ctrl.html"></div>

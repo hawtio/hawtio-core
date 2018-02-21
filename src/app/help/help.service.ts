@@ -19,28 +19,15 @@ namespace Core {
       });
     }
 
-    getBreadcrumbs(): HelpTopic[] {
-      return this.helpRegistry.getTopics().filter((topic) => {
-        if (topic.isIndexTopic() === true) {
-          topic.label = this.helpRegistry.mapSubTopicName(topic.subTopicName);
-          return topic;
-        }
-      });
-    }
-
-    getSections(): HelpTopic[] {
-      let sections = this.helpRegistry.getTopics().filter((topic) => {
-        if (topic.isIndexTopic() === false) {
-          topic.label = this.helpRegistry.mapTopicName(topic.topicName);
-          return topic;
-        }
-      });
-
-      return _.sortBy(sections, 'label');
-    }
-
     getTopics(): HelpTopic[] {
-      return this.helpRegistry.getTopics();
+      return this.helpRegistry.getTopics().filter(topic => topic.isIndexTopic());
+    }
+
+    getSubTopics(topic: HelpTopic): HelpTopic[] {
+      let otherSubTopics = this.helpRegistry.getTopics().filter(t => !t.isIndexTopic() &&
+        t.subTopicName === topic.subTopicName);
+      otherSubTopics = _.sortBy(otherSubTopics, 'label');
+      return [topic, ...otherSubTopics];
     }
 
     getTopic(topicName: string, subTopicName: string): HelpTopic {

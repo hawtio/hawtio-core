@@ -1024,26 +1024,23 @@ var Core;
                 topic.subTopicName = subTopicName;
                 topic.path = path;
                 topic.isValid = isValid;
+                topic.label = topic.isIndexTopic() ? this.getLabel(subTopicName) : this.getLabel(topicName);
                 this.topics.push(topic);
                 this.$rootScope.$broadcast('hawtioNewHelpTopic');
             }
             return topic;
         };
-        HelpRegistry.prototype.mapTopicName = function (name) {
+        HelpRegistry.prototype.getLabel = function (name) {
             if (angular.isDefined(this.topicNameMappings[name])) {
                 return this.topicNameMappings[name];
             }
-            return name;
-        };
-        HelpRegistry.prototype.mapSubTopicName = function (name) {
             if (angular.isDefined(this.subTopicNameMappings[name])) {
                 return this.subTopicNameMappings[name];
             }
             return name;
         };
         HelpRegistry.prototype.getTopics = function () {
-            var answer = this.topics.filter(function (topic) { return topic.isValid(); });
-            return answer;
+            return this.topics.filter(function (topic) { return topic.isValid(); });
         };
         HelpRegistry.prototype.getTopic = function (topicName, subTopicName) {
             return this.topics.filter(function (topic) {
@@ -1074,27 +1071,14 @@ var Core;
                 langPrefix: 'language-'
             });
         }
-        HelpService.prototype.getBreadcrumbs = function () {
-            var _this = this;
-            return this.helpRegistry.getTopics().filter(function (topic) {
-                if (topic.isIndexTopic() === true) {
-                    topic.label = _this.helpRegistry.mapSubTopicName(topic.subTopicName);
-                    return topic;
-                }
-            });
-        };
-        HelpService.prototype.getSections = function () {
-            var _this = this;
-            var sections = this.helpRegistry.getTopics().filter(function (topic) {
-                if (topic.isIndexTopic() === false) {
-                    topic.label = _this.helpRegistry.mapTopicName(topic.topicName);
-                    return topic;
-                }
-            });
-            return _.sortBy(sections, 'label');
-        };
         HelpService.prototype.getTopics = function () {
-            return this.helpRegistry.getTopics();
+            return this.helpRegistry.getTopics().filter(function (topic) { return topic.isIndexTopic(); });
+        };
+        HelpService.prototype.getSubTopics = function (topic) {
+            var otherSubTopics = this.helpRegistry.getTopics().filter(function (t) { return !t.isIndexTopic() &&
+                t.subTopicName === topic.subTopicName; });
+            otherSubTopics = _.sortBy(otherSubTopics, 'label');
+            return [topic].concat(otherSubTopics);
         };
         HelpService.prototype.getTopic = function (topicName, subTopicName) {
             return this.helpRegistry.getTopic(topicName, subTopicName);
@@ -1126,24 +1110,19 @@ var Core;
             'ngInject';
             this.helpService = helpService;
             this.$sce = $sce;
-            $rootScope.$on('hawtioNewHelpTopic', function () {
-                this.breadcrumbs = this.helpService.getBreadcrumbs();
-                this.sections = this.helpService.getSections();
-            });
         }
         HelpController.prototype.$onInit = function () {
-            this.breadcrumbs = this.helpService.getBreadcrumbs();
-            this.sections = this.helpService.getSections();
-            this.onSelectBreadcrumb(this.helpService.getTopic('index', 'user'));
+            this.topics = this.helpService.getTopics();
+            this.onSelectTopic(this.helpService.getTopic('index', 'user'));
         };
         HelpController.prototype.onSelectTopic = function (topic) {
             this.selectedTopic = topic;
-            this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(topic));
+            this.subTopics = this.helpService.getSubTopics(topic);
+            this.onSelectSubTopic(this.subTopics[0]);
         };
-        HelpController.prototype.onSelectBreadcrumb = function (topic) {
-            this.selectedBreadcrumb = topic;
-            this.selectedTopic = null;
-            this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(topic));
+        HelpController.prototype.onSelectSubTopic = function (subTopic) {
+            this.selectedSubTopic = subTopic;
+            this.html = this.$sce.trustAsHtml(this.helpService.getHelpContent(subTopic));
         };
         return HelpController;
     }());
@@ -2738,7 +2717,7 @@ var Core;
     HawtioMainNav._module.component('hawtioTabs', Core.hawtioTabsComponent);
 })(Core || (Core = {}));
 
-angular.module('hawtio-core').run(['$templateCache', function($templateCache) {$templateCache.put('help/help.component.html','<div>\n  <h1>Help</h1>\n  <ul class="nav nav-tabs">\n    <li ng-repeat="breadcrumb in $ctrl.breadcrumbs" ng-class="{active : breadcrumb === $ctrl.selectedBreadcrumb}">\n      <a href="#" ng-click="$ctrl.onSelectBreadcrumb(breadcrumb)">{{breadcrumb.label}}</a>\n    </li>\n  </ul>\n  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs">\n    <li ng-repeat="section in $ctrl.sections" ng-class="{active : section === $ctrl.selectedTopic}">\n      <a ng-href="#" ng-click="$ctrl.onSelectTopic(section)">{{section.label}}</a>\n    </li>\n  </ul>\n  <div ng-bind-html="$ctrl.html"></div>\n</div>\n');
+angular.module('hawtio-core').run(['$templateCache', function($templateCache) {$templateCache.put('help/help.component.html','<div>\n  <h1>Help</h1>\n  <ul class="nav nav-tabs">\n    <li ng-repeat="topic in $ctrl.topics" ng-class="{active : topic === $ctrl.selectedTopic}">\n      <a href="#" ng-click="$ctrl.onSelectTopic(topic)">{{topic.label}}</a>\n    </li>\n  </ul>\n  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs" ng-if="$ctrl.subTopics.length > 1">\n    <li ng-repeat="subTopic in $ctrl.subTopics" ng-class="{active : subTopic === $ctrl.selectedSubTopic}">\n      <a ng-href="#" ng-click="$ctrl.onSelectSubTopic(subTopic)">\n        {{subTopic.label === $ctrl.selectedTopic.label ? \'Home\' : subTopic.label}}\n      </a>\n    </li>\n  </ul>\n  <div ng-bind-html="$ctrl.html"></div>\n</div>\n');
 $templateCache.put('navigation/templates/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
 $templateCache.put('navigation/templates/layoutTest.html','<div>\n  <h1>Test Layout</h1>\n  <div ng-view>\n\n\n  </div>\n</div>\n\n\n');
 $templateCache.put('navigation/templates/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
@@ -2748,5 +2727,5 @@ $templateCache.put('navigation/templates/welcome.html','<div ng-controller="Hawt
 $templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
 $templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
-$templateCache.put('help/help.md','### Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar on the left.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
+$templateCache.put('help/help.md','### Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
 $templateCache.put('preferences/help.md','## Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');}]);

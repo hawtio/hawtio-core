@@ -51,6 +51,7 @@ namespace Core {
         topic.subTopicName = subTopicName;
         topic.path = path;
         topic.isValid = isValid;
+        topic.label = topic.isIndexTopic() ? this.getLabel(subTopicName) : this.getLabel(topicName);
 
         this.topics.push(topic);
         this.$rootScope.$broadcast('hawtioNewHelpTopic');
@@ -58,14 +59,10 @@ namespace Core {
       return topic;
     }
 
-    public mapTopicName(name): string {
+    public getLabel(name): string {
       if (angular.isDefined(this.topicNameMappings[name])) {
         return this.topicNameMappings[name];
       }
-      return name;
-    }
-
-    public mapSubTopicName(name): string {
       if (angular.isDefined(this.subTopicNameMappings[name])) {
         return this.subTopicNameMappings[name];
       }
@@ -73,8 +70,7 @@ namespace Core {
     }
 
     public getTopics(): HelpTopic[] {
-      let answer = this.topics.filter((topic) => topic.isValid());
-      return answer;
+      return this.topics.filter((topic) => topic.isValid());
     }
 
     public getTopic(topicName: string, subTopicName: string): HelpTopic {

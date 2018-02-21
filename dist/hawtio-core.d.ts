@@ -234,8 +234,7 @@ declare namespace Core {
         addDevDoc(topicName: string, path: string, isValid?: () => boolean): void;
         addSubTopic(topicName: string, subtopic: string, path: any, isValid?: () => boolean): void;
         getOrCreateTopic(topicName: string, subTopicName: string, path: string, isValid?: () => boolean): HelpTopic;
-        mapTopicName(name: any): string;
-        mapSubTopicName(name: any): string;
+        getLabel(name: any): string;
         getTopics(): HelpTopic[];
         getTopic(topicName: string, subTopicName: string): HelpTopic;
     }
@@ -245,9 +244,8 @@ declare namespace Core {
         private $templateCache;
         private helpRegistry;
         constructor($templateCache: any, helpRegistry: HelpRegistry);
-        getBreadcrumbs(): HelpTopic[];
-        getSections(): HelpTopic[];
         getTopics(): HelpTopic[];
+        getSubTopics(topic: HelpTopic): HelpTopic[];
         getTopic(topicName: string, subTopicName: string): HelpTopic;
         getHelpContent(topic: HelpTopic): string;
     }
@@ -256,15 +254,15 @@ declare namespace Core {
     class HelpController {
         private helpService;
         private $sce;
-        breadcrumbs: HelpTopic[];
-        sections: HelpTopic[];
+        topics: HelpTopic[];
         selectedTopic: HelpTopic;
-        selectedBreadcrumb: HelpTopic;
+        subTopics: HelpTopic[];
+        selectedSubTopic: HelpTopic;
         html: any;
         constructor($rootScope: any, helpService: HelpService, $sce: ng.ISCEService);
         $onInit(): void;
         onSelectTopic(topic: HelpTopic): void;
-        onSelectBreadcrumb(topic: HelpTopic): void;
+        onSelectSubTopic(subTopic: HelpTopic): void;
     }
     const helpComponent: angular.IComponentOptions;
 }

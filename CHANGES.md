@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 3.2.12
+* Consolidate login/logout functions into `UserDetails` and discontinue `AuthService`.
+  Now you can use `postLoginTasks`/`preLogoutTasks`/`postLogoutTasks` services to
+  enhance login/logout behaviours.
+
 #### 3.2.11
 * Add `PreBootstrapTask` type to `PluginLoader`
 

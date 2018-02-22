@@ -1,12 +1,32 @@
 /// <reference types="angular-route" />
 /// <reference types="angular" />
 declare namespace Core {
-    interface AuthService {
+    const connectionSettingsKey = "jvmConnect";
+    /**
+     * UserDetails service that represents user credentials and login/logout actions.
+     */
+    class UserDetails {
+        private postLoginTasks;
+        private preLogoutTasks;
+        private postLogoutTasks;
+        private localStorage;
+        username: string;
+        password: string;
+        token: string;
+        constructor(postLoginTasks: Tasks, preLogoutTasks: Tasks, postLogoutTasks: Tasks, localStorage: Storage);
+        /**
+         * Log in as a specific user.
+         */
+        login(username: string, password: string, token?: string): void;
+        /**
+         * Log out the current user.
+         */
         logout(): void;
+        private clear();
     }
-    class DummyAuthService implements AuthService {
-        logout(): void;
-    }
+}
+declare namespace Core {
+    function getBasicAuthHeader(username: string, password: string): string;
 }
 declare namespace Core {
     const authModule: string;
@@ -147,7 +167,9 @@ declare namespace Core {
          */
         addUrl(url: string): PluginLoader;
         /**
-         * Return the current list of configured modules
+         * Return the current list of configured modules.
+         *
+         * It is invoked from HawtioCore's bootstrapping.
          */
         getModules(): string[];
         /**
@@ -156,7 +178,9 @@ declare namespace Core {
          */
         setLoaderCallback(callback: PluginLoaderCallback): PluginLoader;
         /**
-         * Downloads plugins at any configured URLs and bootstraps the app
+         * Downloads plugins at any configured URLs and bootstraps the app.
+         *
+         * It is invoked from HawtioCore's bootstrapping.
          */
         loadPlugins(callback: () => void): void;
         private loadScripts(plugins, callback);
@@ -198,6 +222,34 @@ interface HawtioCore {
      * which contains the angular1 injector (As well as the angular2 root injector)
      */
     UpgradeAdapterRef: any;
+}
+declare namespace Core {
+    type TaskMap = {
+        [name: string]: () => void;
+    };
+    type ParameterizedTaskMap = {
+        [name: string]: (...params: any[]) => void;
+    };
+    class Tasks {
+        protected name: string;
+        protected tasks: TaskMap;
+        protected tasksExecuted: boolean;
+        constructor(name: string);
+        addTask(name: string, task: () => void): Tasks;
+        execute(callback?: () => void): void;
+        private executeTask(name, task);
+        reset(): void;
+    }
+    class ParameterizedTasks extends Tasks {
+        protected tasks: ParameterizedTaskMap;
+        constructor(name: string);
+        addTask(name: string, task: (...params: any[]) => void): Tasks;
+        execute(...params: any[]): void;
+        private executeParameterizedTask(name, task, params);
+    }
+}
+declare namespace Core {
+    const eventServicesModule: string;
 }
 declare namespace Core {
     class HawtioExtension {

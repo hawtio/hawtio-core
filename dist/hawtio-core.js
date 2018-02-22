@@ -1,21 +1,93 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Core;
 (function (Core) {
-    var DummyAuthService = /** @class */ (function () {
-        function DummyAuthService() {
+    Core.connectionSettingsKey = 'jvmConnect';
+    var DEFAULT_USER = 'public';
+    /**
+     * UserDetails service that represents user credentials and login/logout actions.
+     */
+    var UserDetails = /** @class */ (function () {
+        UserDetails.$inject = ["postLoginTasks", "preLogoutTasks", "postLogoutTasks", "localStorage"];
+        function UserDetails(postLoginTasks, preLogoutTasks, postLogoutTasks, localStorage) {
+            'ngInject';
+            this.postLoginTasks = postLoginTasks;
+            this.preLogoutTasks = preLogoutTasks;
+            this.postLogoutTasks = postLogoutTasks;
+            this.localStorage = localStorage;
+            this.username = DEFAULT_USER;
+            this.password = null;
+            this.token = null;
         }
-        DummyAuthService.prototype.logout = function () {
-            // do nothing
+        /**
+         * Log in as a specific user.
+         */
+        UserDetails.prototype.login = function (username, password, token) {
+            var _this = this;
+            this.username = username;
+            this.password = password;
+            if (token) {
+                this.token = token;
+            }
+            this.postLoginTasks.execute(function () {
+                Core.log.info('Logged in as', _this.username);
+            });
         };
-        return DummyAuthService;
+        /**
+         * Log out the current user.
+         */
+        UserDetails.prototype.logout = function () {
+            var _this = this;
+            this.preLogoutTasks.execute(function () {
+                _this.clear();
+                _this.postLogoutTasks.execute(function () {
+                    Core.log.debug('Logged out.');
+                });
+            });
+        };
+        UserDetails.prototype.clear = function () {
+            this.username = DEFAULT_USER;
+            this.password = null;
+            this.token = null;
+            // cleanup local storage
+            // TODO This should be moved to plugins where the local storage values are added
+            var jvmConnect = angular.fromJson(this.localStorage[Core.connectionSettingsKey]);
+            _.forOwn(jvmConnect, function (property) {
+                delete property['userName'];
+                delete property['password'];
+            });
+            this.localStorage.setItem(Core.connectionSettingsKey, angular.toJson(jvmConnect));
+            this.localStorage.removeItem('activemqUserName');
+            this.localStorage.removeItem('activemqPassword');
+        };
+        return UserDetails;
     }());
-    Core.DummyAuthService = DummyAuthService;
+    Core.UserDetails = UserDetails;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    function getBasicAuthHeader(username, password) {
+        var authInfo = username + ":" + password;
+        authInfo = window.btoa(authInfo);
+        return "Basic " + authInfo;
+    }
+    Core.getBasicAuthHeader = getBasicAuthHeader;
 })(Core || (Core = {}));
 /// <reference path="auth.service.ts"/>
+/// <reference path="auth.helper.ts"/>
 var Core;
 (function (Core) {
     Core.authModule = angular
-        .module('hawtio-auth', [])
-        .service('authService', Core.DummyAuthService)
+        .module('hawtio-core-auth', [])
+        .service('userDetails', Core.UserDetails)
         .name;
 })(Core || (Core = {}));
 var Core;
@@ -508,7 +580,9 @@ var Core;
         };
         ;
         /**
-         * Return the current list of configured modules
+         * Return the current list of configured modules.
+         *
+         * It is invoked from HawtioCore's bootstrapping.
          */
         PluginLoader.prototype.getModules = function () {
             return this.modules;
@@ -522,7 +596,9 @@ var Core;
             return this;
         };
         /**
-         * Downloads plugins at any configured URLs and bootstraps the app
+         * Downloads plugins at any configured URLs and bootstraps the app.
+         *
+         * It is invoked from HawtioCore's bootstrapping.
          */
         PluginLoader.prototype.loadPlugins = function (callback) {
             var _this = this;
@@ -772,9 +848,7 @@ var HawtioCore = (function () {
         .config(["$locationProvider", function ($locationProvider) {
             $locationProvider.html5Mode(true);
         }])
-        .run(['documentBase', function (documentBase) {
-            log.debug("loaded");
-        }]);
+        .run(['documentBase', function (documentBase) { return log.debug("HawtioCore loaded at", documentBase); }]);
     var dummyLocalStorage = {
         length: 0,
         key: function (index) { return undefined; },
@@ -802,21 +876,13 @@ var HawtioCore = (function () {
     /**
      * services, mostly stubs
      */
-    // localStorage service, returns a dummy impl
-    // if for some reason it's not in the window
-    // object
-    _module.factory('localStorage', function () { return window.localStorage || dummyLocalStorage; });
-    // Holds the document base so plugins can easily
-    // figure out absolute URLs when needed
-    _module.factory('documentBase', function () { return HawtioCore.documentBase(); });
-    // Holds a mapping of plugins to layouts, plugins use 
-    // this to specify a full width view, tree view or their 
-    // own custom view
-    _module.factory('viewRegistry', function () {
+    _module
+        .factory('localStorage', function () { return window.localStorage || dummyLocalStorage; })
+        .factory('documentBase', function () { return HawtioCore.documentBase(); })
+        .factory('viewRegistry', function () {
         return {};
-    });
-    // Placeholder service for the page title service
-    _module.factory('pageTitle', function () {
+    })
+        .factory('pageTitle', function () {
         return {
             addTitleElement: function () { },
             getTitle: function () { return undefined; },
@@ -824,9 +890,8 @@ var HawtioCore = (function () {
             getTitleExcluding: function () { return undefined; },
             getTitleArrayExcluding: function () { return undefined; }
         };
-    });
-    // service for the javascript object that does notifications
-    _module.factory('toastr', ["$window", function ($window) {
+    })
+        .factory('toastr', ["$window", function ($window) {
             var answer = $window.toastr;
             if (!answer) {
                 // lets avoid any NPEs
@@ -834,20 +899,11 @@ var HawtioCore = (function () {
                 $window.toastr = answer;
             }
             return answer;
-        }]);
-    _module.factory('HawtioDashboard', function () {
+        }]).factory('HawtioDashboard', function () {
         return {
             hasDashboard: false,
             inDashboard: false,
             getAddLink: function () { return ''; }
-        };
-    });
-    // Placeholder user details service
-    _module.factory('userDetails', function () {
-        return {
-            logout: function () {
-                log.debug("Dummy userDetails.logout()");
-            }
         };
     });
     // bootstrap the app
@@ -908,6 +964,120 @@ var HawtioCore = (function () {
     });
     return HawtioCore;
 })();
+var Core;
+(function (Core) {
+    var log = Logger.get("hawtio-core-tasks");
+    var Tasks = /** @class */ (function () {
+        function Tasks(name) {
+            this.name = name;
+            this.tasks = {};
+            this.tasksExecuted = false;
+        }
+        Tasks.prototype.addTask = function (name, task) {
+            this.tasks[name] = task;
+            if (this.tasksExecuted) {
+                this.executeTask(name, task);
+            }
+            return this;
+        };
+        Tasks.prototype.execute = function (callback) {
+            var _this = this;
+            log.debug("Executing tasks:", this.name);
+            if (this.tasksExecuted) {
+                return;
+            }
+            _.forOwn(this.tasks, function (task, name) { return _this.executeTask(name, task); });
+            this.tasksExecuted = true;
+            if (!_.isNil(callback)) {
+                callback();
+            }
+        };
+        Tasks.prototype.executeTask = function (name, task) {
+            if (_.isNull(task)) {
+                return;
+            }
+            log.debug("Executing task:", name);
+            try {
+                task();
+            }
+            catch (error) {
+                log.debug("Failed to execute task:", name, "error:", error);
+            }
+        };
+        Tasks.prototype.reset = function () {
+            this.tasksExecuted = false;
+        };
+        return Tasks;
+    }());
+    Core.Tasks = Tasks;
+    var ParameterizedTasks = /** @class */ (function (_super) {
+        __extends(ParameterizedTasks, _super);
+        function ParameterizedTasks(name) {
+            var _this = _super.call(this, name) || this;
+            _this.tasks = {};
+            return _this;
+        }
+        ParameterizedTasks.prototype.addTask = function (name, task) {
+            this.tasks[name] = task;
+            return this;
+        };
+        ParameterizedTasks.prototype.execute = function () {
+            var _this = this;
+            var params = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                params[_i] = arguments[_i];
+            }
+            log.debug("Executing tasks:", this.name);
+            if (this.tasksExecuted) {
+                return;
+            }
+            _.forOwn(this.tasks, function (task, name) { return _this.executeParameterizedTask(name, task, params); });
+            this.tasksExecuted = true;
+            this.reset();
+        };
+        ParameterizedTasks.prototype.executeParameterizedTask = function (name, task, params) {
+            if (_.isNull(task)) {
+                return;
+            }
+            log.debug("Executing task:", name, "with parameters:", params);
+            try {
+                task.apply(task, params);
+            }
+            catch (e) {
+                log.debug("Failed to execute task:", name, "error:", e);
+            }
+        };
+        return ParameterizedTasks;
+    }(Tasks));
+    Core.ParameterizedTasks = ParameterizedTasks;
+})(Core || (Core = {}));
+/// <reference path="tasks.ts"/>
+var Core;
+(function (Core) {
+    initializeTasks.$inject = ["$rootScope", "locationChangeStartTasks", "postLoginTasks", "preLogoutTasks", "postLogoutTasks"];
+    Core.eventServicesModule = angular
+        .module('hawtio-core-event-services', [])
+        .factory('locationChangeStartTasks', function () { return new Core.ParameterizedTasks('LocationChangeStartTasks'); })
+        .factory('postLoginTasks', function () { return new Core.Tasks('PostLogin'); })
+        .factory('preLogoutTasks', function () { return new Core.Tasks('PreLogout'); })
+        .factory('postLogoutTasks', function () { return new Core.Tasks('PostLogout'); })
+        .run(initializeTasks)
+        .name;
+    function initializeTasks($rootScope, locationChangeStartTasks, postLoginTasks, preLogoutTasks, postLogoutTasks) {
+        'ngInject';
+        // Reset pre/post-logout tasks after login
+        postLoginTasks
+            .addTask("ResetPreLogoutTasks", function () { return preLogoutTasks.reset(); })
+            .addTask("ResetPostLogoutTasks", function () { return postLogoutTasks.reset(); });
+        // Reset pre-login tasks before logout
+        preLogoutTasks
+            .addTask("ResetPostLoginTasks", function () { return postLoginTasks.reset(); });
+        $rootScope.$on('$locationChangeStart', function ($event, newUrl, oldUrl) {
+            return locationChangeStartTasks.execute($event, newUrl, oldUrl);
+        });
+        Core.log.debug("Event services loaded");
+    }
+})(Core || (Core = {}));
 var Core;
 (function (Core) {
     var HawtioExtension = /** @class */ (function () {
@@ -2618,6 +2788,7 @@ var templateCache;
 /// <reference path="config/config.module.ts"/>
 /// <reference path="config/config-loader.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
+/// <reference path="event-services/event-services.module.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
@@ -2634,6 +2805,7 @@ var Core;
         Core.commonModule,
         Core.configModule,
         HawtioCore.pluginName,
+        Core.eventServicesModule,
         Core.hawtioExtensionModule,
         Core.helpModule,
         HawtioMainNav.pluginName,
@@ -2641,11 +2813,11 @@ var Core;
         templateCache.pluginName
     ])
         .name;
-    Core.log = Logger.get('hawtio-core');
+    Core.log = Logger.get(HawtioCore.pluginName);
     hawtioPluginLoader
         .addModule(Core.appModule)
         .registerPreBootstrapTask({
-        name: 'ConfigLoader',
+        name: 'HawtioConfigLoader',
         task: Core.configLoader
     });
 })(Core || (Core = {}));

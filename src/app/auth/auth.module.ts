@@ -5,7 +5,7 @@ namespace Core {
 
   export const authModule = angular
     .module('hawtio-core-auth', [])
-    .service('userDetails', UserDetails)
+    .service('userDetails', AuthService)
     .name;
 
 }

@@ -5,9 +5,14 @@ namespace Core {
   const DEFAULT_USER: string = 'public';
 
   /**
+   * @deprecated TODO Temporal type alias to avoid breaking existing code
+   */
+  export type UserDetails = AuthService;
+
+  /**
    * UserDetails service that represents user credentials and login/logout actions.
    */
-  export class UserDetails {
+  export class AuthService {
 
     username: string = DEFAULT_USER;
     password: string = null;

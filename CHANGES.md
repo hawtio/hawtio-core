@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 3.2.13
+* Put back `AuthService` and deprecate `UserDetails` class name
+
 #### 3.2.12
 * Consolidate login/logout functions into `UserDetails` and discontinue `AuthService`.
   Now you can use `postLoginTasks`/`preLogoutTasks`/`postLogoutTasks` services to

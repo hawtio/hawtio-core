@@ -3,12 +3,13 @@
 /// <reference path="help.service.ts"/>
 /// <reference path="help-registry.ts"/>
 
-namespace Core {
+namespace Help {
 
   export const helpModule = angular
     .module('hawtio-help', [])
-    .config(HelpConfig)
-    .run(HelpRun)
+    .config(configureRoutes)
+    .run(configureDocumentation)
+    .run(configureMenu)
     .component('help', helpComponent)
     .service('helpService', HelpService)
     .service('helpRegistry', HelpRegistry)

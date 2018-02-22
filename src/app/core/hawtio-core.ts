@@ -31,11 +31,11 @@ let HawtioCore: HawtioCore = (function () {
 
   let HawtioCore = new HawtioCoreClass();
 
-  Core._module = angular
+  Core._module
     .config(["$locationProvider", ($locationProvider) => {
       $locationProvider.html5Mode(true);
     }])
-    .run(['documentBase', (documentBase) => log.debug("HawtioCore loaded at", documentBase)]);
+    .run(['documentBase', (documentBase) => Core.log.debug("HawtioCore loaded at", documentBase)]);
 
   let dummyLocalStorage: Storage = {
     length: 0,

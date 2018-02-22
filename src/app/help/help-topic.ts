@@ -1,4 +1,4 @@
-namespace Core {
+namespace Help {
 
   export class HelpTopic {
 

@@ -266,7 +266,7 @@ declare namespace Core {
 declare namespace Core {
     const hawtioExtensionModule: string;
 }
-declare namespace Core {
+declare namespace Help {
     class HelpTopic {
         topicName: string;
         subTopicName: string;
@@ -277,7 +277,7 @@ declare namespace Core {
         isIndexTopic(): boolean;
     }
 }
-declare namespace Core {
+declare namespace Help {
     class HelpRegistry {
         private $rootScope;
         private topicNameMappings;
@@ -293,7 +293,7 @@ declare namespace Core {
         getTopic(topicName: string, subTopicName: string): HelpTopic;
     }
 }
-declare namespace Core {
+declare namespace Help {
     class HelpService {
         private $templateCache;
         private helpRegistry;
@@ -304,7 +304,7 @@ declare namespace Core {
         getHelpContent(topic: HelpTopic): string;
     }
 }
-declare namespace Core {
+declare namespace Help {
     class HelpController {
         private helpService;
         private $sce;
@@ -320,11 +320,12 @@ declare namespace Core {
     }
     const helpComponent: angular.IComponentOptions;
 }
-declare namespace Core {
-    function HelpConfig($routeProvider: any, $provide: any): void;
-    function HelpRun(helpRegistry: HelpRegistry, viewRegistry: any, layoutFull: any, $templateCache: any): void;
+declare namespace Help {
+    function configureRoutes($routeProvider: any): void;
+    function configureDocumentation(helpRegistry: HelpRegistry, $templateCache: any): void;
+    function configureMenu(HawtioExtension: Core.HawtioExtension, $compile: ng.ICompileService): void;
 }
-declare namespace Core {
+declare namespace Help {
     const helpModule: string;
 }
 declare namespace HawtioMainNav {
@@ -495,16 +496,16 @@ declare namespace Core {
 }
 declare namespace Core {
     function configureRoutes($routeProvider: any): void;
-    function addItemToUserMenu(HawtioExtension: HawtioExtension, $templateCache: ng.ITemplateCacheService, $compile: ng.ICompileService): void;
+    function configureMenu(HawtioExtension: HawtioExtension, $compile: ng.ICompileService): void;
     function savePreviousLocationWhenOpeningPreferences($rootScope: ng.IScope, preferencesService: PreferencesService): void;
-    function addHelpDocumentation(helpRegistry: HelpRegistry): void;
-    function addPreferencesPages(preferencesRegistry: PreferencesRegistry): void;
+    function configureDocumentation(helpRegistry: Help.HelpRegistry): void;
+    function configurePreferencesPages(preferencesRegistry: PreferencesRegistry): void;
 }
 declare namespace Core {
     const preferencesModule: string;
 }
 declare var templateCache: any;
-declare namespace Core {
+declare namespace App {
     const appModule: string;
 }
 declare namespace Core {

@@ -1,6 +1,6 @@
 /// <reference path="help.service.ts"/>
 
-namespace Core {
+namespace Help {
 
   export class HelpController {
 

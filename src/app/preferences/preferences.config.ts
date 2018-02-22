@@ -12,11 +12,10 @@ namespace Core {
     });
   }
 
-  export function addItemToUserMenu(HawtioExtension: HawtioExtension, $templateCache: ng.ITemplateCacheService,
-    $compile: ng.ICompileService) {
+  export function configureMenu(HawtioExtension: HawtioExtension, $compile: ng.ICompileService) {
     'ngInject';
-    HawtioExtension.add('hawtio-user', $scope => {
-      let template = '<li><a ng-href="preferences">Preferences</a></li>';
+    HawtioExtension.add('hawtio-preferences', $scope => {
+      let template = '<a ng-href="preferences">Preferences</a>';
       return $compile(template)($scope);
     });
   }
@@ -32,12 +31,12 @@ namespace Core {
     });  
   }
 
-  export function addHelpDocumentation(helpRegistry: HelpRegistry) {
+  export function configureDocumentation(helpRegistry: Help.HelpRegistry) {
     'ngInject';
     helpRegistry.addUserDoc('preferences', 'preferences/help.md');
   }
 
-  export function addPreferencesPages(preferencesRegistry: PreferencesRegistry) {
+  export function configurePreferencesPages(preferencesRegistry: PreferencesRegistry) {
     'ngInject';
     preferencesRegistry.addTab("Console Logs", 'preferences/logging-preferences/logging-preferences.html');
     preferencesRegistry.addTab("Reset", 'preferences/reset-preferences/reset-preferences.html');

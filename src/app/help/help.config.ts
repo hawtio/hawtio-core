@@ -1,18 +1,14 @@
-namespace Core {
+namespace Help {
 
-  export function HelpConfig($routeProvider, $provide) {
+  export function configureRoutes($routeProvider) {
     'ngInject';
-
     $routeProvider.when('/help', { template: '<help></help>' });
   }
 
-  export function HelpRun(helpRegistry: HelpRegistry, viewRegistry, layoutFull, $templateCache) {
+  export function configureDocumentation(helpRegistry: HelpRegistry, $templateCache) {
     'ngInject';
-
-    viewRegistry['help'] = layoutFull;
-
     helpRegistry.addUserDoc('index', 'help/help.md');
-
+    
     // These docs live in the main hawtio project
     helpRegistry.addSubTopic('index', 'faq', 'plugins/help/doc/FAQ.md', () => {
       return $templateCache.get('plugins/help/doc/FAQ.md') !== undefined;
@@ -22,4 +18,12 @@ namespace Core {
     });
   }
 
+  export function configureMenu(HawtioExtension: Core.HawtioExtension, $compile: ng.ICompileService) {
+    'ngInject';
+    HawtioExtension.add('hawtio-help', $scope => {
+      let template = '<a ng-href="help">Help</a>';
+      return $compile(template)($scope);
+    });
+  }
+  
 }

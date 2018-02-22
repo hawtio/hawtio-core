@@ -93,7 +93,7 @@ gulp.task('reload', function() {
 
 gulp.task('watch', function() {
   gulp.watch(['src/**/*'], ['build']);
-  gulp.watch(['index.html', config.dist + '/**/*'], ['reload']);
+  gulp.watch(['index.html', config.dist + '**/*'], ['reload']);
 });
 
 gulp.task('test', function (done) {

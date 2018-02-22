@@ -17,10 +17,10 @@ namespace Core {
       resetPreferencesModule
     ])
     .config(configureRoutes)
-    .run(addItemToUserMenu)
+    .run(configureMenu)
     .run(savePreviousLocationWhenOpeningPreferences)
-    .run(addHelpDocumentation)
-    .run(addPreferencesPages)
+    .run(configureDocumentation)
+    .run(configurePreferencesPages)
     .service('preferencesService', PreferencesService)
     .service('preferencesRegistry', PreferencesRegistry)
     .name;

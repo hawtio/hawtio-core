@@ -1,6 +1,6 @@
 /// <reference path="help-topic.ts"/>
 
-namespace Core {
+namespace Help {
 
   export class HelpRegistry {
 

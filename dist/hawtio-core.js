@@ -841,7 +841,7 @@ var HawtioCore = (function () {
         .config(["$locationProvider", function ($locationProvider) {
             $locationProvider.html5Mode(true);
         }])
-        .run(['documentBase', function (documentBase) { return log.debug("HawtioCore loaded at", documentBase); }]);
+        .run(['documentBase', function (documentBase) { return Core.log.debug("HawtioCore loaded at", documentBase); }]);
     var dummyLocalStorage = {
         length: 0,
         key: function (index) { return undefined; },
@@ -869,7 +869,7 @@ var HawtioCore = (function () {
     /**
      * services, mostly stubs
      */
-    _module
+    Core._module
         .factory('localStorage', function () { return window.localStorage || dummyLocalStorage; })
         .factory('documentBase', function () { return HawtioCore.documentBase(); })
         .factory('viewRegistry', function () {
@@ -1130,8 +1130,8 @@ var Core;
         .directive('hawtioExtension', Core.hawtioExtensionDirective)
         .name;
 })(Core || (Core = {}));
-var Core;
-(function (Core) {
+var Help;
+(function (Help) {
     var HelpTopic = /** @class */ (function () {
         function HelpTopic() {
         }
@@ -1140,11 +1140,11 @@ var Core;
         };
         return HelpTopic;
     }());
-    Core.HelpTopic = HelpTopic;
-})(Core || (Core = {}));
+    Help.HelpTopic = HelpTopic;
+})(Help || (Help = {}));
 /// <reference path="help-topic.ts"/>
-var Core;
-(function (Core) {
+var Help;
+(function (Help) {
     var HelpRegistry = /** @class */ (function () {
         HelpRegistry.$inject = ["$rootScope"];
         function HelpRegistry($rootScope) {
@@ -1182,7 +1182,7 @@ var Core;
             if (isValid === void 0) { isValid = function () { return true; }; }
             var topic = this.getTopic(topicName, subTopicName);
             if (!angular.isDefined(topic)) {
-                topic = new Core.HelpTopic();
+                topic = new Help.HelpTopic();
                 topic.topicName = topicName;
                 topic.subTopicName = subTopicName;
                 topic.path = path;
@@ -1212,12 +1212,12 @@ var Core;
         };
         return HelpRegistry;
     }());
-    Core.HelpRegistry = HelpRegistry;
-})(Core || (Core = {}));
+    Help.HelpRegistry = HelpRegistry;
+})(Help || (Help = {}));
 /// <reference path="help-registry.ts"/>
 /// <reference path="help-topic.ts"/>
-var Core;
-(function (Core) {
+var Help;
+(function (Help) {
     var HelpService = /** @class */ (function () {
         HelpService.$inject = ["$templateCache", "helpRegistry"];
         function HelpService($templateCache, helpRegistry) {
@@ -1262,11 +1262,11 @@ var Core;
         };
         return HelpService;
     }());
-    Core.HelpService = HelpService;
-})(Core || (Core = {}));
+    Help.HelpService = HelpService;
+})(Help || (Help = {}));
 /// <reference path="help.service.ts"/>
-var Core;
-(function (Core) {
+var Help;
+(function (Help) {
     var HelpController = /** @class */ (function () {
         HelpController.$inject = ["$rootScope", "helpService", "$sce"];
         function HelpController($rootScope, helpService, $sce) {
@@ -1289,24 +1289,24 @@ var Core;
         };
         return HelpController;
     }());
-    Core.HelpController = HelpController;
-    Core.helpComponent = {
+    Help.HelpController = HelpController;
+    Help.helpComponent = {
         templateUrl: 'help/help.component.html',
         controller: HelpController
     };
-})(Core || (Core = {}));
-var Core;
-(function (Core) {
-    HelpConfig.$inject = ["$routeProvider", "$provide"];
-    HelpRun.$inject = ["helpRegistry", "viewRegistry", "layoutFull", "$templateCache"];
-    function HelpConfig($routeProvider, $provide) {
+})(Help || (Help = {}));
+var Help;
+(function (Help) {
+    configureRoutes.$inject = ["$routeProvider"];
+    configureDocumentation.$inject = ["helpRegistry", "$templateCache"];
+    configureMenu.$inject = ["HawtioExtension", "$compile"];
+    function configureRoutes($routeProvider) {
         'ngInject';
         $routeProvider.when('/help', { template: '<help></help>' });
     }
-    Core.HelpConfig = HelpConfig;
-    function HelpRun(helpRegistry, viewRegistry, layoutFull, $templateCache) {
+    Help.configureRoutes = configureRoutes;
+    function configureDocumentation(helpRegistry, $templateCache) {
         'ngInject';
-        viewRegistry['help'] = layoutFull;
         helpRegistry.addUserDoc('index', 'help/help.md');
         // These docs live in the main hawtio project
         helpRegistry.addSubTopic('index', 'faq', 'plugins/help/doc/FAQ.md', function () {
@@ -1316,23 +1316,32 @@ var Core;
             return $templateCache.get('plugins/help/doc/CHANGES.md') !== undefined;
         });
     }
-    Core.HelpRun = HelpRun;
-})(Core || (Core = {}));
+    Help.configureDocumentation = configureDocumentation;
+    function configureMenu(HawtioExtension, $compile) {
+        'ngInject';
+        HawtioExtension.add('hawtio-help', function ($scope) {
+            var template = '<a ng-href="help">Help</a>';
+            return $compile(template)($scope);
+        });
+    }
+    Help.configureMenu = configureMenu;
+})(Help || (Help = {}));
 /// <reference path="help.component.ts"/>
 /// <reference path="help.config.ts"/>
 /// <reference path="help.service.ts"/>
 /// <reference path="help-registry.ts"/>
-var Core;
-(function (Core) {
-    Core.helpModule = angular
+var Help;
+(function (Help) {
+    Help.helpModule = angular
         .module('hawtio-help', [])
-        .config(Core.HelpConfig)
-        .run(Core.HelpRun)
-        .component('help', Core.helpComponent)
-        .service('helpService', Core.HelpService)
-        .service('helpRegistry', Core.HelpRegistry)
+        .config(Help.configureRoutes)
+        .run(Help.configureDocumentation)
+        .run(Help.configureMenu)
+        .component('help', Help.helpComponent)
+        .service('helpService', Help.HelpService)
+        .service('helpRegistry', Help.HelpRegistry)
         .name;
-})(Core || (Core = {}));
+})(Help || (Help = {}));
 /* global _ */
 /* global angular */
 /* global jQuery */
@@ -2630,10 +2639,10 @@ var Core;
 var Core;
 (function (Core) {
     configureRoutes.$inject = ["$routeProvider"];
-    addItemToUserMenu.$inject = ["HawtioExtension", "$templateCache", "$compile"];
+    configureMenu.$inject = ["HawtioExtension", "$compile"];
     savePreviousLocationWhenOpeningPreferences.$inject = ["$rootScope", "preferencesService"];
-    addHelpDocumentation.$inject = ["helpRegistry"];
-    addPreferencesPages.$inject = ["preferencesRegistry"];
+    configureDocumentation.$inject = ["helpRegistry"];
+    configurePreferencesPages.$inject = ["preferencesRegistry"];
     function configureRoutes($routeProvider) {
         'ngInject';
         $routeProvider.when('/preferences', {
@@ -2642,14 +2651,14 @@ var Core;
         });
     }
     Core.configureRoutes = configureRoutes;
-    function addItemToUserMenu(HawtioExtension, $templateCache, $compile) {
+    function configureMenu(HawtioExtension, $compile) {
         'ngInject';
-        HawtioExtension.add('hawtio-user', function ($scope) {
-            var template = '<li><a ng-href="preferences">Preferences</a></li>';
+        HawtioExtension.add('hawtio-preferences', function ($scope) {
+            var template = '<a ng-href="preferences">Preferences</a>';
             return $compile(template)($scope);
         });
     }
-    Core.addItemToUserMenu = addItemToUserMenu;
+    Core.configureMenu = configureMenu;
     function savePreviousLocationWhenOpeningPreferences($rootScope, preferencesService) {
         'ngInject';
         $rootScope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
@@ -2661,17 +2670,17 @@ var Core;
         });
     }
     Core.savePreviousLocationWhenOpeningPreferences = savePreviousLocationWhenOpeningPreferences;
-    function addHelpDocumentation(helpRegistry) {
+    function configureDocumentation(helpRegistry) {
         'ngInject';
         helpRegistry.addUserDoc('preferences', 'preferences/help.md');
     }
-    Core.addHelpDocumentation = addHelpDocumentation;
-    function addPreferencesPages(preferencesRegistry) {
+    Core.configureDocumentation = configureDocumentation;
+    function configurePreferencesPages(preferencesRegistry) {
         'ngInject';
         preferencesRegistry.addTab("Console Logs", 'preferences/logging-preferences/logging-preferences.html');
         preferencesRegistry.addTab("Reset", 'preferences/reset-preferences/reset-preferences.html');
     }
-    Core.addPreferencesPages = addPreferencesPages;
+    Core.configurePreferencesPages = configurePreferencesPages;
 })(Core || (Core = {}));
 /// <reference path="logging-preferences/logging-preferences.module.ts"/>
 /// <reference path="preferences-home/preferences-home.module.ts"/>
@@ -2691,10 +2700,10 @@ var Core;
         Core.resetPreferencesModule
     ])
         .config(Core.configureRoutes)
-        .run(Core.addItemToUserMenu)
+        .run(Core.configureMenu)
         .run(Core.savePreviousLocationWhenOpeningPreferences)
-        .run(Core.addHelpDocumentation)
-        .run(Core.addPreferencesPages)
+        .run(Core.configureDocumentation)
+        .run(Core.configurePreferencesPages)
         .service('preferencesService', Core.PreferencesService)
         .service('preferencesRegistry', Core.PreferencesRegistry)
         .name;
@@ -2787,32 +2796,35 @@ var templateCache;
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
-var Core;
-(function (Core) {
-    Core.appModule = angular
+var App;
+(function (App) {
+    App.appModule = angular
         .module('hawtio', [
         'ng',
         'ngRoute',
         'ngSanitize',
+        'patternfly',
+        'patternfly.modals',
+        'patternfly.table',
+        'patternfly.toolbars',
         Core.authModule,
         Core.configModule,
-        HawtioCore.pluginName,
+        Core.coreModule,
         Core.eventServicesModule,
         Core.hawtioExtensionModule,
-        Core.helpModule,
+        Help.helpModule,
         HawtioMainNav.pluginName,
         Core.preferencesModule,
         templateCache.pluginName
     ])
         .name;
-    Core.log = Logger.get(HawtioCore.pluginName);
     hawtioPluginLoader
-        .addModule(Core.appModule)
+        .addModule(App.appModule)
         .registerPreBootstrapTask({
-        name: 'HawtioConfigLoader',
+        name: 'ConfigLoader',
         task: Core.configLoader
     });
-})(Core || (Core = {}));
+})(App || (App = {}));
 /// <reference path="hawtio-tab.ts"/>
 var Core;
 (function (Core) {
@@ -2888,8 +2900,8 @@ $templateCache.put('navigation/templates/navItem.html','<li class="list-group-it
 $templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
 $templateCache.put('navigation/templates/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
 $templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
-$templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
 $templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
+$templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
 $templateCache.put('help/help.md','### Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
 $templateCache.put('preferences/help.md','## Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');}]);

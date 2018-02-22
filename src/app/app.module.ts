@@ -10,21 +10,25 @@
 /// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
 
-namespace Core {
+namespace App {
 
   export const appModule = angular
     .module('hawtio', [
       'ng',
       'ngRoute',
       'ngSanitize',
-      authModule,
-      configModule,
-      coreModule,
-      eventServicesModule,
-      hawtioExtensionModule,
-      helpModule,
+      'patternfly',
+      'patternfly.modals',
+      'patternfly.table',
+      'patternfly.toolbars',
+      Core.authModule,
+      Core.configModule,
+      Core.coreModule,
+      Core.eventServicesModule,
+      Core.hawtioExtensionModule,
+      Help.helpModule,
       HawtioMainNav.pluginName,
-      preferencesModule,
+      Core.preferencesModule,
       templateCache.pluginName
     ])
     .name;
@@ -32,8 +36,8 @@ namespace Core {
   hawtioPluginLoader
     .addModule(appModule)
     .registerPreBootstrapTask({
-      name: 'HawtioConfigLoader',
-      task: configLoader
+      name: 'ConfigLoader',
+      task: Core.configLoader
     });
 
 }

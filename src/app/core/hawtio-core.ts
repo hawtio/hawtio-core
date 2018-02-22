@@ -41,14 +41,12 @@ let HawtioCore: HawtioCore = (function () {
 
   const _module = angular
     .module(HawtioCore.pluginName, [])
-    .config(["$locationProvider", function ($locationProvider) {
+    .config(["$locationProvider", ($locationProvider) => {
       $locationProvider.html5Mode(true);
     }])
-    .run(['documentBase', function (documentBase) {
-      log.debug("loaded");
-    }]);
+    .run(['documentBase', (documentBase) => log.debug("HawtioCore loaded at", documentBase)]);
 
-  let dummyLocalStorage = {
+  let dummyLocalStorage: Storage = {
     length: 0,
     key: (index) => undefined,
     getItem: (key) => dummyLocalStorage[key],
@@ -62,7 +60,7 @@ let HawtioCore: HawtioCore = (function () {
   };
   HawtioCore.dummyLocalStorage = dummyLocalStorage;
 
-  HawtioCore.documentBase = () => {
+  HawtioCore.documentBase = (): string => {
     let base = $('head').find('base');
     let answer = '/'
     if (base && base.length > 0) {
@@ -76,61 +74,47 @@ let HawtioCore: HawtioCore = (function () {
   /**
    * services, mostly stubs
    */
-  // localStorage service, returns a dummy impl
-  // if for some reason it's not in the window
-  // object
-  _module.factory('localStorage', () => window.localStorage || dummyLocalStorage);
 
-  // Holds the document base so plugins can easily
-  // figure out absolute URLs when needed
-  _module.factory('documentBase', () => HawtioCore.documentBase());
-
-
-  // Holds a mapping of plugins to layouts, plugins use 
-  // this to specify a full width view, tree view or their 
-  // own custom view
-  _module.factory('viewRegistry', () => {
-    return {};
-  });
-
-  // Placeholder service for the page title service
-  _module.factory('pageTitle', () => {
-    return {
-      addTitleElement: () => { },
-      getTitle: () => undefined,
-      getTitleWithSeparator: () => undefined,
-      getTitleExcluding: () => undefined,
-      getTitleArrayExcluding: () => undefined
-    };
-  });
-
-  // service for the javascript object that does notifications
-  _module.factory('toastr', ["$window", function ($window) {
-    let answer = $window.toastr;
-    if (!answer) {
-      // lets avoid any NPEs
-      answer = {};
-      $window.toastr = answer;
-    }
-    return answer;
-  }]);
-
-  _module.factory('HawtioDashboard', () => {
-    return {
-      hasDashboard: false,
-      inDashboard: false,
-      getAddLink: () => ''
-    };
-  });
-
-  // Placeholder user details service
-  _module.factory('userDetails', () => {
-    return {
-      logout: () => {
-        log.debug("Dummy userDetails.logout()");
+  _module
+    // localStorage service, returns a dummy impl
+    // if for some reason it's not in the window
+    // object
+    .factory('localStorage', (): Storage => window.localStorage || dummyLocalStorage)
+    // Holds the document base so plugins can easily
+    // figure out absolute URLs when needed
+    .factory('documentBase', (): string => HawtioCore.documentBase())
+    // Holds a mapping of plugins to layouts, plugins use 
+    // this to specify a full width view, tree view or their 
+    // own custom view
+    .factory('viewRegistry', () => {
+      return {};
+    })
+    // Placeholder service for the page title service
+    .factory('pageTitle', () => {
+      return {
+        addTitleElement: () => { },
+        getTitle: () => undefined,
+        getTitleWithSeparator: () => undefined,
+        getTitleExcluding: () => undefined,
+        getTitleArrayExcluding: () => undefined
+      };
+    })
+    // service for the javascript object that does notifications
+    .factory('toastr', ["$window", ($window) => {
+      let answer = $window.toastr;
+      if (!answer) {
+        // lets avoid any NPEs
+        answer = {};
+        $window.toastr = answer;
       }
-    };
-  });
+      return answer;
+    }]).factory('HawtioDashboard', () => {
+      return {
+        hasDashboard: false,
+        inDashboard: false,
+        getAddLink: () => ''
+      };
+    });
 
   // bootstrap the app
   $(function () {

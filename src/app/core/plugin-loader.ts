@@ -166,7 +166,9 @@ namespace Core {
     };
 
     /**
-     * Return the current list of configured modules
+     * Return the current list of configured modules.
+     * 
+     * It is invoked from HawtioCore's bootstrapping.
      */
     getModules(): string[] {
       return this.modules;
@@ -182,7 +184,9 @@ namespace Core {
     }
 
     /**
-     * Downloads plugins at any configured URLs and bootstraps the app
+     * Downloads plugins at any configured URLs and bootstraps the app.
+     * 
+     * It is invoked from HawtioCore's bootstrapping.
      */
     loadPlugins(callback: () => void): void {
       log.info("Bootstrapping hawtio app...");

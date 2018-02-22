@@ -1,10 +1,11 @@
 /// <reference path="auth.service.ts"/>
+/// <reference path="auth.helper.ts"/>
 
 namespace Core {
 
   export const authModule = angular
-    .module('hawtio-auth', [])
-    .service('authService', DummyAuthService)
+    .module('hawtio-core-auth', [])
+    .service('userDetails', UserDetails)
     .name;
 
 }

@@ -3,6 +3,7 @@
 /// <reference path="config/config.module.ts"/>
 /// <reference path="config/config-loader.ts"/>
 /// <reference path="core/hawtio-core.ts"/>
+/// <reference path="event-services/event-services.module.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
@@ -20,6 +21,7 @@ namespace Core {
       commonModule,
       configModule,
       HawtioCore.pluginName,
+      eventServicesModule,
       hawtioExtensionModule,
       helpModule,
       HawtioMainNav.pluginName,
@@ -28,12 +30,12 @@ namespace Core {
     ])
     .name;
 
-  export const log: Logging.Logger = Logger.get('hawtio-core');
+  export const log: Logging.Logger = Logger.get(HawtioCore.pluginName);
 
   hawtioPluginLoader
     .addModule(appModule)
     .registerPreBootstrapTask({
-      name: 'ConfigLoader',
+      name: 'HawtioConfigLoader',
       task: configLoader
     });
 

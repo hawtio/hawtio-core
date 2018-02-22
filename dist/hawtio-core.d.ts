@@ -3,9 +3,13 @@
 declare namespace Core {
     const connectionSettingsKey = "jvmConnect";
     /**
+     * @deprecated TODO Temporal type alias to avoid breaking existing code
+     */
+    type UserDetails = AuthService;
+    /**
      * UserDetails service that represents user credentials and login/logout actions.
      */
-    class UserDetails {
+    class AuthService {
         private postLoginTasks;
         private preLogoutTasks;
         private postLogoutTasks;

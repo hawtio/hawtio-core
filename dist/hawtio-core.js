@@ -15,9 +15,9 @@ var Core;
     /**
      * UserDetails service that represents user credentials and login/logout actions.
      */
-    var UserDetails = /** @class */ (function () {
-        UserDetails.$inject = ["postLoginTasks", "preLogoutTasks", "postLogoutTasks", "localStorage"];
-        function UserDetails(postLoginTasks, preLogoutTasks, postLogoutTasks, localStorage) {
+    var AuthService = /** @class */ (function () {
+        AuthService.$inject = ["postLoginTasks", "preLogoutTasks", "postLogoutTasks", "localStorage"];
+        function AuthService(postLoginTasks, preLogoutTasks, postLogoutTasks, localStorage) {
             'ngInject';
             this.postLoginTasks = postLoginTasks;
             this.preLogoutTasks = preLogoutTasks;
@@ -30,7 +30,7 @@ var Core;
         /**
          * Log in as a specific user.
          */
-        UserDetails.prototype.login = function (username, password, token) {
+        AuthService.prototype.login = function (username, password, token) {
             var _this = this;
             this.username = username;
             this.password = password;
@@ -44,7 +44,7 @@ var Core;
         /**
          * Log out the current user.
          */
-        UserDetails.prototype.logout = function () {
+        AuthService.prototype.logout = function () {
             var _this = this;
             this.preLogoutTasks.execute(function () {
                 _this.clear();
@@ -53,7 +53,7 @@ var Core;
                 });
             });
         };
-        UserDetails.prototype.clear = function () {
+        AuthService.prototype.clear = function () {
             this.username = DEFAULT_USER;
             this.password = null;
             this.token = null;
@@ -68,9 +68,9 @@ var Core;
             this.localStorage.removeItem('activemqUserName');
             this.localStorage.removeItem('activemqPassword');
         };
-        return UserDetails;
+        return AuthService;
     }());
-    Core.UserDetails = UserDetails;
+    Core.AuthService = AuthService;
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -87,7 +87,7 @@ var Core;
 (function (Core) {
     Core.authModule = angular
         .module('hawtio-core-auth', [])
-        .service('userDetails', Core.UserDetails)
+        .service('userDetails', Core.AuthService)
         .name;
 })(Core || (Core = {}));
 /// <reference path="config.ts"/>
@@ -2900,8 +2900,8 @@ $templateCache.put('navigation/templates/navItem.html','<li class="list-group-it
 $templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
 $templateCache.put('navigation/templates/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
 $templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
-$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
+$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
 $templateCache.put('help/help.md','### Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
 $templateCache.put('preferences/help.md','## Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');}]);

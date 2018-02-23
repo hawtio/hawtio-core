@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 3.2.14
+* Fix `AuthService.logout()`
+
 #### 3.2.13
 * Put back `AuthService` and deprecate `UserDetails` class name
 

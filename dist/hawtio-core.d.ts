@@ -1,7 +1,6 @@
 /// <reference types="angular-route" />
 /// <reference types="angular" />
 declare namespace Core {
-    const connectionSettingsKey = "jvmConnect";
     /**
      * @deprecated TODO Temporal type alias to avoid breaking existing code
      */

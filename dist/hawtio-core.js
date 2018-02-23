@@ -10,7 +10,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var Core;
 (function (Core) {
-    Core.connectionSettingsKey = 'jvmConnect';
     var DEFAULT_USER = 'public';
     /**
      * UserDetails service that represents user credentials and login/logout actions.
@@ -47,9 +46,10 @@ var Core;
         AuthService.prototype.logout = function () {
             var _this = this;
             this.preLogoutTasks.execute(function () {
+                var username = _this.username;
                 _this.clear();
                 _this.postLogoutTasks.execute(function () {
-                    Core.log.debug('Logged out.');
+                    Core.log.info('Logged out:', username);
                 });
             });
         };
@@ -57,16 +57,6 @@ var Core;
             this.username = DEFAULT_USER;
             this.password = null;
             this.token = null;
-            // cleanup local storage
-            // TODO This should be moved to plugins where the local storage values are added
-            var jvmConnect = angular.fromJson(this.localStorage[Core.connectionSettingsKey]);
-            _.forOwn(jvmConnect, function (property) {
-                delete property['userName'];
-                delete property['password'];
-            });
-            this.localStorage.setItem(Core.connectionSettingsKey, angular.toJson(jvmConnect));
-            this.localStorage.removeItem('activemqUserName');
-            this.localStorage.removeItem('activemqPassword');
         };
         return AuthService;
     }());

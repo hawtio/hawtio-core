@@ -1,7 +1,5 @@
 namespace Core {
 
-  export const connectionSettingsKey = 'jvmConnect';
-
   const DEFAULT_USER: string = 'public';
 
   /**
@@ -45,9 +43,10 @@ namespace Core {
      */
     logout(): void {
       this.preLogoutTasks.execute(() => {
+        let username = this.username;
         this.clear();
         this.postLogoutTasks.execute(() => {
-          log.debug('Logged out.');
+          log.info('Logged out:', username);
         });
       });
     }
@@ -56,17 +55,6 @@ namespace Core {
       this.username = DEFAULT_USER;
       this.password = null;
       this.token = null;
-
-      // cleanup local storage
-      // TODO This should be moved to plugins where the local storage values are added
-      let jvmConnect = angular.fromJson(this.localStorage[connectionSettingsKey])
-      _.forOwn(jvmConnect, (property) => {
-        delete property['userName'];
-        delete property['password'];
-      });
-      this.localStorage.setItem(connectionSettingsKey, angular.toJson(jvmConnect));
-      this.localStorage.removeItem('activemqUserName');
-      this.localStorage.removeItem('activemqPassword');
     }
   }
 

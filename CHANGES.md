@@ -1,5 +1,8 @@
 ### Change Log
 
+#### 3.2.15
+* Improve `AuthService`
+
 #### 3.2.14
 * Fix `AuthService.logout()`
 

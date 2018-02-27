@@ -35,9 +35,8 @@ namespace Core {
         this._token = token;
       }
       this._loggedIn = true;
-      this.postLoginTasks.execute(() => {
-        log.info('Logged in as', this._username);
-      });
+      log.info('Logged in as', this._username);
+      this.postLoginTasks.execute();
     }
 
     /**

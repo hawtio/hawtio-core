@@ -12,9 +12,10 @@ namespace Core {
    */
   export class AuthService {
 
-    username: string = DEFAULT_USER;
-    password: string = null;
-    token: string = null;
+    private _username: string = DEFAULT_USER;
+    private _password: string = null;
+    private _token: string = null;
+    private _loggedIn: boolean = false;
 
     constructor(
       private postLoginTasks: Tasks,
@@ -28,13 +29,14 @@ namespace Core {
      * Log in as a specific user.
      */
     login(username: string, password: string, token?: string): void {
-      this.username = username;
-      this.password = password;
+      this._username = username;
+      this._password = password;
       if (token) {
-        this.token = token;
+        this._token = token;
       }
       this.postLoginTasks.execute(() => {
-        log.info('Logged in as', this.username);
+        log.info('Logged in as', this._username);
+        this._loggedIn = true;
       });
     }
 
@@ -43,7 +45,7 @@ namespace Core {
      */
     logout(): void {
       this.preLogoutTasks.execute(() => {
-        let username = this.username;
+        let username = this._username;
         this.clear();
         this.postLogoutTasks.execute(() => {
           log.info('Logged out:', username);
@@ -52,9 +54,26 @@ namespace Core {
     }
 
     private clear(): void {
-      this.username = DEFAULT_USER;
-      this.password = null;
-      this.token = null;
+      this._username = DEFAULT_USER;
+      this._password = null;
+      this._token = null;
+      this._loggedIn = false;
+    }
+
+    get username(): string {
+      return this._username;
+    }
+
+    get password(): string {
+      return this._password;
+    }
+
+    get token(): string {
+      return this._token;
+    }
+
+    get loggedIn(): boolean {
+      return this._loggedIn;
     }
   }
 

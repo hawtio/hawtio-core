@@ -34,9 +34,9 @@ namespace Core {
       if (token) {
         this._token = token;
       }
+      this._loggedIn = true;
       this.postLoginTasks.execute(() => {
         log.info('Logged in as', this._username);
-        this._loggedIn = true;
       });
     }
 
@@ -44,9 +44,16 @@ namespace Core {
      * Log out the current user.
      */
     logout(): void {
+      if (!this._loggedIn) {
+        log.debug('Not logged in');
+        return;
+      }
       this.preLogoutTasks.execute(() => {
         let username = this._username;
+
+        // do logout
         this.clear();
+
         this.postLogoutTasks.execute(() => {
           log.info('Logged out:', username);
         });

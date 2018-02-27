@@ -13,9 +13,10 @@ declare namespace Core {
         private preLogoutTasks;
         private postLogoutTasks;
         private localStorage;
-        username: string;
-        password: string;
-        token: string;
+        private _username;
+        private _password;
+        private _token;
+        private _loggedIn;
         constructor(postLoginTasks: Tasks, preLogoutTasks: Tasks, postLogoutTasks: Tasks, localStorage: Storage);
         /**
          * Log in as a specific user.
@@ -26,6 +27,10 @@ declare namespace Core {
          */
         logout(): void;
         private clear();
+        readonly username: string;
+        readonly password: string;
+        readonly token: string;
+        readonly loggedIn: boolean;
     }
 }
 declare namespace Core {

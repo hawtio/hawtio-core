@@ -1,3 +1,49 @@
+@media screen and (max-width: 767px) {
+}
+@media (min-width: 768px) {
+}
+@media (min-width: 768px) {
+}
+@media (max-width: 767px) {
+}
+@media (min-width: 768px) {
+}
+@media (min-width: 768px) {
+}
+@media (max-width: 767px) {
+}
+@media (max-width: 767px) {
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+}
+#main {
+  height: 100%;
+  overflow: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+#main > div[ng-view] {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.nav-hawtio-vertical {
+  width: 150px;
+}
+.hover-secondary-nav-pf {
+  width: 300px;
+}
+.layout-pf.layout-pf-fixed .container-hawtio-nav-hawtio-vertical {
+  margin-left: 150px;
+}
+.nav-hawtio-secondary-nav {
+  left: 150px;
+  width: 150px;
+}
+
 .help-secondary-tabs {
   text-transform: capitalize;
 }

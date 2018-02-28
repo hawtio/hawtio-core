@@ -8,6 +8,23 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var App;
+(function (App) {
+    var AppController = /** @class */ (function () {
+        function AppController() {
+            this.verticalNavCollapsed = false;
+        }
+        AppController.prototype.toggleVerticalNav = function (collapsed) {
+            this.verticalNavCollapsed = collapsed;
+        };
+        return AppController;
+    }());
+    App.AppController = AppController;
+    App.appComponent = {
+        template: "\n      <nav-bar on-toggle-vertical-nav=\"$ctrl.toggleVerticalNav(collapsed)\"></nav-bar>\n      <vertical-nav collapsed=\"$ctrl.verticalNavCollapsed\"></vertical-nav>\n      <div id=\"main\" class=\"container-fluid container-pf-nav-pf-vertical hidden-icons-pf ng-cloak container-hawtio-nav-hawtio-vertical\"\n          ng-class=\"{'collapsed-nav': $ctrl.verticalNavCollapsed}\"\n          ng-controller=\"HawtioNav.ViewController\"\n          ng-include src=\"viewPartial\">\n      </div>\n    ",
+        controller: AppController
+    };
+})(App || (App = {}));
 var Core;
 (function (Core) {
     var DEFAULT_USER = 'public';
@@ -1384,8 +1401,8 @@ var Help;
         window['CustomEvent'] = CustomEvent;
     }
 })();
-var HawtioMainNav;
-(function (HawtioMainNav) {
+var Nav;
+(function (Nav) {
     welcomeController.$inject = ["$scope", "$location", "WelcomePageRegistry", "HawtioNav", "$timeout", "documentBase"];
     viewController.$inject = ["$scope", "$route", "$location", "layoutFull", "viewRegistry", "documentBase"];
     configureHtmlBase.$inject = ["HawtioNav", "$rootScope", "$route", "documentBase"];
@@ -1397,8 +1414,8 @@ var HawtioMainNav;
         }
         return text;
     }
-    HawtioMainNav.pluginName = 'hawtio-core-nav';
-    var log = Logger.get(HawtioMainNav.pluginName);
+    Nav.pluginName = 'hawtio-core-nav';
+    var log = Logger.get(Nav.pluginName);
     // Actions class with some pre-defined actions
     var Actions = /** @class */ (function () {
         function Actions() {
@@ -1409,7 +1426,7 @@ var HawtioMainNav;
         Actions.REDRAW = 'hawtio-main-nav-redraw';
         return Actions;
     }());
-    HawtioMainNav.Actions = Actions;
+    Nav.Actions = Actions;
     var Registry = /** @class */ (function () {
         function Registry(root) {
             this.items = [];
@@ -1534,12 +1551,12 @@ var HawtioMainNav;
         };
         return Registry;
     }());
-    HawtioMainNav.Registry = Registry;
+    Nav.Registry = Registry;
     // Factory for registry, used to create angular service
     function createRegistry(root) {
         return new Registry(root);
     }
-    HawtioMainNav.createRegistry = createRegistry;
+    Nav.createRegistry = createRegistry;
     function join() {
         var args = [];
         for (var _a = 0; _a < arguments.length; _a++) {
@@ -1691,24 +1708,24 @@ var HawtioMainNav;
         ;
         return NavItemBuilder;
     }());
-    HawtioMainNav.NavItemBuilder = NavItemBuilder;
+    Nav.NavItemBuilder = NavItemBuilder;
     // Factory functions
     function createBuilder() {
         return new NavItemBuilder();
     }
-    HawtioMainNav.createBuilder = createBuilder;
+    Nav.createBuilder = createBuilder;
     ;
     // Plugin initialization
-    HawtioMainNav._module = angular.module(HawtioMainNav.pluginName, ['ngRoute']);
-    HawtioMainNav._module.constant('layoutFull', 'navigation/templates/layoutFull.html');
-    HawtioMainNav._module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
+    Nav._module = angular.module(Nav.pluginName, ['ngRoute']);
+    Nav._module.constant('layoutFull', 'navigation/templates/layoutFull.html');
+    Nav._module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
             $locationProvider.html5Mode({
                 enabled: true,
                 requireBase: true
             });
             $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
         }]);
-    HawtioMainNav._module.controller('HawtioNav.WelcomeController', welcomeController);
+    Nav._module.controller('HawtioNav.WelcomeController', welcomeController);
     function welcomeController($scope, $location, WelcomePageRegistry, HawtioNav, $timeout, documentBase) {
         'ngInject';
         var backoffPeriod = 500;
@@ -1838,7 +1855,7 @@ var HawtioMainNav;
         }
         $timeout(gotoBestCandidateNav, 500);
     }
-    HawtioMainNav._module.controller('HawtioNav.ViewController', viewController);
+    Nav._module.controller('HawtioNav.ViewController', viewController);
     function viewController($scope, $route, $location, layoutFull, viewRegistry, documentBase) {
         'ngInject';
         findViewPartial();
@@ -1920,7 +1937,7 @@ var HawtioMainNav;
             return answer;
         }
     }
-    HawtioMainNav._module.run(configureHtmlBase);
+    Nav._module.run(configureHtmlBase);
     function configureHtmlBase(HawtioNav, $rootScope, $route, documentBase) {
         'ngInject';
         HawtioNav.on(Actions.CHANGED, "$apply", function (item) {
@@ -2088,7 +2105,7 @@ var HawtioMainNav;
             collection.splice(index, 0, item);
         }
     }
-    HawtioMainNav._module.directive('hawtioSubTabs', ['$templateCache', '$compile', function ($templateCache, $compile) {
+    Nav._module.directive('hawtioSubTabs', ['$templateCache', '$compile', function ($templateCache, $compile) {
             return {
                 restrict: 'A',
                 scope: {
@@ -2102,7 +2119,7 @@ var HawtioMainNav;
                 }
             };
         }]);
-    HawtioMainNav._module.directive("hawtioMainNav", ["HawtioNav", "$templateCache", "$compile", "$location", "$rootScope", function (HawtioNav, $templateCache, $compile, $location, $rootScope) {
+    Nav._module.directive("hawtioMainNav", ["HawtioNav", "$templateCache", "$compile", "$location", "$rootScope", function (HawtioNav, $templateCache, $compile, $location, $rootScope) {
             var config = {
                 nav: {},
                 numKeys: 0,
@@ -2280,10 +2297,10 @@ var HawtioMainNav;
         };
         return BuilderFactory;
     }());
-    HawtioMainNav.BuilderFactory = BuilderFactory;
+    Nav.BuilderFactory = BuilderFactory;
     // provider so it's possible to get a nav builder in _module.config()
-    HawtioMainNav._module.provider('HawtioNavBuilder', BuilderFactory);
-    HawtioMainNav._module.factory('HawtioPerspective', [function () {
+    Nav._module.provider('HawtioNavBuilder', BuilderFactory);
+    Nav._module.factory('HawtioPerspective', [function () {
             var log = Logger.get('hawtio-dummy-perspective');
             return {
                 add: function (id, perspective) {
@@ -2305,16 +2322,16 @@ var HawtioMainNav;
                 }
             };
         }]);
-    HawtioMainNav._module.factory('WelcomePageRegistry', [function () {
+    Nav._module.factory('WelcomePageRegistry', [function () {
             return {
                 pages: []
             };
         }]);
-    HawtioMainNav._module.factory('HawtioNav', ['$window', '$rootScope', function ($window, $rootScope) {
+    Nav._module.factory('HawtioNav', ['$window', '$rootScope', function ($window, $rootScope) {
             var registry = createRegistry(window);
             return registry;
         }]);
-    HawtioMainNav._module.component('hawtioVerticalNav', {
+    Nav._module.component('hawtioVerticalNav', {
         templateUrl: 'navigation/templates/verticalNav.html',
         controller: function () {
             this.showSecondaryNav = false;
@@ -2332,7 +2349,7 @@ var HawtioMainNav;
             };
         }
     });
-})(HawtioMainNav || (HawtioMainNav = {}));
+})(Nav || (Nav = {}));
 var Core;
 (function (Core) {
     var LoggingPreferencesService = /** @class */ (function () {
@@ -2568,8 +2585,8 @@ var Core;
     }());
     Core.PreferencesRegistry = PreferencesRegistry;
 })(Core || (Core = {}));
-var Core;
-(function (Core) {
+var Nav;
+(function (Nav) {
     var HawtioTab = /** @class */ (function () {
         function HawtioTab(label, path) {
             this.label = label;
@@ -2577,8 +2594,8 @@ var Core;
         }
         return HawtioTab;
     }());
-    Core.HawtioTab = HawtioTab;
-})(Core || (Core = {}));
+    Nav.HawtioTab = HawtioTab;
+})(Nav || (Nav = {}));
 /// <reference path="../preferences.service.ts"/>
 /// <reference path="../preferences-registry.ts"/>
 /// <reference path="../../navigation/hawtio-tab.ts"/>
@@ -2588,7 +2605,7 @@ var Core;
     function PreferencesHomeController($scope, $location, preferencesRegistry, preferencesService) {
         'ngInject';
         var panels = preferencesRegistry.getTabs();
-        $scope.tabs = _.keys(panels).sort(byLabel).map(function (label) { return new Core.HawtioTab(label, label); });
+        $scope.tabs = _.keys(panels).sort(byLabel).map(function (label) { return new Nav.HawtioTab(label, label); });
         // pick the first one as the default
         preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);
         $scope.setPanel = function (tab) {
@@ -2820,6 +2837,7 @@ var templateCache;
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
+/// <reference path="app.component.ts"/>
 var App;
 (function (App) {
     App.appModule = angular
@@ -2837,10 +2855,11 @@ var App;
         Core.eventServicesModule,
         Core.hawtioExtensionModule,
         Help.helpModule,
-        HawtioMainNav.pluginName,
+        Nav.pluginName,
         Core.preferencesModule,
         templateCache.pluginName
     ])
+        .component('hawtioApp', App.appComponent)
         .name;
     hawtioPluginLoader
         .addModule(App.appModule)
@@ -2850,8 +2869,8 @@ var App;
     });
 })(App || (App = {}));
 /// <reference path="hawtio-tab.ts"/>
-var Core;
-(function (Core) {
+var Nav;
+(function (Nav) {
     var HawtioTabsController = /** @class */ (function () {
         HawtioTabsController.$inject = ["$document", "$timeout", "$location"];
         function HawtioTabsController($document, $timeout, $location) {
@@ -2904,8 +2923,8 @@ var Core;
         };
         return HawtioTabsController;
     }());
-    Core.HawtioTabsController = HawtioTabsController;
-    Core.hawtioTabsComponent = {
+    Nav.HawtioTabsController = HawtioTabsController;
+    Nav.hawtioTabsComponent = {
         bindings: {
             tabs: '<',
             activeTab: '<',
@@ -2914,18 +2933,71 @@ var Core;
         template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs track by tab.path\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.moreTabs.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"tab in $ctrl.moreTabs track by tab.label\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
         controller: HawtioTabsController
     };
-    HawtioMainNav._module.component('hawtioTabs', Core.hawtioTabsComponent);
-})(Core || (Core = {}));
+    Nav._module.component('hawtioTabs', Nav.hawtioTabsComponent);
+})(Nav || (Nav = {}));
+/// <reference path="hawtio-core-navigation.ts"/>
+var Nav;
+(function (Nav) {
+    var NavBarController = /** @class */ (function () {
+        function NavBarController() {
+            this.verticalNavCollapsed = false;
+        }
+        NavBarController.prototype.toggleVerticalNav = function () {
+            this.verticalNavCollapsed = !this.verticalNavCollapsed;
+            this.onToggleVerticalNav({ collapsed: this.verticalNavCollapsed });
+        };
+        return NavBarController;
+    }());
+    Nav.NavBarController = NavBarController;
+    Nav.navBarComponent = {
+        bindings: {
+            onToggleVerticalNav: '&'
+        },
+        template: "\n      <nav class=\"navbar navbar-pf-vertical\">\n        <div class=\"navbar-header\">\n          <button type=\"button\" class=\"navbar-toggle\" ng-click=\"$ctrl.toggleVerticalNav()\">\n            <span class=\"sr-only\">Toggle navigation</span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n          </button>        \n          <a href=\".\" class=\"navbar-brand\">\n            <hawtio-branding-image class=\"navbar-brand-name\" src=\"appLogoUrl\" alt=\"appName\"></hawtio-branding-image>\n          </a>\n        </div>\n        <nav class=\"collapse navbar-collapse\">\n          <ul class=\"nav navbar-nav navbar-right navbar-iconic\">\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"helpDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Help\" class=\"fa pficon-help\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"helpDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-help\"></li>\n                <li hawtio-extension name=\"hawtio-about\"></li>\n              </ul>\n            </li>\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"userDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Username\" class=\"fa pficon-user\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"userDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-preferences\"></li>\n                <li hawtio-extension name=\"hawtio-logout\"></li>\n              </ul>\n            </li>\n          </ul>\n        </nav>\n      </nav>\n    ",
+        controller: NavBarController
+    };
+    Nav._module.component('navBar', Nav.navBarComponent);
+})(Nav || (Nav = {}));
+/// <reference path="hawtio-core-navigation.ts"/>
+var Nav;
+(function (Nav) {
+    var VerticalNavController = /** @class */ (function () {
+        function VerticalNavController() {
+            this.showSecondaryNav = false;
+        }
+        VerticalNavController.prototype.onHover = function (item) {
+            if (item.tabs && item.tabs.length > 0) {
+                item.isHover = true;
+                this.showSecondaryNav = true;
+            }
+        };
+        VerticalNavController.prototype.onUnHover = function (item) {
+            if (this.showSecondaryNav) {
+                item.isHover = false;
+                this.showSecondaryNav = false;
+            }
+        };
+        return VerticalNavController;
+    }());
+    Nav.VerticalNavController = VerticalNavController;
+    Nav.verticalNavComponent = {
+        bindings: {
+            collapsed: '<'
+        },
+        template: "\n      <div class=\"nav-pf-vertical nav-pf-vertical-with-sub-menus hidden-icons-pf nav-hawtio-vertical\"\n           ng-class=\"{'hover-secondary-nav-pf': $ctrl.showSecondaryNav, collapsed: $ctrl.collapsed}\">\n        <ul class=\"list-group\" hawtio-main-nav></ul>\n      </div>\n    ",
+        controller: VerticalNavController
+    };
+    Nav._module.component('verticalNav', Nav.verticalNavComponent);
+})(Nav || (Nav = {}));
 
 angular.module('hawtio-core').run(['$templateCache', function($templateCache) {$templateCache.put('help/help.component.html','<div>\n  <h1>Help</h1>\n  <ul class="nav nav-tabs">\n    <li ng-repeat="topic in $ctrl.topics" ng-class="{active : topic === $ctrl.selectedTopic}">\n      <a href="#" ng-click="$ctrl.onSelectTopic(topic)">{{topic.label}}</a>\n    </li>\n  </ul>\n  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs" ng-if="$ctrl.subTopics.length > 1">\n    <li ng-repeat="subTopic in $ctrl.subTopics" ng-class="{active : subTopic === $ctrl.selectedSubTopic}">\n      <a ng-href="#" ng-click="$ctrl.onSelectSubTopic(subTopic)">\n        {{subTopic.label === $ctrl.selectedTopic.label ? \'Home\' : subTopic.label}}\n      </a>\n    </li>\n  </ul>\n  <div ng-bind-html="$ctrl.html"></div>\n</div>\n');
+$templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
 $templateCache.put('navigation/templates/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
 $templateCache.put('navigation/templates/layoutTest.html','<div>\n  <h1>Test Layout</h1>\n  <div ng-view>\n\n\n  </div>\n</div>\n\n\n');
-$templateCache.put('navigation/templates/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
+$templateCache.put('navigation/templates/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav nav-hawtio-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
 $templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
-$templateCache.put('navigation/templates/verticalNav.html','<div class="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-persistent-secondary" \n     ng-class="{\'hover-secondary-nav-pf\': $ctrl.showSecondaryNav}">\n  <ul class="list-group" hawtio-main-nav></ul>\n</div>');
 $templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
 $templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
-$templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
 $templateCache.put('help/help.md','### Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
 $templateCache.put('preferences/help.md','## Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');}]);

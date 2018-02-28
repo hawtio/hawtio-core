@@ -20,7 +20,7 @@
   }
 })();
 
-namespace HawtioMainNav {
+namespace Nav {
 
   function trimLeading(text, prefix) {
     if (text && prefix) {

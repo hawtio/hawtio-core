@@ -1,5 +1,12 @@
-/// <reference types="angular-route" />
 /// <reference types="angular" />
+/// <reference types="angular-route" />
+declare namespace App {
+    class AppController {
+        verticalNavCollapsed: boolean;
+        toggleVerticalNav(collapsed: any): void;
+    }
+    const appComponent: angular.IComponentOptions;
+}
 declare namespace Core {
     /**
      * @deprecated TODO Temporal type alias to avoid breaking existing code
@@ -336,7 +343,7 @@ declare namespace Help {
 declare namespace Help {
     const helpModule: string;
 }
-declare namespace HawtioMainNav {
+declare namespace Nav {
     const pluginName = "hawtio-core-nav";
     class Actions {
         static ADD: string;
@@ -483,7 +490,7 @@ declare namespace Core {
         getTabs(): {};
     }
 }
-declare namespace Core {
+declare namespace Nav {
     class HawtioTab {
         readonly label: string;
         readonly path: string;
@@ -516,7 +523,7 @@ declare var templateCache: any;
 declare namespace App {
     const appModule: string;
 }
-declare namespace Core {
+declare namespace Nav {
     class HawtioTabsController {
         private $document;
         private $timeout;
@@ -533,4 +540,20 @@ declare namespace Core {
         onClick(tab: HawtioTab): void;
     }
     const hawtioTabsComponent: angular.IComponentOptions;
+}
+declare namespace Nav {
+    class NavBarController {
+        onToggleVerticalNav: Function;
+        verticalNavCollapsed: boolean;
+        toggleVerticalNav(): void;
+    }
+    const navBarComponent: angular.IComponentOptions;
+}
+declare namespace Nav {
+    class VerticalNavController {
+        showSecondaryNav: boolean;
+        onHover(item: any): void;
+        onUnHover(item: any): void;
+    }
+    const verticalNavComponent: angular.IComponentOptions;
 }

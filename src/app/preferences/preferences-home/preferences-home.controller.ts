@@ -9,12 +9,12 @@ namespace Core {
     'ngInject';
 
     var panels = preferencesRegistry.getTabs();
-    $scope.tabs = _.keys(panels).sort(byLabel).map(label => new HawtioTab(label, label));
+    $scope.tabs = _.keys(panels).sort(byLabel).map(label => new Nav.HawtioTab(label, label));
 
     // pick the first one as the default
     preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);
 
-    $scope.setPanel = (tab: HawtioTab) => {
+    $scope.setPanel = (tab: Nav.HawtioTab) => {
       $scope.pref = tab.label;
     };
 
@@ -30,7 +30,7 @@ namespace Core {
       return undefined;
     };
 
-    $scope.getTab = (pref: string): Core.HawtioTab => {
+    $scope.getTab = (pref: string): Nav.HawtioTab => {
       return _.find($scope.tabs, {label: pref});
     };
     

@@ -9,6 +9,7 @@
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
+/// <reference path="app.component.ts"/>
 
 namespace App {
 
@@ -27,10 +28,11 @@ namespace App {
       Core.eventServicesModule,
       Core.hawtioExtensionModule,
       Help.helpModule,
-      HawtioMainNav.pluginName,
+      Nav.pluginName,
       Core.preferencesModule,
       templateCache.pluginName
     ])
+    .component('hawtioApp', appComponent)
     .name;
 
   hawtioPluginLoader

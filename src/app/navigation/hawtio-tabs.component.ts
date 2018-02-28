@@ -1,6 +1,6 @@
 /// <reference path="hawtio-tab.ts"/>
 
-namespace Core {
+namespace Nav {
 
   export class HawtioTabsController {
 
@@ -91,6 +91,6 @@ namespace Core {
     controller: HawtioTabsController
   };
 
-  HawtioMainNav._module.component('hawtioTabs', hawtioTabsComponent);
+  _module.component('hawtioTabs', hawtioTabsComponent);
 
 }

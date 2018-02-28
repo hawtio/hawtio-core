@@ -1,4 +1,4 @@
-namespace Core {
+namespace Nav {
 
   export class HawtioTab {
 

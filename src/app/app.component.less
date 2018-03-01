@@ -3,8 +3,6 @@
 @import (reference) "@{pf-less-path}/patternfly.less";
 
 @pf-padding: @grid-gutter-width / 2;
-@vertical-nav-width: 150px;
-@vertical-nav-hover-width: @vertical-nav-width * 2;
 
 html {
   height: 100%;
@@ -24,21 +22,4 @@ body {
     padding-left: @pf-padding;
     padding-right: @pf-padding;
   }
-}
-
-.nav-hawtio-vertical {
-  width: @vertical-nav-width;
-}
-
-.hover-secondary-nav-pf {
-  width: @vertical-nav-hover-width;
-}
-
-.layout-pf.layout-pf-fixed .container-hawtio-nav-hawtio-vertical {
-  margin-left: @vertical-nav-width;
-}
-
-.nav-hawtio-secondary-nav {
-  left: @vertical-nav-width;
-  width: @vertical-nav-width;
 }

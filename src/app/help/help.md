@@ -1,4 +1,4 @@
-### Plugin Help
+## Plugin Help
 
 Browse the available help topics for plugin specific documentation using the help navigation bar.
 

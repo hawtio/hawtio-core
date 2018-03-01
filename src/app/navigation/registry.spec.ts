@@ -3,7 +3,7 @@
 describe("Nav Registry Tests", function() {
 
   it("Should create a new nav item in the registry", function() {
-    var registry = HawtioMainNav.createRegistry(document.createElement('UL'));
+    var registry = Nav.createRegistry(document.createElement('UL'));
     var navItem = registry.builder().id("foo").build();
     registry.add(navItem);
     registry.iterate(function(item)  {
@@ -12,10 +12,10 @@ describe("Nav Registry Tests", function() {
   });
 
   it("Should call on a notification handler when an item is added", function() {
-    var registry = HawtioMainNav.createRegistry(document.createElement('UL'));
+    var registry = Nav.createRegistry(document.createElement('UL'));
     var navItem = registry.builder().id("foo").build();
     var added = 0;
-    registry.on(HawtioMainNav.Actions.ADD, 'test', function(item) {
+    registry.on(Nav.Actions.ADD, 'test', function(item) {
       added = added + 1;
     });
     registry.add(navItem);
@@ -23,24 +23,24 @@ describe("Nav Registry Tests", function() {
   });
 
   it("Should call on a notification handler even after an item is already added", function() {
-    var registry = HawtioMainNav.createRegistry(document.createElement('UL'));
+    var registry = Nav.createRegistry(document.createElement('UL'));
     var navItem = registry.builder().id("foo").build();
     registry.add(navItem);
     var added = 0;
-    registry.on(HawtioMainNav.Actions.ADD, 'test', function(item) {
+    registry.on(Nav.Actions.ADD, 'test', function(item) {
       added = added + 1;
     });
     expect(added).toBe(1);
   });
 
   it("Should call on a notification handler when an item is removed", function() {
-    var registry = HawtioMainNav.createRegistry(document.createElement('UL'));
+    var registry = Nav.createRegistry(document.createElement('UL'));
     var navItem = registry.builder().id("foo").build();
     var added = 0;
-    registry.on(HawtioMainNav.Actions.ADD, 'test', function(item)  {
+    registry.on(Nav.Actions.ADD, 'test', function(item)  {
       added = added + 1;
     });
-    registry.on(HawtioMainNav.Actions.REMOVE, 'test', function(item)  {
+    registry.on(Nav.Actions.REMOVE, 'test', function(item)  {
       added = added - 1;
     });
     registry.add(navItem);

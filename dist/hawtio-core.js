@@ -99,6 +99,9 @@ var Core;
             get: function () {
                 return this._token;
             },
+            set: function (token) {
+                this._token = token;
+            },
             enumerable: true,
             configurable: true
         });

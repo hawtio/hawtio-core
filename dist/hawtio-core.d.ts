@@ -36,7 +36,7 @@ declare namespace Core {
         private clear();
         readonly username: string;
         readonly password: string;
-        readonly token: string;
+        token: string;
         readonly loggedIn: boolean;
     }
 }

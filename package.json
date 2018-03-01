@@ -165,6 +165,7 @@
     "string-width": "2.1.1",
     "is-fullwidth-code-point": "2.0.0",
     "angular": "1.6.8",
-    "angular-sanitize": "1.6.8"
+    "angular-sanitize": "1.6.8",
+    "mime-types": "2.1.18"
   }
 }

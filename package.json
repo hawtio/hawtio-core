@@ -6,7 +6,7 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
-    "test": "gulp build && gulp test"
+    "test": "gulp test"
   },
   "dependencies": {
     "@hawtio/core-dts": "3.0.18",
@@ -39,11 +39,12 @@
     "gulp-typescript": "^3.1.7",
     "jasmine-core": "~2.8.0",
     "karma": "~1.7.1",
+    "karma-chrome-launcher": "~2.2.0",
     "karma-jasmine": "~1.1.0",
     "karma-mocha-reporter": "~2.2.5",
-    "karma-phantomjs-launcher": "^1.0.4",
     "karma-typescript-preprocessor": "~0.3.1",
     "path": "~0.12.7",
+    "puppeteer": "~1.1.1",
     "typescript": "^2.4.1",
     "yargs": "^8.0.0"
   },
@@ -74,7 +75,6 @@
     "replace-ext": "0.0.1",
     "through2": "2.0.3",
     "vinyl": "0.5.3",
-    "readable-stream": "2.3.3",
     "isarray": "1.0.0",
     "string_decoder": "1.0.3",
     "clone": "1.0.3",
@@ -166,6 +166,8 @@
     "is-fullwidth-code-point": "2.0.0",
     "angular": "1.6.8",
     "angular-sanitize": "1.6.8",
-    "mime-types": "2.1.18"
+    "mime-types": "2.1.18",
+    "process-nextick-args": "2.0.0",
+    "readable-stream": "1.1.14"
   }
 }

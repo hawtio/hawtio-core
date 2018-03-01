@@ -1,6 +1,8 @@
 // Karma configuration
 // Generated on Thu Nov 23 2017 10:43:14 GMT-0200 (-02)
 
+process.env.CHROME_BIN = require('puppeteer').executablePath()
+
 module.exports = function(config) {
   config.set({
 
@@ -33,8 +35,14 @@ module.exports = function(config) {
       'node_modules/js-logger/src/logger.min.js',
       'node_modules/marked/lib/marked.js',
       'dist/hawtio-core.js',
-      'src/**/*.spec.ts'
+      'src/**/*.spec.ts',
+      {pattern: 'hawtconfig.json', watched: false, included: false, served: true}
     ],
+
+    
+    proxies: {
+      "/hawtconfig.json": "/base/hawtconfig.json"
+    },
 
 
     // list of files to exclude
@@ -73,7 +81,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadless'],
 
 
     // Continuous Integration mode

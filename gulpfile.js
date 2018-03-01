@@ -96,7 +96,7 @@ gulp.task('watch', function() {
   gulp.watch(['index.html', config.dist + '**/*'], ['reload']);
 });
 
-gulp.task('test', function (done) {
+gulp.task('test', ['build'], function (done) {
   new Server({
     configFile: __dirname + '/karma.conf.js'
   }, done).start();

@@ -16,14 +16,22 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'node_modules/jquery/dist/jquery.min.js',
+      'node_modules/datatables.net/js/jquery.dataTables.js',
+      'node_modules/datatables.net-select/js/dataTables.select.js',
       'node_modules/bootstrap/dist/js/bootstrap.min.js',
       'node_modules/patternfly/dist/js/patternfly.min.js',
       'node_modules/angular/angular.js',
       'node_modules/angular-sanitize/angular-sanitize.js',
       'node_modules/angular-route/angular-route.min.js',
+      'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+      'node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js',
+      'node_modules/angularjs-datatables/dist/angular-datatables.min.js',
+      'node_modules/angularjs-datatables/dist/plugins/select/angular-datatables.select.min.js',
+      'node_modules/angular-patternfly/dist/angular-patternfly.js',
       'node_modules/lodash/lodash.min.js',
       'node_modules/urijs/src/URI.min.js',
       'node_modules/js-logger/src/logger.min.js',
+      'node_modules/marked/lib/marked.js',
       'dist/hawtio-core.js',
       'src/**/*.spec.ts'
     ],

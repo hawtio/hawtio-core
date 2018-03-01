@@ -78,6 +78,10 @@ namespace Core {
       return this._token;
     }
 
+    set token(token: string) {
+      this._token = token;
+    }
+
     get loggedIn(): boolean {
       return this._loggedIn;
     }

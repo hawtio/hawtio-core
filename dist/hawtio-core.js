@@ -2881,23 +2881,24 @@ var Nav;
             this.$document = $document;
             this.$timeout = $timeout;
             this.$location = $location;
-            this.tabs = [];
             this.moreTabs = [];
         }
         HawtioTabsController.prototype.$onChanges = function (changesObj) {
-            if (!this.tabs) {
-                throw Error("hawtioTabsComponent 'tabs' input is " + this.tabs);
+            if (this.tabs) {
+                this.activateTab(changesObj);
+                this.adjustTabs();
             }
-            this.activateTab(changesObj);
-            this.adjustTabs();
         };
         HawtioTabsController.prototype.activateTab = function (changesObj) {
             if (changesObj.activeTab && changesObj.activeTab.currentValue) {
                 this.activeTab = _.find(this.tabs, function (tab) { return tab === changesObj.activeTab.currentValue; });
             }
-            else if (this.tabs.length > 0) {
-                this.activeTab = this.tabs[0];
-                this.$location.path(this.activeTab.path);
+            else {
+                var tab = _.find(this.tabs, { path: this.$location.path() });
+                if (tab) {
+                    this.activeTab = tab;
+                    this.$location.path(tab.path);
+                }
             }
         };
         HawtioTabsController.prototype.adjustTabs = function () {
@@ -2933,7 +2934,7 @@ var Nav;
             activeTab: '<',
             onChange: '&',
         },
-        template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs track by tab.path\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.moreTabs.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"tab in $ctrl.moreTabs track by tab.label\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
+        template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\" ng-if=\"$ctrl.tabs\">\n        <li ng-repeat=\"tab in $ctrl.tabs track by tab.path\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.moreTabs.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"tab in $ctrl.moreTabs track by tab.label\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
         controller: HawtioTabsController
     };
     Nav._module.component('hawtioTabs', Nav.hawtioTabsComponent);

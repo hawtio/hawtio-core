@@ -4,7 +4,7 @@ namespace Nav {
 
   export class HawtioTabsController {
 
-    tabs: HawtioTab[] = [];
+    tabs: HawtioTab[];
     moreTabs: HawtioTab[] = [];
     adjustingTabs: boolean;
     onChange: Function;
@@ -16,19 +16,21 @@ namespace Nav {
     }
 
     $onChanges(changesObj: ng.IOnChangesObject) {
-      if (!this.tabs) {
-        throw Error(`hawtioTabsComponent 'tabs' input is ${this.tabs}`);
+      if (this.tabs) {
+        this.activateTab(changesObj);
+        this.adjustTabs();
       }
-      this.activateTab(changesObj);
-      this.adjustTabs();
     }
     
     private activateTab(changesObj: ng.IOnChangesObject) {
       if (changesObj.activeTab && changesObj.activeTab.currentValue) {
         this.activeTab = _.find(this.tabs, tab => tab === changesObj.activeTab.currentValue);
-      } else if (this.tabs.length > 0) {
-        this.activeTab = this.tabs[0];
-        this.$location.path(this.activeTab.path);
+      } else {
+        let tab = _.find(this.tabs, {path: this.$location.path()});
+        if (tab) {
+          this.activeTab = tab;
+          this.$location.path(tab.path);
+        }
       }
     }
 
@@ -70,7 +72,7 @@ namespace Nav {
       onChange: '&',
     },
     template: `
-      <ul class="nav nav-tabs hawtio-tabs">
+      <ul class="nav nav-tabs hawtio-tabs" ng-if="$ctrl.tabs">
         <li ng-repeat="tab in $ctrl.tabs track by tab.path" class="hawtio-tab" 
             ng-class="{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}">
           <a href="#" ng-click="$ctrl.onClick(tab)">{{tab.label}}</a>

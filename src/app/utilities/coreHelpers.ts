@@ -244,8 +244,15 @@ namespace Core {
    * @param {string} mbean the mbean
    * @returns {string}
    */
+  function applyJolokiaEscapeRules(mbean: string): string {
+    return mbean
+      .replace(/!/g, '!!')
+      .replace(/\//g, '!/')
+      .replace(/"/g, '!"');
+  }
+
   export function escapeMBean(mbean: string): string {
-    return encodeURI(mbean.replace(/\//g, '!/'));
+    return encodeURI(applyJolokiaEscapeRules(mbean));
   }
 
   /**
@@ -256,7 +263,7 @@ namespace Core {
    * @returns {string}
    */
   export function escapeMBeanPath(mbean: string): string {
-    return mbean.replace(/\//g, '!/').replace(':', '/');
+    return applyJolokiaEscapeRules(mbean).replace(':', '/');
   }
 
   export function escapeDots(text: string) {

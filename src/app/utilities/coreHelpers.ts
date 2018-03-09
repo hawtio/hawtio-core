@@ -238,7 +238,7 @@ namespace Core {
   }
 
   /**
-   * Escapes the mbean for Jolokia GET requests.
+   * Applies the Jolokia escaping rules to the mbean name.
    * See: http://www.jolokia.org/reference/html/protocol.html#escape-rules
    *
    * @param {string} mbean the mbean
@@ -251,6 +251,13 @@ namespace Core {
       .replace(/"/g, '!"');
   }
 
+
+  /**
+   * Escapes the mbean for Jolokia GET requests.
+   *
+   * @param {string} mbean the mbean
+   * @returns {string}
+   */
   export function escapeMBean(mbean: string): string {
     return encodeURI(applyJolokiaEscapeRules(mbean));
   }

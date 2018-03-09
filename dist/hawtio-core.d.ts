@@ -954,7 +954,6 @@ declare namespace Core {
     function isNumberTypeName(typeName: any): boolean;
     /**
      * Escapes the mbean for Jolokia GET requests.
-     * See: http://www.jolokia.org/reference/html/protocol.html#escape-rules
      *
      * @param {string} mbean the mbean
      * @returns {string}

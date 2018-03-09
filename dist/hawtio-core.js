@@ -4117,14 +4117,26 @@ var Core;
     }
     Core.isNumberTypeName = isNumberTypeName;
     /**
-     * Escapes the mbean for Jolokia GET requests.
+     * Applies the Jolokia escaping rules to the mbean name.
      * See: http://www.jolokia.org/reference/html/protocol.html#escape-rules
      *
      * @param {string} mbean the mbean
      * @returns {string}
      */
+    function applyJolokiaEscapeRules(mbean) {
+        return mbean
+            .replace(/!/g, '!!')
+            .replace(/\//g, '!/')
+            .replace(/"/g, '!"');
+    }
+    /**
+     * Escapes the mbean for Jolokia GET requests.
+     *
+     * @param {string} mbean the mbean
+     * @returns {string}
+     */
     function escapeMBean(mbean) {
-        return encodeURI(mbean.replace(/\//g, '!/'));
+        return encodeURI(applyJolokiaEscapeRules(mbean));
     }
     Core.escapeMBean = escapeMBean;
     /**
@@ -4135,7 +4147,7 @@ var Core;
      * @returns {string}
      */
     function escapeMBeanPath(mbean) {
-        return mbean.replace(/\//g, '!/').replace(':', '/');
+        return applyJolokiaEscapeRules(mbean).replace(':', '/');
     }
     Core.escapeMBeanPath = escapeMBeanPath;
     function escapeDots(text) {

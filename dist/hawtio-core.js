@@ -1721,11 +1721,7 @@ var Nav;
     // Plugin initialization
     Nav._module = angular.module(Nav.pluginName, ['ngRoute']);
     Nav._module.constant('layoutFull', 'navigation/templates/layoutFull.html');
-    Nav._module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
-            $locationProvider.html5Mode({
-                enabled: true,
-                requireBase: true
-            });
+    Nav._module.config(['$routeProvider', function ($routeProvider) {
             $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
         }]);
     Nav._module.controller('HawtioNav.WelcomeController', welcomeController);

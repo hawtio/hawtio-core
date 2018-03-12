@@ -11,7 +11,6 @@ var Test;
     var tabs = [];
     
     Test._module.config(['$routeProvider', 'HawtioNavBuilderProvider', '$locationProvider', function ($routeProvider, builder, $locationProvider) {
-        $locationProvider.html5Mode(true);
         tab = builder.create()
                      .id(Test.pluginName)
                      .title(function () { return "Test"; })

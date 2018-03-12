@@ -387,11 +387,7 @@ namespace Nav {
 
   _module.constant('layoutFull', 'navigation/templates/layoutFull.html');
 
-  _module.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
-    $locationProvider.html5Mode({
-      enabled: true,
-      requireBase: true
-    });
+  _module.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
   }]);
 

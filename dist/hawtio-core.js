@@ -131,7 +131,8 @@ var Core;
 (function (Core) {
     Core.authModule = angular
         .module('hawtio-core-auth', [])
-        .service('userDetails', Core.AuthService)
+        .service('authService', Core.AuthService)
+        .service('userDetails', Core.AuthService) // remove when all references are gone
         .name;
 })(Core || (Core = {}));
 /// <reference path="config.ts"/>

@@ -5,7 +5,8 @@ namespace Core {
 
   export const authModule = angular
     .module('hawtio-core-auth', [])
-    .service('userDetails', AuthService)
+    .service('authService', AuthService)
+    .service('userDetails', AuthService) // remove when all references are gone
     .name;
 
 }

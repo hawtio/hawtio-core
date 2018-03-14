@@ -43,6 +43,7 @@ var Core;
             this._password = null;
             this._token = null;
             this._loggedIn = false;
+            console.count('AuthService.constructor()');
         }
         /**
          * Log in as a specific user.
@@ -132,7 +133,7 @@ var Core;
     Core.authModule = angular
         .module('hawtio-core-auth', [])
         .service('authService', Core.AuthService)
-        .service('userDetails', Core.AuthService) // remove when all references are gone
+        .factory('userDetails', ['authService', function (authService) { return authService; }]) // remove when all references are gone
         .name;
 })(Core || (Core = {}));
 /// <reference path="config.ts"/>

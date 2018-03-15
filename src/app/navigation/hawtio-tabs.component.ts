@@ -5,7 +5,6 @@ namespace Nav {
   export class HawtioTabsController {
 
     tabs: HawtioTab[];
-    moreTabs: HawtioTab[] = [];
     adjustingTabs: boolean;
     onChange: Function;
     activeTab: HawtioTab;
@@ -17,8 +16,8 @@ namespace Nav {
 
     $onChanges(changesObj: ng.IOnChangesObject) {
       if (this.tabs) {
-        this.activateTab(changesObj);
         this.adjustTabs();
+        this.activateTab(changesObj);
       }
     }
     
@@ -44,20 +43,25 @@ namespace Nav {
         let $liDropdown = $ul.find('.dropdown');
         
         let availableWidth = $ul.width() - $liDropdown.width();
-        let lisWidth = 0;
-        this.moreTabs = [];
+        let tabsWidth = 0;
 
-        $liTabs.each((index: number, element: Element) => {
-          lisWidth += element.clientWidth;
-          if (lisWidth > availableWidth) {
-            this.moreTabs.unshift(this.tabs.pop());
-          }
+        $liTabs.each((i: number, element: Element) => {
+          tabsWidth += element.clientWidth;
+          this.tabs[i].visible = tabsWidth < availableWidth;
         });
 
         this.adjustingTabs = false;
       });
     }
 
+    get visibleTabs() {
+      return _.filter(this.tabs, {'visible': true});
+    }
+
+    get moreTabs() {
+      return _.filter(this.tabs, {'visible': false});
+    }
+    
     onClick(tab: HawtioTab) {
       this.activeTab = tab;
       this.onChange({tab: tab});
@@ -73,7 +77,7 @@ namespace Nav {
     },
     template: `
       <ul class="nav nav-tabs hawtio-tabs" ng-if="$ctrl.tabs">
-        <li ng-repeat="tab in $ctrl.tabs track by tab.path" class="hawtio-tab" 
+        <li ng-repeat="tab in $ctrl.visibleTabs track by tab.path" class="hawtio-tab" 
             ng-class="{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}">
           <a href="#" ng-click="$ctrl.onClick(tab)">{{tab.label}}</a>
         </li>

@@ -494,6 +494,7 @@ declare namespace Nav {
     class HawtioTab {
         readonly label: string;
         readonly path: string;
+        visible: boolean;
         constructor(label: string, path: string);
     }
 }
@@ -529,7 +530,6 @@ declare namespace Nav {
         private $timeout;
         private $location;
         tabs: HawtioTab[];
-        moreTabs: HawtioTab[];
         adjustingTabs: boolean;
         onChange: Function;
         activeTab: HawtioTab;
@@ -537,6 +537,8 @@ declare namespace Nav {
         $onChanges(changesObj: ng.IOnChangesObject): void;
         private activateTab(changesObj);
         private adjustTabs();
+        readonly visibleTabs: HawtioTab[];
+        readonly moreTabs: HawtioTab[];
         onClick(tab: HawtioTab): void;
     }
     const hawtioTabsComponent: angular.IComponentOptions;

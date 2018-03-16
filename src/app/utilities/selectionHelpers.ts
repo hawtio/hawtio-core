@@ -2,7 +2,7 @@
 
 namespace SelectionHelpers {
 
-  const log: Logging.Logger = Logger.get("SelectionHelpers");
+  const log: Logging.Logger = Logger.get("hawtio-core-utils-selection-helpers");
 
   // these functions deal with adding/using a 'selected' item on a group of objects
   export function selectNone(group: any[]): void {

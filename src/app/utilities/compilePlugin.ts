@@ -1,6 +1,6 @@
 namespace HawtioCompile {
 
-  const pluginName = 'hawtio-compile';
+  const pluginName = 'hawtio-core-compile';
   const log: Logging.Logger = Logger.get(pluginName);
 
   export const _module = angular

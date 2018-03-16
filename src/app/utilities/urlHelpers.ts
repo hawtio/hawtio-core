@@ -2,7 +2,7 @@
 
 namespace UrlHelpers {
 
-  const log: Logging.Logger = Logger.get("UrlHelpers");
+  const log: Logging.Logger = Logger.get("hawtio-core-utils-url-helpers");
 
   /**
    * Returns the URL without the starting '#' if it's there

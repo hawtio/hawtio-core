@@ -2,7 +2,7 @@
 
 namespace FilterHelpers {
 
-  export const log: Logging.Logger = Logger.get("FilterHelpers");
+  export const log: Logging.Logger = Logger.get("hawtio-core-utils-filter-helpers");
 
   export function search(object: any, filter: string, maxDepth = -1, and = true): boolean {
     let f = filter.split(" ");

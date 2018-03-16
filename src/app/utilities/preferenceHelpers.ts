@@ -1,6 +1,6 @@
 namespace Core {
 
-  const log: Logging.Logger = Logger.get("Core");
+  const log: Logging.Logger = Logger.get("hawtio-core-utils");
 
   /**
   * Parsers the given value as JSON if it is define

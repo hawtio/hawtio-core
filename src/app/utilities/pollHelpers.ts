@@ -2,7 +2,7 @@
 
 namespace PollHelpers {
 
-  const log: Logging.Logger = Logger.get("PollHelpers");
+  const log: Logging.Logger = Logger.get("hawtio-core-utils-poll-helpers");
 
   export function setupPolling($scope, updateFunction: (next: () => void) => void,
     period: number = 2000, $timeout?: ng.ITimeoutService,

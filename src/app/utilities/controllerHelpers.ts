@@ -1,6 +1,6 @@
 namespace ControllerHelpers {
 
-  const log: Logging.Logger = Logger.get("ControllerHelpers");
+  const log: Logging.Logger = Logger.get("hawtio-core-utils-controller-helpers");
 
   export function createClassSelector(config: any): (selection: any, model: any) => string {
     return (selector: string, model: any): string => {

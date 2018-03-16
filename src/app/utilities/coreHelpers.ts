@@ -3,7 +3,7 @@
 
 namespace Core {
 
-  const log = Logger.get("hawtio-core");
+  const log = Logger.get("hawtio-core-utils");
 
   export const lazyLoaders = {};
 

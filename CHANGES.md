@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 3.2.21
+
+* Canonicalise logger names based on `hawtio-[plugin name]-[sub component name]` format
+* Bug fixes
+
 #### 3.2.15
 * Improve `AuthService`
 

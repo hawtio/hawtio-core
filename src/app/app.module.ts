@@ -30,7 +30,7 @@ namespace App {
       Help.helpModule,
       Nav.pluginName,
       Core.preferencesModule,
-      templateCache.pluginName
+      Core.templateCacheModule
     ])
     .component('hawtioApp', appComponent)
     .name;

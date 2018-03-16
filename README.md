@@ -2,6 +2,14 @@
 
 This package contains the core parts of the **[hawtio](http://hawt.io)** web console.
 
+hawtio-core features include:
+
+1. [Plugins](#plugins)
+2. [Routing and navigation](#routing-and-navigation)
+3. [Help documentation](#help-documentation)
+4. [UI extensions](#ui-extensions)
+5. [Template caching](#template-caching)
+
 ## Plugins
 
 ### Registering inline plugins

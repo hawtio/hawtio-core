@@ -1,24 +1,23 @@
 namespace Core {
 
-  declare var log:Logging.Logger;
-  var log = log || Logger.get("Core");
-  
-   /**
-   * Parsers the given value as JSON if it is define
-   */
-  export function parsePreferencesJson(value, key) {
-    var answer = null;
+  const log: Logging.Logger = Logger.get("Core");
+
+  /**
+  * Parsers the given value as JSON if it is define
+  */
+  export function parsePreferencesJson(value, key): any {
+    let answer = null;
     if (angular.isDefined(value)) {
       answer = Core.parseJsonText(value, "localStorage for " + key);
     }
     return answer;
   }
 
-  export function initPreferenceScope($scope, localStorage, defaults) {
+  export function initPreferenceScope($scope, localStorage, defaults): void {
     angular.forEach(defaults, (_default, key) => {
       $scope[key] = _default['value'];
-      var converter = _default['converter'];
-      var formatter = _default['formatter'];
+      let converter = _default['converter'];
+      let formatter = _default['formatter'];
       if (!formatter) {
         formatter = (value) => { return value; };
       }
@@ -26,16 +25,16 @@ namespace Core {
         converter = (value) => { return value; };
       }
       if (key in localStorage) {
-        var value = converter(localStorage[key]);
+        let value = converter(localStorage[key]);
         log.debug("from local storage, setting ", key, " to ", value);
         $scope[key] = value;
       } else {
-        var value = _default['value'];
+        let value = _default['value'];
         log.debug("from default, setting ", key, " to ", value);
         localStorage[key] = value;
       }
 
-      var watchFunc = _default['override'];
+      let watchFunc = _default['override'];
       if (!watchFunc) {
         watchFunc = (newValue, oldValue) => {
           if (newValue !== oldValue) {
@@ -43,7 +42,7 @@ namespace Core {
               _default.pre(newValue);
             }
 
-            var value = formatter(newValue);
+            let value = formatter(newValue);
             log.debug("to local storage, setting ", key, " to ", value);
             localStorage[key] = value;
 
@@ -70,9 +69,9 @@ namespace Core {
    * @param {Core.Workspace} workspace
    * @param {Function} validFn
    * @param {string} perspectiveId
-   * @return {Boolean}
+   * @return {boolean}
    */
-  export function isValidFunction(workspace, validFn, perspectiveId) {
+  export function isValidFunction(workspace, validFn, perspectiveId): boolean {
     return !validFn || validFn(workspace, perspectiveId);
   }
 

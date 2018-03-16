@@ -1,9 +1,9 @@
 namespace ControllerHelpers {
 
-  var log = Logger.get("ControllerHelpers");
+  const log: Logging.Logger = Logger.get("ControllerHelpers");
 
-  export function createClassSelector(config:any): (selection:any, model:any) => string {
-    return (selector:string, model:any):string => {
+  export function createClassSelector(config: any): (selection: any, model: any) => string {
+    return (selector: string, model: any): string => {
       if (selector === model && selector in config) {
         return config[selector];
       }
@@ -11,8 +11,8 @@ namespace ControllerHelpers {
     }
   }
 
-  export function createValueClassSelector(config:any): (model:any) => string {
-    return (model:any):string => {
+  export function createValueClassSelector(config: any): (model: any) => string {
+    return (model: any): string => {
       if (model in config) {
         return config[model]
       } else {
@@ -33,20 +33,21 @@ namespace ControllerHelpers {
    * @param {String} paramName
    * @param {Object} initialValue
    */
-  export function bindModelToSearchParam($scope, $location, modelName:string, paramName:string, initialValue?:any, to?: (value:any) => any, from?: (value:any) => any) {
+  export function bindModelToSearchParam($scope, $location, modelName: string, paramName: string,
+    initialValue?: any, to?: (value: any) => any, from?: (value: any) => any): void {
 
-    if ( !(modelName in $scope)) {
+    if (!(modelName in $scope)) {
       $scope[modelName] = initialValue;
     }
 
-    var toConverter = to || Core.doNothing
-    var fromConverter = from || Core.doNothing;
+    let toConverter = to || Core.doNothing
+    let fromConverter = from || Core.doNothing;
 
     function currentValue() {
       return fromConverter($location.search()[paramName] || initialValue);
     }
 
-    var value = currentValue();
+    let value = currentValue();
     Core.pathSet($scope, modelName, value);
 
     $scope.$watch(modelName, (newValue, oldValue) => {
@@ -69,21 +70,22 @@ namespace ControllerHelpers {
    * @param {Object} $route
    * @param {*} $scope
    * @param {ng.ILocationService} $location
-   * @param {Array[String]} parameters
+   * @param {string[]} parameters
    */
-  export function reloadWhenParametersChange($route:any, $scope, $location, parameters = ["nid"]) {
-    var initial = angular.copy($location.search());
+  export function reloadWhenParametersChange($route: any, $scope, $location: ng.ILocationService,
+    parameters: string[] = ["nid"]): void {
+    let initial = angular.copy($location.search());
     $scope.$on('$routeUpdate', () => {
       // lets check if any of the parameters changed
-      var current = $location.search();
-      var changed = [];
+      let current = $location.search();
+      let changed = [];
       angular.forEach(parameters, (param) => {
         if (current[param] !== initial[param]) {
           changed.push(param);
         }
       });
       if (changed.length) {
-        //log.info("Reloading page due to change to parameters: " + changed);
+        log.debug("Reloading page due to change to parameters:", changed);
         $route.reload();
       }
     });

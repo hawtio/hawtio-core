@@ -2,11 +2,11 @@
 
 namespace FilterHelpers {
 
-  export var log:Logging.Logger = Logger.get("FilterHelpers");
+  export const log: Logging.Logger = Logger.get("FilterHelpers");
 
-  export function search(object:any, filter:string, maxDepth = -1, and = true):boolean {
-    var f = filter.split(" ");
-    var matches = _.filter(f, (f) => searchObject(object, f, maxDepth));
+  export function search(object: any, filter: string, maxDepth = -1, and = true): boolean {
+    let f = filter.split(" ");
+    let matches = _.filter(f, (f) => searchObject(object, f, maxDepth));
     if (and) {
       return matches.length === f.length;
     } else {
@@ -22,15 +22,15 @@ namespace FilterHelpers {
    * @param filter
    * @returns {boolean}
    */
-  export function searchObject(object:any, filter:string, maxDepth = -1, depth = 0):boolean {
+  export function searchObject(object: any, filter: string, maxDepth = -1, depth = 0): boolean {
     // avoid inifinite recursion...
     if ((maxDepth > 0 && depth >= maxDepth) || depth > 50) {
       return false;
     }
-    var f = filter.toLowerCase();
-    var answer = false;
+    let f = filter.toLowerCase();
+    let answer = false;
     if (angular.isString(object)) {
-      answer = (<string>object).toLowerCase().indexOf(f) !== -1;
+      answer = (object as string).toLowerCase().indexOf(f) !== -1;
     } else if (angular.isNumber(object)) {
       answer = ("" + object).toLowerCase().indexOf(f) !== -1;
     } else if (angular.isArray(object)) {

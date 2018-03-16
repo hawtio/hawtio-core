@@ -2,15 +2,15 @@
 
 namespace SelectionHelpers {
 
-  var log:Logging.Logger = Logger.get("SelectionHelpers");
+  const log: Logging.Logger = Logger.get("SelectionHelpers");
 
   // these functions deal with adding/using a 'selected' item on a group of objects
-  export function selectNone(group:any[]):void {
-    group.forEach((item:any):void => { item['selected'] = false; });
+  export function selectNone(group: any[]): void {
+    group.forEach((item: any): void => { item['selected'] = false; });
   }
 
-  export function selectAll(group:any[], filter?:(any) => boolean):void {
-    group.forEach((item:any):void => {
+  export function selectAll(group: any[], filter?: (any) => boolean): void {
+    group.forEach((item: any): void => {
       if (!filter) {
         item['selected'] = true;
       } else {
@@ -21,24 +21,24 @@ namespace SelectionHelpers {
     });
   }
 
-  export function toggleSelection(item:any):void {
+  export function toggleSelection(item: any): void {
     item['selected'] = !item['selected'];
   }
 
-  export function selectOne(group:any[], item:any):void {
+  export function selectOne(group: any[], item: any): void {
     selectNone(group);
     toggleSelection(item);
   }
 
-  export function sync(selections:Array<any>, group:Array<any>, index:string):Array<any> {
+  export function sync(selections: any[], group: any[], index: string): any[] {
     group.forEach((item) => {
       item['selected'] = _.some(selections, (selection) => selection[index] === item[index]);
     });
     return _.filter(group, (item) => item['selected']);
   }
 
-  export function select(group:any[], item:any, $event:any):void {
-    var ctrlKey = $event.ctrlKey;
+  export function select(group: any[], item: any, $event: any): void {
+    let ctrlKey = $event.ctrlKey;
     if (!ctrlKey) {
       if (item['selected']) {
         toggleSelection(item);
@@ -50,17 +50,17 @@ namespace SelectionHelpers {
     }
   }
 
-  export function isSelected(item:any, yes?:string, no?:string):any {
+  export function isSelected(item: any, yes?: string, no?: string): any {
     return maybe(item['selected'], yes, no);
   }
 
   // these functions deal with using a separate selection array
-  export function clearGroup(group:any):void {
+  export function clearGroup(group: any): void {
     group.length = 0;
   }
 
-  export function toggleSelectionFromGroup(group:any[], item:any, search?:(item:any) => boolean):void {
-    var searchMethod = search || _.matches(item);
+  export function toggleSelectionFromGroup(group: any[], item: any, search?: (item: any) => boolean): void {
+    let searchMethod = search || _.matches(item);
     if (_.some(group, searchMethod)) {
       _.remove(group, searchMethod);
     } else {
@@ -68,7 +68,7 @@ namespace SelectionHelpers {
     }
   }
 
-  function stringOrBoolean(str:string, answer:boolean):any {
+  function stringOrBoolean(str: string, answer: boolean): any {
     if (angular.isDefined(str)) {
       return str;
     } else {
@@ -76,15 +76,15 @@ namespace SelectionHelpers {
     }
   }
 
-  function nope(str?:string) {
+  function nope(str?: string) {
     return stringOrBoolean(str, false);
   }
 
-  function yup(str?:string) {
+  function yup(str?: string) {
     return stringOrBoolean(str, true);
   }
 
-  function maybe(answer:boolean, yes?:string, no?:string) {
+  function maybe(answer: boolean, yes?: string, no?: string) {
     if (answer) {
       return yup(yes);
     } else {
@@ -92,19 +92,19 @@ namespace SelectionHelpers {
     }
   }
 
-  export function isInGroup(group:any[], item:any, yes?:string, no?:string, search?:(item:any) => boolean):any {
+  export function isInGroup(group: any[], item: any, yes?: string, no?: string, search?: (item: any) => boolean): any {
     if (!group) {
       return nope(no);
     }
-    var searchMethod = search || _.matches(item);
+    let searchMethod = search || _.matches(item);
     return maybe(_.some(group, searchMethod), yes, no);
   }
 
-  export function filterByGroup(group:any, item:any, yes?:string, no?:string, search?:(item:any) => boolean):any {
+  export function filterByGroup(group: any, item: any, yes?: string, no?: string, search?: (item: any) => boolean): any {
     if (group.length === 0) {
       return yup(yes);
     }
-    var searchMethod = search || item;
+    let searchMethod = search || item;
     if (angular.isArray(item)) {
       return maybe(_.intersection(group, item).length === group.length, yes, no);
     } else {
@@ -112,11 +112,11 @@ namespace SelectionHelpers {
     }
   }
 
-  export function syncGroupSelection(group:any, collection:any, attribute?:string) {
-    var newGroup = [];
+  export function syncGroupSelection(group: any, collection: any, attribute?: string) {
+    let newGroup = [];
     if (attribute) {
       group.forEach((groupItem) => {
-        var first = _.find(collection, (collectionItem) => {
+        let first = _.find(collection, (collectionItem) => {
           return groupItem[attribute] === collectionItem[attribute];
         });
         if (first) {
@@ -125,7 +125,7 @@ namespace SelectionHelpers {
       });
     } else {
       group.forEach((groupItem) => {
-        var first = _.find(collection, (collectionItem) => {
+        let first = _.find(collection, (collectionItem) => {
           return _.isEqual(groupItem, collectionItem);
         });
         if (first) {

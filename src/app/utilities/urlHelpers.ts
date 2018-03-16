@@ -2,14 +2,14 @@
 
 namespace UrlHelpers {
 
-  var log = Logger.get("UrlHelpers");
+  const log: Logging.Logger = Logger.get("UrlHelpers");
 
   /**
    * Returns the URL without the starting '#' if it's there
    * @param url
    * @returns {string}
    */
-  export function noHash(url:string):string {
+  export function noHash(url: string): string {
     if (url && _.startsWith(url, '#')) {
       return url.substring(1);
     } else {
@@ -17,7 +17,7 @@ namespace UrlHelpers {
     }
   }
 
-  export function extractPath(url:string):string {
+  export function extractPath(url: string): string {
     if (url.indexOf('?') !== -1) {
       return url.split('?')[0];
     } else {
@@ -31,8 +31,8 @@ namespace UrlHelpers {
    * @param thingICareAbout
    * @returns {boolean}
    */
-  export function contextActive(url:string, thingICareAbout:string):boolean {
-    var cleanUrl = extractPath(url);
+  export function contextActive(url: string, thingICareAbout: string): boolean {
+    let cleanUrl = extractPath(url);
     if (_.endsWith(thingICareAbout, '/') && _.startsWith(thingICareAbout, "/")) {
       return cleanUrl.indexOf(thingICareAbout) > -1;
     }
@@ -47,9 +47,9 @@ namespace UrlHelpers {
    * from the supplied strings if needed, except the first and last string
    * @returns {string}
    */
-  export function join(...paths:string[]) {
-    var tmp = [];
-    var length = paths.length - 1;
+  export function join(...paths: string[]) {
+    let tmp = [];
+    let length = paths.length - 1;
     paths.forEach((path, index) => {
       if (Core.isBlank(path)) {
         return;
@@ -68,33 +68,32 @@ namespace UrlHelpers {
         tmp.push(path);
       }
     });
-    var rc = tmp.join('/');
+    let rc = tmp.join('/');
     return rc
   }
 
-  export function parseQueryString(text?:string):any {
-    var uri = new URI(text);
+  export function parseQueryString(text?: string): any {
+    let uri = new URI(text);
     return URI.parseQuery(uri.query());
   }
 
-  //export var parseQueryString = hawtioPluginLoader.parseQueryString;
   /**
    * Apply a proxy to the supplied URL if the jolokiaUrl is using the proxy, or if the URL is for a a different host/port
    * @param jolokiaUrl
    * @param url
    * @returns {*}
    */
-  export function maybeProxy(jolokiaUrl:string, url:string) {
+  export function maybeProxy(jolokiaUrl: string, url: string) {
     if (jolokiaUrl && _.startsWith(jolokiaUrl, 'proxy/')) {
-      log.debug("Jolokia URL is proxied, applying proxy to: ", url);
+      log.debug("Jolokia URL is proxied, applying proxy to:", url);
       return join('proxy', url);
     }
-    var origin = window.location['origin'];
+    let origin = window.location['origin'];
     if (url && (_.startsWith(url, 'http') && !_.startsWith(url, origin))) {
-      log.debug("Url doesn't match page origin: ", origin, " applying proxy to: ", url);
+      log.debug("Url doesn't match page origin:", origin, "applying proxy to:", url);
       return join('proxy', url);
     }
-    log.debug("No need to proxy: ", url);
+    log.debug("No need to proxy:", url);
     return url;
   }
 
@@ -103,8 +102,8 @@ namespace UrlHelpers {
    * @param url
    * @returns {*}
    */
-  export function escapeColons(url:string):string {
-    var answer = url;
+  export function escapeColons(url: string): string {
+    let answer = url;
     if (_.startsWith(url, 'proxy')) {
       answer = url.replace(/:/g, '\\:');
     } else {

@@ -1,6 +1,6 @@
 ### Change Log
 
-#### 3.2.21
+#### 3.2.22
 
 * Canonicalise logger names based on `hawtio-[plugin name]-[sub component name]` format
 * Bug fixes

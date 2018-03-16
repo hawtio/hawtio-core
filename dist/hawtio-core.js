@@ -2750,83 +2750,81 @@ var Core;
         .service('preferencesRegistry', Core.PreferencesRegistry)
         .name;
 })(Core || (Core = {}));
-var templateCache;
-(function (templateCache) {
-    templateCache.pluginName = 'hawtio-template-cache';
-    templateCache._module = angular.module(templateCache.pluginName, []);
-    templateCache._module.config(['$provide', function ($provide) {
-            // extend template cache a bit so we can avoid fetching templates from the
-            // server
-            $provide.decorator('$templateCache', ['$delegate', function ($delegate) {
-                    var log = Logger.get('$templateCache');
-                    var oldPut = $delegate.put;
-                    $delegate.watches = {};
-                    $delegate.put = function (id, template) {
-                        ////log.debug("Adding template: ", id); //, " with content: ", template);
-                        /*
-                        if (!template) {
-                          //log.debug("Template is undefined, ignoring");
-                          return;
-                        }
-                        */
-                        oldPut(id, template);
-                        if (id in $delegate.watches) {
-                            //log.debug("Found watches for id: ", id);
-                            $delegate.watches[id].forEach(function (func) {
-                                func(template);
+var Core;
+(function (Core) {
+    templateCacheConfig.$inject = ["$provide"];
+    var pluginName = 'hawtio-core-template-cache';
+    var log = Logger.get(pluginName);
+    Core.templateCacheModule = angular
+        .module(pluginName, [])
+        .config(templateCacheConfig)
+        .name;
+    function templateCacheConfig($provide) {
+        'ngInject';
+        // extend template cache a bit so we can avoid fetching templates from the
+        // server
+        $provide.decorator('$templateCache', ['$delegate', function ($delegate) {
+                var oldPut = $delegate.put;
+                $delegate.watches = {};
+                $delegate.put = function (id, template) {
+                    log.debug("Adding template:", id); //, " with content: ", template);
+                    oldPut(id, template);
+                    if (id in $delegate.watches) {
+                        log.debug("Found watches for id:", id);
+                        $delegate.watches[id].forEach(function (func) {
+                            func(template);
+                        });
+                        log.debug("Removing watches for id:", id);
+                        delete $delegate.watches[id];
+                    }
+                };
+                var oldGet = $delegate.get;
+                $delegate.get = function (id) {
+                    var answer = oldGet(id);
+                    log.debug("Getting template:", id); //, " returning: ", answer);
+                    return answer;
+                };
+                return $delegate;
+            }]);
+        // extend templateRequest so we can prevent it from requesting templates, as
+        // we have 'em all in $templateCache
+        $provide.decorator('$templateRequest', ['$rootScope', '$timeout', '$q', '$templateCache', '$delegate',
+            function ($rootScope, $timeout, $q, $templateCache, $delegate) {
+                var fn = function (url, ignore) {
+                    log.debug("request for template at:", url);
+                    var answer = $templateCache.get(url);
+                    var deferred = $q.defer();
+                    if (!angular.isDefined(answer)) {
+                        log.debug("No template in cache for URL:", url);
+                        if ('watches' in $templateCache) {
+                            log.debug("Adding watch to $templateCache for url:", url);
+                            if (!$templateCache.watches[url]) {
+                                $templateCache.watches[url] = [];
+                            }
+                            $templateCache.watches[url].push(function (template) {
+                                log.debug("Resolving watch on template:", url);
+                                deferred.resolve(template);
                             });
-                            //log.debug("Removing watches for id: ", id);
-                            delete $delegate.watches[id];
-                        }
-                    };
-                    var oldGet = $delegate.get;
-                    $delegate.get = function (id) {
-                        var answer = oldGet(id);
-                        //log.debug("Getting template: ", id); //, " returning: ", answer);
-                        return answer;
-                    };
-                    return $delegate;
-                }]);
-            // extend templateRequest so we can prevent it from requesting templates, as
-            // we have 'em all in $templateCache
-            $provide.decorator('$templateRequest', ['$rootScope', '$timeout', '$q', '$templateCache', '$delegate',
-                function ($rootScope, $timeout, $q, $templateCache, $delegate) {
-                    var fn = function (url, ignore) {
-                        var log = Logger.get('$templateRequest');
-                        //log.debug("request for template at: ", url);
-                        var answer = $templateCache.get(url);
-                        var deferred = $q.defer();
-                        if (!angular.isDefined(answer)) {
-                            //log.debug("No template in cache for URL: ", url);
-                            if ('watches' in $templateCache) {
-                                //log.debug("Adding watch to $templateCache for url: ", url);
-                                if (!$templateCache.watches[url]) {
-                                    $templateCache.watches[url] = [];
-                                }
-                                $templateCache.watches[url].push(function (template) {
-                                    //log.debug("Resolving watch on template: ", url);
-                                    deferred.resolve(template);
-                                });
-                                return deferred.promise;
-                            }
-                            else {
-                                // Guess we'll just let the real templateRequest service handle it
-                                return $delegate(url, ignore);
-                            }
-                        }
-                        else {
-                            //log.debug("Found template for URL: ", url);
-                            $timeout(function () {
-                                deferred.resolve(answer);
-                            }, 1);
                             return deferred.promise;
                         }
-                    };
-                    fn['totalPendingRequests'] = 0;
-                    return fn;
-                }]);
-        }]);
-})(templateCache || (templateCache = {}));
+                        else {
+                            // Guess we'll just let the real templateRequest service handle it
+                            return $delegate(url, ignore);
+                        }
+                    }
+                    else {
+                        log.debug("Found template for URL:", url);
+                        $timeout(function () {
+                            deferred.resolve(answer);
+                        }, 1);
+                        return deferred.promise;
+                    }
+                };
+                fn['totalPendingRequests'] = 0;
+                return fn;
+            }]);
+    }
+})(Core || (Core = {}));
 /// <reference path="auth/auth.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="config/config-loader.ts"/>
@@ -2858,7 +2856,7 @@ var App;
         Help.helpModule,
         Nav.pluginName,
         Core.preferencesModule,
-        templateCache.pluginName
+        Core.templateCacheModule
     ])
         .component('hawtioApp', App.appComponent)
         .name;
@@ -3091,7 +3089,7 @@ var StringHelpers;
 /// <reference path="baseHelpers.ts"/>
 var UrlHelpers;
 (function (UrlHelpers) {
-    var log = Logger.get("UrlHelpers");
+    var log = Logger.get("hawtio-core-utils-url-helpers");
     /**
      * Returns the URL without the starting '#' if it's there
      * @param url
@@ -3171,7 +3169,6 @@ var UrlHelpers;
         return URI.parseQuery(uri.query());
     }
     UrlHelpers.parseQueryString = parseQueryString;
-    //export var parseQueryString = hawtioPluginLoader.parseQueryString;
     /**
      * Apply a proxy to the supplied URL if the jolokiaUrl is using the proxy, or if the URL is for a a different host/port
      * @param jolokiaUrl
@@ -3180,15 +3177,15 @@ var UrlHelpers;
      */
     function maybeProxy(jolokiaUrl, url) {
         if (jolokiaUrl && _.startsWith(jolokiaUrl, 'proxy/')) {
-            log.debug("Jolokia URL is proxied, applying proxy to: ", url);
+            log.debug("Jolokia URL is proxied, applying proxy to:", url);
             return join('proxy', url);
         }
         var origin = window.location['origin'];
         if (url && (_.startsWith(url, 'http') && !_.startsWith(url, origin))) {
-            log.debug("Url doesn't match page origin: ", origin, " applying proxy to: ", url);
+            log.debug("Url doesn't match page origin:", origin, "applying proxy to:", url);
             return join('proxy', url);
         }
-        log.debug("No need to proxy: ", url);
+        log.debug("No need to proxy:", url);
         return url;
     }
     UrlHelpers.maybeProxy = maybeProxy;
@@ -3761,13 +3758,14 @@ var Core;
 })(Core || (Core = {}));
 var HawtioCompile;
 (function (HawtioCompile) {
-    var pluginName = 'hawtio-compile';
+    var pluginName = 'hawtio-core-compile';
     var log = Logger.get(pluginName);
-    HawtioCompile._module = angular.module(pluginName, []);
-    HawtioCompile._module.run(function () {
-        log.debug("loaded");
-    });
-    HawtioCompile._module.directive('compile', ['$compile', function ($compile) {
+    HawtioCompile._module = angular
+        .module(pluginName, [])
+        .run(function () {
+        log.debug("Module loaded");
+    })
+        .directive('compile', ['$compile', function ($compile) {
             return function (scope, element, attrs) {
                 scope.$watch(function (scope) {
                     // watch the 'compile' expression for changes
@@ -3788,7 +3786,7 @@ var HawtioCompile;
 })(HawtioCompile || (HawtioCompile = {}));
 var ControllerHelpers;
 (function (ControllerHelpers) {
-    var log = Logger.get("ControllerHelpers");
+    var log = Logger.get("hawtio-core-utils-controller-helpers");
     function createClassSelector(config) {
         return function (selector, model) {
             if (selector === model && selector in config) {
@@ -3853,7 +3851,7 @@ var ControllerHelpers;
      * @param {Object} $route
      * @param {*} $scope
      * @param {ng.ILocationService} $location
-     * @param {Array[String]} parameters
+     * @param {string[]} parameters
      */
     function reloadWhenParametersChange($route, $scope, $location, parameters) {
         if (parameters === void 0) { parameters = ["nid"]; }
@@ -3868,7 +3866,7 @@ var ControllerHelpers;
                 }
             });
             if (changed.length) {
-                //log.info("Reloading page due to change to parameters: " + changed);
+                log.debug("Reloading page due to change to parameters:", changed);
                 $route.reload();
             }
         });
@@ -3879,7 +3877,7 @@ var ControllerHelpers;
 /// <reference path="controllerHelpers.ts"/>
 var Core;
 (function (Core) {
-    var log = Logger.get("hawtio-core");
+    var log = Logger.get("hawtio-core-utils");
     Core.lazyLoaders = {};
     Core.numberTypeNames = {
         'byte': true,
@@ -5324,7 +5322,7 @@ var CoreFilters;
 /// <reference path="baseHelpers.ts"/>
 var FilterHelpers;
 (function (FilterHelpers) {
-    FilterHelpers.log = Logger.get("FilterHelpers");
+    FilterHelpers.log = Logger.get("hawtio-core-utils-filter-helpers");
     function search(object, filter, maxDepth, and) {
         if (maxDepth === void 0) { maxDepth = -1; }
         if (and === void 0) { and = true; }
@@ -5732,7 +5730,7 @@ var PluginHelpers;
 /// <reference path="baseHelpers.ts"/>
 var PollHelpers;
 (function (PollHelpers) {
-    var log = Logger.get("PollHelpers");
+    var log = Logger.get("hawtio-core-utils-poll-helpers");
     function setupPolling($scope, updateFunction, period, $timeout, jolokia) {
         if (period === void 0) { period = 2000; }
         if ($scope.$hasPoller) {
@@ -5788,7 +5786,7 @@ var PollHelpers;
 })(PollHelpers || (PollHelpers = {}));
 var Core;
 (function (Core) {
-    var log = log || Logger.get("Core");
+    var log = Logger.get("hawtio-core-utils");
     /**
     * Parsers the given value as JSON if it is define
     */
@@ -5855,7 +5853,7 @@ var Core;
      * @param {Core.Workspace} workspace
      * @param {Function} validFn
      * @param {string} perspectiveId
-     * @return {Boolean}
+     * @return {boolean}
      */
     function isValidFunction(workspace, validFn, perspectiveId) {
         return !validFn || validFn(workspace, perspectiveId);
@@ -5865,7 +5863,7 @@ var Core;
 /// <reference path="baseHelpers.ts"/>
 var SelectionHelpers;
 (function (SelectionHelpers) {
-    var log = Logger.get("SelectionHelpers");
+    var log = Logger.get("hawtio-core-utils-selection-helpers");
     // these functions deal with adding/using a 'selected' item on a group of objects
     function selectNone(group) {
         group.forEach(function (item) { item['selected'] = false; });
@@ -6107,8 +6105,8 @@ $templateCache.put('navigation/templates/layoutTest.html','<div>\n  <h1>Test Lay
 $templateCache.put('navigation/templates/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav nav-hawtio-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
 $templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
 $templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
-$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
+$templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');
 $templateCache.put('help/help.md','## Plugin Help\n\nBrowse the available help topics for plugin specific documentation using the help navigation bar.\n\n### Further Reading\n\n- [hawtio](http://hawt.io "hawtio") website\n- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**\n- Help improve [hawtio](http://hawt.io "hawtio") by [contributing](http://hawt.io/contributing/index.html)\n- [hawtio on github](https://github.com/hawtio/hawtio)\n');
 $templateCache.put('preferences/help.md','## Preferences\n\nThe preferences page is used to configure application preferences and individual plugin preferences.\n\nThe preferences page is accessible by clicking the user icon (<i class=\'fa pficon-user\'></i>) in the main navigation bar,\nand then by choosing the preferences sub menu option.\n');}]);

@@ -520,7 +520,9 @@ declare namespace Core {
 declare namespace Core {
     const preferencesModule: string;
 }
-declare var templateCache: any;
+declare namespace Core {
+    const templateCacheModule: string;
+}
 declare namespace App {
     const appModule: string;
 }
@@ -858,7 +860,7 @@ declare namespace Core {
     function humanizeValue(value: any): string;
 }
 declare namespace HawtioCompile {
-    var _module: angular.IModule;
+    const _module: angular.IModule;
 }
 declare namespace ControllerHelpers {
     function createClassSelector(config: any): (selection: any, model: any) => string;
@@ -885,9 +887,9 @@ declare namespace ControllerHelpers {
      * @param {Object} $route
      * @param {*} $scope
      * @param {ng.ILocationService} $location
-     * @param {Array[String]} parameters
+     * @param {string[]} parameters
      */
-    function reloadWhenParametersChange($route: any, $scope: any, $location: any, parameters?: string[]): void;
+    function reloadWhenParametersChange($route: any, $scope: any, $location: ng.ILocationService, parameters?: string[]): void;
 }
 declare namespace Core {
     const lazyLoaders: {};
@@ -1283,7 +1285,7 @@ declare var humandate: any;
 declare namespace CoreFilters {
 }
 declare namespace FilterHelpers {
-    var log: Logging.Logger;
+    const log: Logging.Logger;
     function search(object: any, filter: string, maxDepth?: number, and?: boolean): boolean;
     /**
      * Tests if an object contains the text in "filter".  The function
@@ -1580,16 +1582,16 @@ declare namespace Core {
      * @param {Core.Workspace} workspace
      * @param {Function} validFn
      * @param {string} perspectiveId
-     * @return {Boolean}
+     * @return {boolean}
      */
-    function isValidFunction(workspace: any, validFn: any, perspectiveId: any): any;
+    function isValidFunction(workspace: any, validFn: any, perspectiveId: any): boolean;
 }
 declare namespace SelectionHelpers {
     function selectNone(group: any[]): void;
     function selectAll(group: any[], filter?: (any) => boolean): void;
     function toggleSelection(item: any): void;
     function selectOne(group: any[], item: any): void;
-    function sync(selections: Array<any>, group: Array<any>, index: string): Array<any>;
+    function sync(selections: any[], group: any[], index: string): any[];
     function select(group: any[], item: any, $event: any): void;
     function isSelected(item: any, yes?: string, no?: string): any;
     function clearGroup(group: any): void;

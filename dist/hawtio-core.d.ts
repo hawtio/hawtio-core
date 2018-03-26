@@ -8,6 +8,55 @@ declare namespace App {
     const appComponent: angular.IComponentOptions;
 }
 declare namespace Core {
+    interface Config {
+        branding?: {
+            [key: string]: string;
+        };
+        about?: {
+            title?: string;
+            description?: string;
+            productInfo?: AboutProductInfo[];
+        };
+        disabledRoutes?: string[];
+    }
+    interface AboutProductInfo {
+        name: string;
+        value: string;
+    }
+}
+declare namespace About {
+    class AboutService {
+        private configManager;
+        private moreProductInfo;
+        constructor(configManager: Core.ConfigManager);
+        getTitle(): string;
+        getDescription(): string;
+        getProductInfo(): Core.AboutProductInfo[];
+        addProductInfo(name: string, value: string): void;
+    }
+}
+declare namespace About {
+    class AboutController {
+        private aboutService;
+        flags: {
+            open: boolean;
+        };
+        title: string;
+        description: string;
+        productInfo: Core.AboutProductInfo[];
+        constructor(aboutService: AboutService);
+        $onInit(): void;
+        onClose(): void;
+    }
+    const aboutComponent: angular.IComponentOptions;
+}
+declare namespace About {
+    function configureMenu(HawtioExtension: Core.HawtioExtension, $compile: ng.ICompileService): void;
+}
+declare namespace About {
+    const aboutModule: string;
+}
+declare namespace Core {
     /**
      * @deprecated TODO Temporal type alias to avoid breaking existing code
      */
@@ -47,19 +96,12 @@ declare namespace Core {
     const authModule: string;
 }
 declare namespace Core {
-    interface Config {
-        branding?: {
-            [key: string]: string;
-        };
-        disabledRoutes?: string[];
-    }
-}
-declare namespace Core {
     class ConfigManager {
         private config;
         private $routeProvider;
         constructor(config: Config, $routeProvider: ng.route.IRouteProvider);
         getBrandingValue(key: string): string;
+        getAboutValue(key: string): any;
         isRouteEnabled(path: string): boolean;
         addRoute(path: string, route: ng.route.IRoute): ConfigManager;
     }

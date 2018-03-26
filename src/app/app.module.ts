@@ -1,3 +1,4 @@
+/// <reference path="about/about.module.ts"/>
 /// <reference path="auth/auth.module.ts"/>
 /// <reference path="config/config.module.ts"/>
 /// <reference path="config/config-loader.ts"/>
@@ -22,6 +23,7 @@ namespace App {
       'patternfly.modals',
       'patternfly.table',
       'patternfly.toolbars',
+      About.aboutModule,
       Core.authModule,
       Core.configModule,
       Core.coreModule,

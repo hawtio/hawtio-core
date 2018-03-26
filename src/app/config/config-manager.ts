@@ -15,6 +15,14 @@ namespace Core {
       }
     }
     
+    getAboutValue(key: string): any {
+      if (this.config && this.config.about && this.config.about[key]) {
+        return this.config.about[key];
+      } else {
+        return null;
+      }
+    }
+    
     isRouteEnabled(path: string): boolean {
       return !this.config || !this.config.disabledRoutes || this.config.disabledRoutes.indexOf(path) === -1;
     }

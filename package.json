@@ -6,7 +6,8 @@
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
-    "test": "gulp test"
+    "test": "gulp test",
+    "version": "gulp version && git add -A dist"
   },
   "dependencies": {
     "@hawtio/core-dts": "3.0.18",
@@ -36,6 +37,7 @@
     "gulp-concat": "^2.0.0",
     "gulp-less": "~3.3.2",
     "gulp-ng-annotate": "^2.0.0",
+    "gulp-replace": "~0.6.1",
     "gulp-typescript": "^3.1.7",
     "jasmine-core": "~2.8.0",
     "karma": "~1.7.1",
@@ -165,9 +167,9 @@
     "is-fullwidth-code-point": "2.0.0",
     "mime-types": "2.1.18",
     "process-nextick-args": "2.0.0",
-    "readable-stream": "1.1.14",
     "angular": "1.6.9",
     "angular-sanitize": "1.6.9",
-    "datatables.net-colreorder": "1.4.1"
+    "datatables.net-colreorder": "1.4.1",
+    "readable-stream": "2.3.5"
   }
 }

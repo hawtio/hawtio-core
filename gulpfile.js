@@ -11,6 +11,8 @@ var tsProject = ts.createProject('tsconfig.json');
 var ngAnnotate = require('gulp-ng-annotate');
 var Server = require('karma').Server;
 var hawtio = require('@hawtio/node-backend');
+var packageJson = require('./package.json');
+var replace = require('gulp-replace');
 
 var config = {
   dist: argv.out || './dist/',
@@ -100,6 +102,12 @@ gulp.task('test', ['build'], function (done) {
   new Server({
     configFile: __dirname + '/karma.conf.js'
   }, done).start();
+});
+
+gulp.task('version', function() {
+  gulp.src(config.dist + 'hawtio-core.js')
+    .pipe(replace('PACKAGE_VERSION_PLACEHOLDER', packageJson.version))
+    .pipe(gulp.dest(config.dist));
 });
 
 gulp.task('build', ['tsc', 'templates', 'copy-images', 'less']);

@@ -35,6 +35,9 @@ declare namespace About {
         addProductInfo(name: string, value: string): void;
     }
 }
+declare namespace App {
+    function configureAboutPage(aboutService: About.AboutService): void;
+}
 declare namespace About {
     class AboutController {
         private aboutService;

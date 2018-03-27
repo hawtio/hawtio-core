@@ -10,6 +10,7 @@
 /// <reference path="navigation/hawtio-core-navigation.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
+/// <reference path="app.config.ts"/>
 /// <reference path="app.component.ts"/>
 
 namespace App {
@@ -34,6 +35,7 @@ namespace App {
       Core.preferencesModule,
       Core.templateCacheModule
     ])
+    .run(configureAboutPage)
     .component('hawtioApp', appComponent)
     .name;
 

@@ -6,9 +6,7 @@
   "about": {
     "title": "About Hawtio",
     "description": "Hawtio Management Console is a lightweight and modular web console with lots of plugins for managing Java applications.",
-    "productInfo": [
-      {"name": "@hawtio/core", "value": "v3.2.0"}
-    ]
+    "productInfo": []
   },
   "disabledRoutes": []
 }

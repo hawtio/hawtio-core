@@ -38,15 +38,24 @@ var About;
         AboutService.prototype.getTitle = function () {
             return this.configManager.getAboutValue('title');
         };
-        AboutService.prototype.getDescription = function () {
-            return this.configManager.getAboutValue('description');
-        };
         AboutService.prototype.getProductInfo = function () {
-            var productInfo = this.configManager.getAboutValue('productInfo') || [];
-            return productInfo.concat(this.moreProductInfo);
+            var productInfo = [];
+            productInfo = productInfo.concat(this.configManager.getAboutValue('productInfo') || []);
+            productInfo = this.moreProductInfo;
+            productInfo = _.sortBy(productInfo, ['label']);
+            return productInfo;
         };
         AboutService.prototype.addProductInfo = function (name, value) {
             this.moreProductInfo.push({ name: name, value: value });
+        };
+        AboutService.prototype.getAdditionalInfo = function () {
+            return this.configManager.getAboutValue('additionalInfo');
+        };
+        AboutService.prototype.getCopyright = function () {
+            return this.configManager.getAboutValue('copyright');
+        };
+        AboutService.prototype.getImgSrc = function () {
+            return this.configManager.getAboutValue('imgSrc');
         };
         return AboutService;
     }());
@@ -58,7 +67,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('hawtio-core', '3.2.24');
+        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));
@@ -74,8 +83,10 @@ var About;
         }
         AboutController.prototype.$onInit = function () {
             this.title = this.aboutService.getTitle();
-            this.description = this.aboutService.getDescription();
             this.productInfo = this.aboutService.getProductInfo();
+            this.additionalInfo = this.aboutService.getAdditionalInfo();
+            this.copyright = this.aboutService.getCopyright();
+            this.imgSrc = this.aboutService.getImgSrc();
         };
         AboutController.prototype.onClose = function () {
             this.flags.open = false;
@@ -87,7 +98,7 @@ var About;
         bindings: {
             flags: '<'
         },
-        template: "\n      <pf-about-modal is-open=\"$ctrl.flags.open\" on-close=\"$ctrl.onClose()\" title=\"$ctrl.title\"\n          additional-info=\"$ctrl.description\" product-info=\"$ctrl.productInfo\"></pf-about-modal>\n    ",
+        template: "\n      <pf-about-modal is-open=\"$ctrl.flags.open\" on-close=\"$ctrl.onClose()\" title=\"$ctrl.title\"\n        product-info=\"$ctrl.productInfo\" additional-info=\"$ctrl.additionalInfo\" copyright=\"$ctrl.copyright\"\n        img-src=\"$ctrl.imgSrc\">\n      </pf-about-modal>\n    ",
         controller: AboutController
     };
 })(About || (About = {}));

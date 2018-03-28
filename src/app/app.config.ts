@@ -4,7 +4,7 @@ namespace App {
 
   export function configureAboutPage(aboutService: About.AboutService) {
     'ngInject';
-    aboutService.addProductInfo('hawtio-core', 'PACKAGE_VERSION_PLACEHOLDER');
+    aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
   }
 
 }

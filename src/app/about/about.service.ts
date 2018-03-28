@@ -4,7 +4,7 @@ namespace About {
 
   export class AboutService {
 
-    private moreProductInfo: Core.AboutProductInfo[] = [];
+    private moreProductInfo = [];
 
     constructor(private configManager: Core.ConfigManager) {
       'ngInject';
@@ -14,19 +14,29 @@ namespace About {
       return this.configManager.getAboutValue('title');
     }
 
-    getDescription(): string {
-      return this.configManager.getAboutValue('description');
-    }
-
     getProductInfo(): Core.AboutProductInfo[] {
-      let productInfo: Core.AboutProductInfo[] = this.configManager.getAboutValue('productInfo') || [];
-      return productInfo.concat(this.moreProductInfo);
+      let productInfo = [];
+      productInfo = productInfo.concat(this.configManager.getAboutValue('productInfo') || []);
+      productInfo = this.moreProductInfo;
+      productInfo = _.sortBy(productInfo, ['label']);
+      return productInfo;
     }
-
+    
     addProductInfo(name: string, value: string) {
       this.moreProductInfo.push({name: name, value: value});
     }
+    
+    getAdditionalInfo(): string {
+      return this.configManager.getAboutValue('additionalInfo');
+    }
 
+    getCopyright(): string {
+      return this.configManager.getAboutValue('copyright');
+    }
+
+    getImgSrc(): string {
+      return this.configManager.getAboutValue('imgSrc');
+    }
   }
 
 }

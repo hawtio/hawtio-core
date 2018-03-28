@@ -6,8 +6,10 @@ namespace About {
   export class AboutController {
     flags: { open: boolean };
     title: string;
-    description: string;
     productInfo: Core.AboutProductInfo[];
+    additionalInfo: string;
+    copyright: string;
+    imgSrc: string;
 
     constructor(private aboutService: AboutService) {
       'ngInject';
@@ -15,8 +17,10 @@ namespace About {
     
     $onInit() {
       this.title = this.aboutService.getTitle();
-      this.description = this.aboutService.getDescription();
       this.productInfo = this.aboutService.getProductInfo();
+      this.additionalInfo = this.aboutService.getAdditionalInfo();
+      this.copyright = this.aboutService.getCopyright();
+      this.imgSrc = this.aboutService.getImgSrc();
     }
 
     onClose() {
@@ -30,7 +34,9 @@ namespace About {
     },
     template: `
       <pf-about-modal is-open="$ctrl.flags.open" on-close="$ctrl.onClose()" title="$ctrl.title"
-          additional-info="$ctrl.description" product-info="$ctrl.productInfo"></pf-about-modal>
+        product-info="$ctrl.productInfo" additional-info="$ctrl.additionalInfo" copyright="$ctrl.copyright"
+        img-src="$ctrl.imgSrc">
+      </pf-about-modal>
     `,
     controller: AboutController
   };

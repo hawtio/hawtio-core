@@ -30,9 +30,11 @@ declare namespace About {
         private moreProductInfo;
         constructor(configManager: Core.ConfigManager);
         getTitle(): string;
-        getDescription(): string;
         getProductInfo(): Core.AboutProductInfo[];
         addProductInfo(name: string, value: string): void;
+        getAdditionalInfo(): string;
+        getCopyright(): string;
+        getImgSrc(): string;
     }
 }
 declare namespace App {
@@ -45,8 +47,10 @@ declare namespace About {
             open: boolean;
         };
         title: string;
-        description: string;
         productInfo: Core.AboutProductInfo[];
+        additionalInfo: string;
+        copyright: string;
+        imgSrc: string;
         constructor(aboutService: AboutService);
         $onInit(): void;
         onClose(): void;

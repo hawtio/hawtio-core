@@ -67,7 +67,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('Hawtio Core', '3.2.25');
+        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));
@@ -1024,11 +1024,20 @@ var HawtioCore = (function () {
      * services, mostly stubs
      */
     Core._module
+        // localStorage service, returns a dummy impl
+        // if for some reason it's not in the window
+        // object
         .factory('localStorage', function () { return window.localStorage || dummyLocalStorage; })
+        // Holds the document base so plugins can easily
+        // figure out absolute URLs when needed
         .factory('documentBase', function () { return HawtioCore.documentBase(); })
+        // Holds a mapping of plugins to layouts, plugins use 
+        // this to specify a full width view, tree view or their 
+        // own custom view
         .factory('viewRegistry', function () {
         return {};
     })
+        // Placeholder service for the page title service
         .factory('pageTitle', function () {
         return {
             addTitleElement: function () { },
@@ -1038,6 +1047,7 @@ var HawtioCore = (function () {
             getTitleArrayExcluding: function () { return undefined; }
         };
     })
+        // service for the javascript object that does notifications
         .factory('toastr', ["$window", function ($window) {
             var answer = $window.toastr;
             if (!answer) {
@@ -1204,9 +1214,13 @@ var Core;
     initializeTasks.$inject = ["$rootScope", "locationChangeStartTasks", "postLoginTasks", "preLogoutTasks", "postLogoutTasks"];
     Core.eventServicesModule = angular
         .module('hawtio-core-event-services', [])
+        // service to register tasks that should happen when the URL changes
         .factory('locationChangeStartTasks', function () { return new Core.ParameterizedTasks('LocationChangeStartTasks'); })
+        // service to register stuff that should happen when the user logs in
         .factory('postLoginTasks', function () { return new Core.Tasks('PostLogin'); })
+        // service to register stuff that should happen when the user logs out
         .factory('preLogoutTasks', function () { return new Core.Tasks('PreLogout'); })
+        // service to register stuff that should happen after the user logs out
         .factory('postLogoutTasks', function () { return new Core.Tasks('PostLogout'); })
         .run(initializeTasks)
         .name;

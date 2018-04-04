@@ -61,7 +61,7 @@ gulp.task('less', ['clean'], function () {
     .pipe(gulp.dest(config.dist));
 });
 
-gulp.task('connect', ['watch'], function() {
+gulp.task('connect', function() {
   hawtio.setConfig({
     port: 2772,
     staticAssets: [{

@@ -19,6 +19,7 @@
     "@types/marked": "0.3.0",
     "@types/urijs": "1.15.34",
     "angular": "~1.6.0",
+    "angular-animate": "~1.6.0",
     "angular-patternfly": "^4.0.0",
     "angular-route": "~1.6.0",
     "angular-sanitize": "~1.6.0",
@@ -170,6 +171,12 @@
     "angular": "1.6.9",
     "angular-sanitize": "1.6.9",
     "datatables.net-colreorder": "1.4.1",
-    "readable-stream": "2.3.5"
+    "readable-stream": "2.3.5",
+    "angular-animate": "1.6.9",
+    "lodash.template": "4.4.0",
+    "lodash.templatesettings": "4.1.0",
+    "arr-diff": "2.0.0",
+    "source-map": "0.6.1",
+    "extend-shallow": "2.0.1"
   }
 }

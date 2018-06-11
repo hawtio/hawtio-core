@@ -2,16 +2,14 @@
   "compilerOptions": {
     "target": "ES5",
     "declaration": true,
-    "outFile": "hawtio-core.js",
+    "outFile": "hawtio-core-example.js",
     "typeRoots": [
       "node_modules/@types",
-      "node_modules/@hawtio"
+      "node_modules/@hawtio",
+      "dist-example/types"
     ]
   },
   "include": [
-    "src/app/**/*.ts"
-  ],
-  "exclude": [
-    "src/app/**/*.spec.ts"
+    "src/example/**/*.ts"
   ]
 }

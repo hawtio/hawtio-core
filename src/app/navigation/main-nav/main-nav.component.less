@@ -1,0 +1,21 @@
+// PatternFly
+@pf-less-path: "/patternfly/dist/less";
+@import (reference) "@{pf-less-path}/patternfly.less";
+
+@pf-padding: @grid-gutter-width / 2;
+
+#main {
+  height: 100%;
+
+  & > .container-fluid {
+    height: 100%;
+    overflow: auto;
+    padding-left: 0;
+    padding-right: 0;
+  
+    div[ng-view] {
+      padding-left: @pf-padding;
+      padding-right: @pf-padding;
+    }
+  }
+}

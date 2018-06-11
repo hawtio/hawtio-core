@@ -1,3 +1,38 @@
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+}
+
+.help-secondary-tabs {
+  text-transform: capitalize;
+}
+
+.navbar-brand-icon,
+.navbar-brand-name {
+  max-height: 35px;
+}
+
+.nav-tabs {
+  flex: 0 0 auto;
+  padding-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.nav-tabs-main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+}
+.nav-tabs-main > .contents {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  position: relative;
+}
+
 @media screen and (max-width: 767px) {
 }
 @media (min-width: 768px) {
@@ -14,50 +49,18 @@
 }
 @media (max-width: 767px) {
 }
-html {
-  height: 100%;
-}
-body {
-  height: 100%;
-}
 #main {
+  height: 100%;
+}
+#main > .container-fluid {
   height: 100%;
   overflow: auto;
   padding-left: 0;
   padding-right: 0;
 }
-#main > div[ng-view] {
+#main > .container-fluid div[ng-view] {
   padding-left: 20px;
   padding-right: 20px;
-}
-
-.help-secondary-tabs {
-  text-transform: capitalize;
-}
-
-.nav-tabs-main {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-}
-.nav-tabs-main .nav-tabs {
-  flex: 0 0 auto;
-  padding-top: 20px;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-.nav-tabs-main .contents {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  position: relative;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.navbar-brand-icon,
-.navbar-brand-name {
-  max-height: 35px;
 }
 
 .logging-preferences-form {
@@ -78,4 +81,17 @@ body {
 
 .preferences-reset-alert {
   margin-top: 20px;
+}
+
+.loading-centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.loading-label {
+  margin-top: 5px;
+}
+.loading-content {
+  height: 100%;
 }

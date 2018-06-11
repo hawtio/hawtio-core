@@ -7,8 +7,10 @@
 /// <reference path="event-services/event-services.module.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
-/// <reference path="navigation/hawtio-core-navigation.ts"/>
+/// <reference path="init/init.module.ts"/>
+/// <reference path="navigation/navigation.module.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
+/// <reference path="shared/shared.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
 /// <reference path="app.config.ts"/>
 /// <reference path="app.component.ts"/>
@@ -30,10 +32,12 @@ namespace App {
       Core.coreModule,
       Core.eventServicesModule,
       Core.hawtioExtensionModule,
-      Help.helpModule,
-      Nav.pluginName,
       Core.preferencesModule,
-      Core.templateCacheModule
+      Core.templateCacheModule,
+      Help.helpModule,
+      Init.initModule,
+      Nav.navigationModule,
+      Shared.sharedModule
     ])
     .run(configureAboutPage)
     .component('hawtioApp', appComponent)

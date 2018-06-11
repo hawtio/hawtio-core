@@ -28,7 +28,10 @@ namespace Nav {
         let tab = _.find(this.tabs, {path: this.$location.path()});
         if (tab) {
           this.activeTab = tab;
-          this.$location.path(tab.path);
+          this.$location.path(this.activeTab.path);
+        } else if (this.tabs.length > 0) {
+          this.activeTab = this.tabs[0];
+          this.$location.path(this.activeTab.path);
         }
       }
     }
@@ -96,7 +99,5 @@ namespace Nav {
     `,
     controller: HawtioTabsController
   };
-
-  _module.component('hawtioTabs', hawtioTabsComponent);
 
 }

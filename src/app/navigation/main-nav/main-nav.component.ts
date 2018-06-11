@@ -1,35 +1,34 @@
-/// <reference path="hawtio-core-navigation.ts"/>
+/// <reference path="../../init/init.service.ts"/>
+/// <reference path="main-nav.service.ts"/>
 
 namespace Nav {
 
-  export class NavBarController {
-    onToggleVerticalNav: Function;
-    verticalNavCollapsed = false;
+  export class MainNavController {
+    navigationItems: Nav.MainNavItem[];
+    brandSrc: string;
+    templateUrl: string;
 
-    toggleVerticalNav() {
-      this.verticalNavCollapsed = !this.verticalNavCollapsed;
-      this.onToggleVerticalNav({collapsed: this.verticalNavCollapsed});
+    constructor(configManager: Core.ConfigManager, private mainNavService: Nav.MainNavService,
+      private $location: ng.ILocationService) {
+      'ngInject';
+      this.brandSrc = configManager.getBrandingValue('appLogoUrl');
+    }
+
+    $onInit() {
+      this.navigationItems = this.mainNavService.getValidItems();
+      this.mainNavService.setActiveItem(this.navigationItems, this.$location);
+    }
+
+    loadContent() {
+      const path = this.$location.path();
+      this.templateUrl = this.mainNavService.getTemplateUrlByPath(path);
     }
   }
 
-  export const navBarComponent: angular.IComponentOptions = {
-    bindings: {
-      onToggleVerticalNav: '&'
-    },
+  export const mainNavComponent: angular.IComponentOptions = {
     template: `
-      <nav class="navbar navbar-pf-vertical">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" ng-click="$ctrl.toggleVerticalNav()">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>        
-          <a href="." class="navbar-brand">
-            <hawtio-branding-image class="navbar-brand-name" src="appLogoUrl" alt="appName"></hawtio-branding-image>
-          </a>
-        </div>
-        <nav class="collapse navbar-collapse">
+      <div id="main">
+        <pf-vertical-navigation items="$ctrl.navigationItems" brand-src="{{$ctrl.brandSrc}}" item-click-callback="$ctrl.loadContent()">
           <ul class="nav navbar-nav navbar-right navbar-iconic">
             <li class="dropdown">
               <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -52,12 +51,13 @@ namespace Nav {
               </ul>
             </li>
           </ul>
-        </nav>
-      </nav>
+        </pf-vertical-navigation>
+        <div class="container-fluid container-pf-nav-pf-vertical">
+          <ng-include src="$ctrl.templateUrl"></ng-include>
+        </div>
+      </div>
     `,
-    controller: NavBarController
+    controller: MainNavController
   };
-
-  _module.component('navBar', navBarComponent);
 
 }

@@ -8,20 +8,118 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var Init;
+(function (Init) {
+    var InitService = /** @class */ (function () {
+        InitService.$inject = ["$q"];
+        function InitService($q) {
+            'ngInject';
+            this.$q = $q;
+            this.initFunctions = [];
+        }
+        InitService.prototype.registerInitFunction = function (initFunction) {
+            this.initFunctions.push(initFunction);
+        };
+        InitService.prototype.init = function () {
+            return this.$q.all(this.initFunctions.map(function (initFunction) { return initFunction(); }));
+        };
+        return InitService;
+    }());
+    Init.InitService = InitService;
+})(Init || (Init = {}));
+var Nav;
+(function (Nav) {
+    var MainNavItem = /** @class */ (function () {
+        function MainNavItem(item) {
+            this.template = '<div ng-view></div>';
+            this.isValid = function () { return true; };
+            this.rank = 0;
+            _.assign(this, item);
+        }
+        Object.defineProperty(MainNavItem.prototype, "templateUrl", {
+            get: function () {
+                return this.href + '.html';
+            },
+            enumerable: true,
+            configurable: true
+        });
+        return MainNavItem;
+    }());
+    Nav.MainNavItem = MainNavItem;
+})(Nav || (Nav = {}));
+/// <reference path="main-nav-item.ts"/>
+var Nav;
+(function (Nav) {
+    var MainNavService = /** @class */ (function () {
+        MainNavService.$inject = ["$templateCache"];
+        function MainNavService($templateCache) {
+            'ngInject';
+            this.$templateCache = $templateCache;
+            this.defaultTemplateUrl = '/defaultTemplateUrl.html';
+            this.items = [];
+            $templateCache.put(this.defaultTemplateUrl, '<div ng-view></div>');
+        }
+        MainNavService.prototype.addItem = function (item) {
+            var mainNavItem = new Nav.MainNavItem(item);
+            this.$templateCache.put(mainNavItem.templateUrl, mainNavItem.template);
+            this.items.push(mainNavItem);
+        };
+        MainNavService.prototype.getValidItems = function () {
+            return this.items
+                .filter(function (item) { return item.isValid(); })
+                .sort(function (a, b) { return a.rank !== b.rank ? b.rank - a.rank : a.title.localeCompare(b.title); });
+        };
+        MainNavService.prototype.getTemplateUrlByPath = function (path) {
+            var mainNavItem = _.find(this.items, function (item) { return _.startsWith(path, item.href); });
+            return mainNavItem ? mainNavItem.templateUrl : this.defaultTemplateUrl;
+        };
+        MainNavService.prototype.setActiveItem = function (navigationItems, $location) {
+            if (navigationItems.length > 0) {
+                var path = $location.path();
+                if (path === '/') {
+                    this.activateFirstNavItem(navigationItems, $location);
+                }
+                else {
+                    this.activateNavItemBasedOnPath(navigationItems, path);
+                }
+            }
+        };
+        MainNavService.prototype.activateFirstNavItem = function (navigationItems, $location) {
+            var activeItem = navigationItems[0];
+            activeItem['isActive'] = true;
+            $location.path(activeItem.href);
+        };
+        MainNavService.prototype.activateNavItemBasedOnPath = function (navigationItems, path) {
+            var activeItem = _.find(navigationItems, function (item) { return _.startsWith(path, item.href); });
+            if (activeItem) {
+                activeItem['isActive'] = true;
+            }
+        };
+        return MainNavService;
+    }());
+    Nav.MainNavService = MainNavService;
+})(Nav || (Nav = {}));
+/// <reference path="init/init.service.ts"/>
+/// <reference path="navigation/main-nav/main-nav.service.ts"/>
 var App;
 (function (App) {
     var AppController = /** @class */ (function () {
-        function AppController() {
-            this.verticalNavCollapsed = false;
+        AppController.$inject = ["initService"];
+        function AppController(initService) {
+            'ngInject';
+            this.initService = initService;
+            this.loading = true;
         }
-        AppController.prototype.toggleVerticalNav = function (collapsed) {
-            this.verticalNavCollapsed = collapsed;
+        AppController.prototype.$onInit = function () {
+            var _this = this;
+            this.initService.init()
+                .then(function () { return _this.loading = false; });
         };
         return AppController;
     }());
     App.AppController = AppController;
     App.appComponent = {
-        template: "\n      <nav-bar on-toggle-vertical-nav=\"$ctrl.toggleVerticalNav(collapsed)\"></nav-bar>\n      <vertical-nav collapsed=\"$ctrl.verticalNavCollapsed\"></vertical-nav>\n      <div id=\"main\" class=\"container-fluid container-pf-nav-pf-vertical hidden-icons-pf ng-cloak container-hawtio-nav-hawtio-vertical\"\n          ng-class=\"{'collapsed-nav': $ctrl.verticalNavCollapsed}\"\n          ng-controller=\"HawtioNav.ViewController\"\n          ng-include src=\"viewPartial\">\n      </div>\n    ",
+        template: "\n      <hawtio-loading loading=\"$ctrl.loading\">\n        <main-nav></main-nav>\n      </hawtio-loading>\n    ",
         controller: AppController
     };
 })(App || (App = {}));
@@ -67,7 +165,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('Hawtio Core', '3.2.26');
+        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));
@@ -1510,968 +1608,170 @@ var Help;
         .service('helpRegistry', Help.HelpRegistry)
         .name;
 })(Help || (Help = {}));
-/* global _ */
-/* global angular */
-/* global jQuery */
-/*globals window document Logger CustomEvent URI _ $ angular hawtioPluginLoader jQuery*/
-// Polyfill custom event if necessary since we kinda need it
-// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
-(function () {
-    if (typeof window['CustomEvent'] !== "function") {
-        function CustomEvent(event, params) {
-            params = params || { bubbles: false, cancelable: false, detail: undefined };
-            var evt = document.createEvent('CustomEvent');
-            evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-            return evt;
-        }
-        CustomEvent.prototype = window['Event'].prototype;
-        window['CustomEvent'] = CustomEvent;
-    }
-})();
+/// <reference path="init.service.ts"/>
+var Init;
+(function (Init) {
+    Init.initModule = angular
+        .module('hawtio-init', [])
+        .service('initService', Init.InitService)
+        .name;
+})(Init || (Init = {}));
 var Nav;
 (function (Nav) {
-    welcomeController.$inject = ["$scope", "$location", "WelcomePageRegistry", "HawtioNav", "$timeout", "documentBase"];
-    viewController.$inject = ["$scope", "$route", "$location", "layoutFull", "viewRegistry", "documentBase"];
-    configureHtmlBase.$inject = ["HawtioNav", "$rootScope", "$route", "documentBase"];
-    function trimLeading(text, prefix) {
-        if (text && prefix) {
-            if (_.startsWith(text, prefix) || text.indexOf(prefix) === 0) {
-                return text.substring(prefix.length);
-            }
+    var HawtioTab = /** @class */ (function () {
+        function HawtioTab(label, path) {
+            this.label = label;
+            this.path = path;
+            this.visible = true;
         }
-        return text;
-    }
-    Nav.pluginName = 'hawtio-core-nav';
-    var log = Logger.get(Nav.pluginName);
-    // Actions class with some pre-defined actions
-    var Actions = /** @class */ (function () {
-        function Actions() {
-        }
-        Actions.ADD = 'hawtio-main-nav-add';
-        Actions.REMOVE = 'hawtio-main-nav-remove';
-        Actions.CHANGED = 'hawtio-main-nav-change';
-        Actions.REDRAW = 'hawtio-main-nav-redraw';
-        return Actions;
+        return HawtioTab;
     }());
-    Nav.Actions = Actions;
-    var Registry = /** @class */ (function () {
-        function Registry(root) {
-            this.items = [];
-            this.root = root;
+    Nav.HawtioTab = HawtioTab;
+})(Nav || (Nav = {}));
+/// <reference path="hawtio-tab.ts"/>
+var Nav;
+(function (Nav) {
+    var HawtioTabsController = /** @class */ (function () {
+        HawtioTabsController.$inject = ["$document", "$timeout", "$location"];
+        function HawtioTabsController($document, $timeout, $location) {
+            'ngInject';
+            this.$document = $document;
+            this.$timeout = $timeout;
+            this.$location = $location;
         }
-        Registry.prototype.builder = function () {
-            return new NavItemBuilder();
-        };
-        Registry.prototype.add = function (item) {
-            var _this = this;
-            var items = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                items[_i - 1] = arguments[_i];
-            }
-            var toAdd = _.union([item], items);
-            this.items = _.union(this.items, toAdd);
-            toAdd.forEach(function (item) {
-                _this.root.dispatchEvent(new CustomEvent(Actions.ADD, {
-                    detail: {
-                        item: item
-                    }
-                }));
-            });
-            this.root.dispatchEvent(new CustomEvent(Actions.CHANGED, {
-                detail: {
-                    items: this.items
-                }
-            }));
-            this.root.dispatchEvent(new CustomEvent(Actions.REDRAW, {
-                detail: {}
-            }));
-        };
-        Registry.prototype.remove = function (search) {
-            var _this = this;
-            var removed = _.remove(this.items, search);
-            removed.forEach(function (item) {
-                _this.root.dispatchEvent(new CustomEvent(Actions.REMOVE, {
-                    detail: {
-                        item: item
-                    }
-                }));
-            });
-            this.root.dispatchEvent(new CustomEvent(Actions.CHANGED, {
-                detail: {
-                    items: this.items
-                }
-            }));
-            this.root.dispatchEvent(new CustomEvent(Actions.REDRAW, {
-                detail: {}
-            }));
-            return removed;
-        };
-        Registry.prototype.iterate = function (iterator) {
-            this.items.forEach(iterator);
-        };
-        Registry.prototype.selected = function () {
-            var valid = _.filter(this.items, function (item) {
-                if (!item['isValid']) {
-                    return true;
-                }
-                return item['isValid']();
-            });
-            var answer = _.find(valid, function (item) {
-                if (!item['isSelected']) {
-                    return false;
-                }
-                return item['isSelected']();
-            });
-            return answer;
-        };
-        Registry.prototype.on = function (action, key, fn) {
-            var _this = this;
-            switch (action) {
-                case Actions.ADD:
-                    this.root.addEventListener(Actions.ADD, function (event) {
-                        //log.debug("event key: ", key, " event: ", event);
-                        fn(event.detail.item);
-                    });
-                    if (this.items.length > 0) {
-                        this.items.forEach(function (item) {
-                            _this.root.dispatchEvent(new CustomEvent(Actions.ADD, {
-                                detail: {
-                                    item: item
-                                }
-                            }));
-                        });
-                    }
-                    break;
-                case Actions.REMOVE:
-                    this.root.addEventListener(Actions.REMOVE, function (event) {
-                        //log.debug("event key: ", key, " event: ", event);
-                        fn(event.detail.item);
-                    });
-                    break;
-                case Actions.CHANGED:
-                    this.root.addEventListener(Actions.CHANGED, function (event) {
-                        //log.debug("event key: ", key, " event: ", event);
-                        fn(event.detail.items);
-                    });
-                    if (this.items.length > 0) {
-                        this.root.dispatchEvent(new CustomEvent(Actions.CHANGED, {
-                            detail: {
-                                items: _this.items
-                            }
-                        }));
-                    }
-                    break;
-                case Actions.REDRAW:
-                    this.root.addEventListener(Actions.REDRAW, function (event) {
-                        //log.debug("event key: ", key, " event: ", event);
-                        fn(event);
-                    });
-                    var event_1 = new CustomEvent(Actions.REDRAW, {
-                        detail: {
-                            text: ''
-                        }
-                    });
-                    this.root.dispatchEvent(event_1);
-                    break;
-                default:
+        HawtioTabsController.prototype.$onChanges = function (changesObj) {
+            if (this.tabs) {
+                this.adjustTabs();
+                this.activateTab(changesObj);
             }
         };
-        return Registry;
-    }());
-    Nav.Registry = Registry;
-    // Factory for registry, used to create angular service
-    function createRegistry(root) {
-        return new Registry(root);
-    }
-    Nav.createRegistry = createRegistry;
-    function join() {
-        var args = [];
-        for (var _a = 0; _a < arguments.length; _a++) {
-            args[_a] = arguments[_a];
-        }
-        var paths = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            paths[_i - 0] = arguments[_i];
-        }
-        var tmp = [];
-        var length = paths.length - 1;
-        paths.forEach(function (path, index) {
-            if (!path || path === '') {
-                return;
-            }
-            if (index !== 0 && path.charAt(0) === '/') {
-                path = path.slice(1);
-            }
-            if (index !== length && path.charAt(path.length) === '/') {
-                path = path.slice(0, path.length - 1);
-            }
-            if (path && path !== '') {
-                tmp.push(path);
-            }
-        });
-        var rc = tmp.join('/');
-        return rc;
-    }
-    // Class NavItemBuilderImpl
-    var NavItemBuilder = /** @class */ (function () {
-        function NavItemBuilder() {
-            this.self = {
-                id: ''
-            };
-        }
-        NavItemBuilder.prototype.id = function (id) {
-            this.self.id = id;
-            return this;
-        };
-        NavItemBuilder.prototype.rank = function (rank) {
-            this.self.rank = rank;
-            return this;
-        };
-        NavItemBuilder.prototype.title = function (title) {
-            this.self.title = title;
-            return this;
-        };
-        NavItemBuilder.prototype.tooltip = function (tooltip) {
-            this.self.tooltip = tooltip;
-            return this;
-        };
-        NavItemBuilder.prototype.page = function (page) {
-            this.self.page = page;
-            return this;
-        };
-        NavItemBuilder.prototype.reload = function (reload) {
-            this.self.reload = reload;
-            return this;
-        };
-        NavItemBuilder.prototype.attributes = function (attributes) {
-            this.self.attributes = attributes;
-            return this;
-        };
-        NavItemBuilder.prototype.linkAttributes = function (attributes) {
-            this.self.linkAttributes = attributes;
-            return this;
-        };
-        NavItemBuilder.prototype.context = function (context) {
-            this.self.context = context;
-            return this;
-        };
-        NavItemBuilder.prototype.href = function (href) {
-            this.self.href = href;
-            return this;
-        };
-        NavItemBuilder.prototype.click = function (click) {
-            this.self.click = click;
-            return this;
-        };
-        NavItemBuilder.prototype.isSelected = function (isSelected) {
-            this.self.isSelected = isSelected;
-            return this;
-        };
-        NavItemBuilder.prototype.isValid = function (isValid) {
-            this.self.isValid = isValid;
-            return this;
-        };
-        NavItemBuilder.prototype.show = function (show) {
-            this.self.show = show;
-            return this;
-        };
-        NavItemBuilder.prototype.template = function (template) {
-            this.self.template = template;
-            return this;
-        };
-        NavItemBuilder.prototype.defaultPage = function (defaultPage) {
-            this.self.defaultPage = defaultPage;
-            return this;
-        };
-        NavItemBuilder.prototype.tabs = function (item) {
-            var items = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                items[_i - 1] = arguments[_i];
-            }
-            this.self.tabs = _.union(this.self.tabs, [item], items);
-            return this;
-        };
-        NavItemBuilder.prototype.subPath = function (title, path, page, rank, reload, isValid) {
-            var parent = this.self;
-            if (!this.self.tabs) {
-                this.self.tabs = [];
-            }
-            var tab = {
-                id: parent.id + '-' + path,
-                title: function () {
-                    return title;
-                },
-                href: function () {
-                    if (parent.href) {
-                        return join(parent.href(), path);
-                    }
-                    return path;
-                }
-            };
-            if (!_.isUndefined(page)) {
-                tab['page'] = function () {
-                    return page;
-                };
-            }
-            if (!_.isUndefined(rank)) {
-                tab['rank'] = rank;
-            }
-            if (!_.isUndefined(reload)) {
-                tab['reload'] = reload;
-            }
-            if (!_.isUndefined(isValid)) {
-                tab['isValid'] = isValid;
-            }
-            this.self.tabs.push(tab);
-            return this;
-        };
-        NavItemBuilder.prototype.build = function () {
-            var answer = _.cloneDeep(this.self);
-            this.self = {
-                id: ''
-            };
-            return answer;
-        };
-        ;
-        return NavItemBuilder;
-    }());
-    Nav.NavItemBuilder = NavItemBuilder;
-    // Factory functions
-    function createBuilder() {
-        return new NavItemBuilder();
-    }
-    Nav.createBuilder = createBuilder;
-    ;
-    // Plugin initialization
-    Nav._module = angular.module(Nav.pluginName, ['ngRoute']);
-    Nav._module.constant('layoutFull', 'navigation/templates/layoutFull.html');
-    Nav._module.config(['$routeProvider', function ($routeProvider) {
-            $routeProvider.otherwise({ templateUrl: 'navigation/templates/welcome.html' });
-        }]);
-    Nav._module.controller('HawtioNav.WelcomeController', welcomeController);
-    function welcomeController($scope, $location, WelcomePageRegistry, HawtioNav, $timeout, documentBase) {
-        'ngInject';
-        var backoffPeriod = 500;
-        var locationChanged = false;
-        $scope.$on("$locationChangeStart", function (event, next, current) {
-            locationChanged = true;
-        });
-        function gotoNavItem(item) {
-            if (item && item.href) {
-                var href = trimLeading(item.href(), documentBase);
-                var uri_1 = new URI(href);
-                var search_1 = _.merge($location.search(), uri_1.query(true));
-                log.debug("Going to item id: ", item.id, " href: ", uri_1.path(), " query: ", search_1);
-                $timeout(function () {
-                    $location.path(uri_1.path()).search(search_1);
-                }, 10);
-            }
-        }
-        function gotoFirstAvailableNav() {
-            var candidates = [];
-            HawtioNav.iterate(function (item) {
-                var isValid = item['isValid'] || function () { return true; };
-                var show = item.show || function () { return true; };
-                if (isValid() && show()) {
-                    candidates.push(item);
-                }
-            });
-            var rankedCandidates = sortByRank(candidates);
-            if (rankedCandidates.length > 0) {
-                gotoNavItem(rankedCandidates[0]);
-            }
-            else if (!locationChanged) {
-                log.debug('No default nav available, backing off for', backoffPeriod, 'ms');
-                $timeout(gotoBestCandidateNav, backoffPeriod);
-                backoffPeriod *= 1.25;
-            }
-        }
-        function gotoBestCandidateNav() {
-            var search = $location.search();
-            if (search.tab) {
-                var tab_1 = search.tab;
-                var selected_1;
-                HawtioNav.iterate(function (item) {
-                    if (!selected_1 && item.id === tab_1) {
-                        selected_1 = item;
-                    }
-                });
-                if (selected_1) {
-                    gotoNavItem(selected_1);
-                    return;
-                }
-            }
-            var candidates = [];
-            HawtioNav.iterate(function (item) {
-                if ('defaultPage' in item) {
-                    var page = item.defaultPage;
-                    if (!('rank' in page)) {
-                        candidates.push(item);
-                        return;
-                    }
-                    var index = _.findIndex(candidates, function (i) {
-                        if ('rank' in i && item.rank > i.rank) {
-                            return true;
-                        }
-                    });
-                    if (index < 0) {
-                        candidates.push(item);
-                    }
-                    else {
-                        candidates.splice(index, 0, item);
-                    }
-                }
-            });
-            function welcomePageFallback() {
-                if (WelcomePageRegistry.pages.length === 0) {
-                    log.debug("No welcome pages, going to first available nav");
-                    gotoFirstAvailableNav();
-                    return;
-                }
-                var sortedPages = _.sortBy(WelcomePageRegistry.pages, function (page) { return page['rank']; });
-                var page = _.find(sortedPages, function (page) {
-                    if ('isValid' in page) {
-                        return page['isValid']();
-                    }
-                    return true;
-                });
-                if (page) {
-                    gotoNavItem(page);
-                }
-                else {
-                    gotoFirstAvailableNav();
-                }
-            }
-            function evalCandidates(candidates) {
-                if (candidates.length === 0) {
-                    welcomePageFallback();
-                    return;
-                }
-                var item = candidates.pop();
-                var remaining = candidates;
-                log.debug("Trying candidate: ", item, " remaining: ", remaining);
-                if (!item) {
-                    welcomePageFallback();
-                    return;
-                }
-                var func = item.defaultPage.isValid;
-                if (func) {
-                    var yes = function () {
-                        gotoNavItem(item);
-                    };
-                    var no = function () {
-                        evalCandidates(remaining);
-                    };
-                    try {
-                        func(yes, no);
-                    }
-                    catch (err) {
-                        log.debug("Failed to eval item: ", item.id, " error: ", err);
-                        no();
-                    }
-                }
-                else {
-                    evalCandidates(remaining);
-                }
-            }
-            evalCandidates(candidates);
-        }
-        $timeout(gotoBestCandidateNav, 500);
-    }
-    Nav._module.controller('HawtioNav.ViewController', viewController);
-    function viewController($scope, $route, $location, layoutFull, viewRegistry, documentBase) {
-        'ngInject';
-        findViewPartial();
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            findViewPartial();
-        });
-        function searchRegistryViaQuery(query) {
-            var answer = undefined;
-            if (!query || _.keys(query).length === 0) {
-                log.debug("No query, skipping query matching");
-                return;
-            }
-            var keys = _.keys(viewRegistry);
-            var candidates = _.filter(keys, function (key) { return key.charAt(0) === '{'; });
-            candidates.forEach(function (candidate) {
-                if (!answer) {
-                    try {
-                        var obj = angular.fromJson(candidate);
-                        if (_.isObject(obj)) {
-                            _.mergeWith(obj, query, function (a, b) {
-                                if (a) {
-                                    if (a === b) {
-                                        answer = viewRegistry[candidate];
-                                    }
-                                    else {
-                                        answer = undefined;
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    catch (e) {
-                        // ignore and move on...
-                        log.debug("Unable to parse json: ", candidate);
-                    }
-                }
-            });
-            return answer;
-        }
-        function searchRegistry(path) {
-            var answer = undefined;
-            _.forIn(viewRegistry, function (value, key) {
-                if (!answer) {
-                    try {
-                        var reg = new RegExp(key, "");
-                        if (reg.exec(path)) {
-                            answer = value;
-                        }
-                    }
-                    catch (e) {
-                        log.debug("Invalid RegExp " + key + " for viewRegistry value: " + value);
-                    }
-                }
-            });
-            return answer;
-        }
-        function findViewPartial() {
-            var answer = null;
-            var hash = $location.search();
-            answer = searchRegistryViaQuery(hash);
-            if (answer) {
-                log.debug("View partial matched on query");
-            }
-            if (!answer) {
-                var path = $location.path();
-                if (path) {
-                    answer = searchRegistry(path);
-                    if (answer) {
-                        log.debug("View partial matched on path name");
-                    }
-                }
-            }
-            if (!answer) {
-                answer = layoutFull;
-                log.debug("Using default view partial");
-            }
-            $scope.viewPartial = answer;
-            log.debug("Using view partial: " + answer);
-            return answer;
-        }
-    }
-    Nav._module.run(configureHtmlBase);
-    function configureHtmlBase(HawtioNav, $rootScope, $route, documentBase) {
-        'ngInject';
-        HawtioNav.on(Actions.CHANGED, "$apply", function (item) {
-            if (!$rootScope.$$phase) {
-                $rootScope.$apply();
-            }
-        });
-        var href = documentBase;
-        var applyBaseHref = function (item) {
-            if (!item.preBase) {
-                item.preBase = item.href;
-                item.href = function () {
-                    if (href) {
-                        var preBase = item.preBase();
-                        if (preBase && preBase.charAt(0) === '/') {
-                            preBase = preBase.substr(1);
-                            return href + preBase;
-                        }
-                    }
-                    return item.preBase();
-                };
-            }
-        };
-        HawtioNav.on(Actions.ADD, "htmlBaseRewriter", function (item) {
-            if (item.href) {
-                applyBaseHref(item);
-                _.forEach(item.tabs, applyBaseHref);
-            }
-        });
-        HawtioNav.on(Actions.ADD, "$apply", function (item) {
-            var oldClick = item.click;
-            item.click = function ($event) {
-                if (!($event instanceof jQuery.Event)) {
-                    try {
-                        if (!$rootScope.$$phase) {
-                            $rootScope.$apply();
-                        }
-                    }
-                    catch (e) {
-                        // ignore
-                    }
-                }
-                if (oldClick) {
-                    oldClick($event);
-                }
-            };
-        });
-        $route.reload();
-        log.debug("loaded");
-    }
-    // helper function for testing nav items
-    function itemIsValid(item) {
-        if (!('isValid' in item)) {
-            return true;
-        }
-        if (_.isFunction(item['isValid'])) {
-            return item['isValid']();
-        }
-        return false;
-    }
-    // Construct once and share between invocations to avoid memory leaks
-    var tmpLink = $('<a>');
-    function addIsSelected($location, item) {
-        if (!('isSelected' in item) && 'href' in item) {
-            item['isSelected'] = function () {
-                // item.href() might be relative, in which
-                // case we should let the browser resolve
-                // what the full path should be
-                tmpLink.attr("href", item.href());
-                var href = new URI(tmpLink[0]['href']);
-                var itemPath = trimLeading(href.path(), '/');
-                if (itemPath === '') {
-                    // log.debug("nav item: ", item.id, " returning empty href, can't be selected");
-                    return false;
-                }
-                var current = new URI();
-                var path = trimLeading(current.path(), '/');
-                var query = current.query(true);
-                var mainTab = query['main-tab'];
-                var subTab = query['sub-tab'];
-                if (itemPath !== '' && !mainTab && !subTab) {
-                    if (item.isSubTab && _.startsWith(path, itemPath)) {
-                        return true;
-                    }
-                    if (item.tabs) {
-                        var answer_1 = _.some(item.tabs, function (subTab) {
-                            return subTab['isSelected']();
-                        });
-                        if (answer_1) {
-                            return true;
-                        }
-                    }
-                }
-                var answer = false;
-                if (item.isSubTab) {
-                    if (!subTab) {
-                        answer = _.startsWith(path, itemPath);
-                    }
-                    else {
-                        answer = subTab === item.id;
-                    }
-                }
-                else {
-                    if (!mainTab) {
-                        answer = _.startsWith(path, itemPath);
-                    }
-                    else {
-                        answer = mainTab === item.id;
-                    }
-                }
-                return answer;
-            };
-        }
-    }
-    function drawNavItem($templateCache, $compile, scope, element, item) {
-        if (!itemIsValid(item)) {
-            return;
-        }
-        var newScope = scope.$new();
-        item.hide = function () { return item.show && !item.show(); };
-        newScope.item = item;
-        var template = null;
-        if (_.isFunction(item.template)) {
-            template = item.template();
-        }
-        else {
-            template = $templateCache.get('navigation/templates/navItem.html');
-        }
-        if (item.attributes || item.linkAttributes) {
-            var tmpEl = $(template);
-            if (item.attributes) {
-                tmpEl.attr(item.attributes);
-            }
-            if (item.linkAttributes) {
-                tmpEl.find('a').attr(item.linkAttributes);
-            }
-            template = tmpEl.prop('outerHTML');
-        }
-        element.append($compile(template)(newScope));
-    }
-    function sortByRank(collection) {
-        var answer = [];
-        collection.forEach(function (item) {
-            rankItem(item, answer);
-        });
-        return answer;
-    }
-    function rankItem(item, collection) {
-        if (!('rank' in item) || collection.length === 0) {
-            collection.push(item);
-            return;
-        }
-        var index = _.findIndex(collection, function (i) {
-            if ('rank' in i && item.rank > i['rank']) {
-                return true;
-            }
-        });
-        if (!('rank' in collection[0])) {
-            index = 0;
-        }
-        if (index < 0) {
-            collection.push(item);
-        }
-        else {
-            collection.splice(index, 0, item);
-        }
-    }
-    Nav._module.directive('hawtioSubTabs', ['$templateCache', '$compile', function ($templateCache, $compile) {
-            return {
-                restrict: 'A',
-                scope: {
-                    item: '<'
-                },
-                link: function (scope, element) {
-                    var rankedTabs = sortByRank(scope.item.tabs);
-                    rankedTabs.forEach(function (item) {
-                        drawNavItem($templateCache, $compile, scope, element, item);
-                    });
-                }
-            };
-        }]);
-    Nav._module.directive("hawtioMainNav", ["HawtioNav", "$templateCache", "$compile", "$location", "$rootScope", function (HawtioNav, $templateCache, $compile, $location, $rootScope) {
-            var config = {
-                nav: {},
-                numKeys: 0,
-                numValid: 0
-            };
-            var iterationFunc = function (item) {
-                if (itemIsValid(item)) {
-                    config.numValid = config.numValid + 1;
-                }
-            };
-            HawtioNav.on(Actions.ADD, 'subTabEnricher', function (item) {
-                if (item.tabs && item.tabs.length > 0) {
-                    item.tabs.forEach(function (subItem) {
-                        subItem.isSubTab = true;
-                        if (!subItem.oldHref) {
-                            subItem.oldHref = subItem.href;
-                            subItem.href = function () {
-                                var uri = new URI(subItem.oldHref());
-                                if (uri.path() === "") {
-                                    return "";
-                                }
-                                uri.search(function (search) {
-                                    _.merge(search, uri.query(true));
-                                    search['main-tab'] = item.id;
-                                    search['sub-tab'] = subItem.id;
-                                });
-                                return uri.toString();
-                            };
-                        }
-                    });
-                }
-            });
-            HawtioNav.on(Actions.ADD, 'hrefEnricher', function (item) {
-                item.isSubTab = false;
-                if (item.href && !item.oldHref) {
-                    item.oldHref = item.href;
-                    item.href = function () {
-                        var oldHref = item.oldHref();
-                        if (!oldHref) {
-                            log.debug("Item: ", item.id, " returning null for href()");
-                            return "";
-                        }
-                        var uri = new URI(oldHref);
-                        if (uri.path() === "") {
-                            return "";
-                        }
-                        uri.search(function (search) {
-                            if (!search['main-tab']) {
-                                search['main-tab'] = item.id;
-                            }
-                            _.merge(search, uri.query(true));
-                            if (!search['sub-tab'] && item.tabs && item.tabs.length > 0) {
-                                var sorted = sortByRank(item.tabs);
-                                search['sub-tab'] = sorted[0].id;
-                            }
-                        });
-                        return uri.toString();
-                    };
-                }
-            });
-            HawtioNav.on(Actions.ADD, 'isSelectedEnricher', function (item) {
-                addIsSelected($location, item);
-                if (item.tabs) {
-                    item.tabs.forEach(function (item) { addIsSelected($location, item); });
-                }
-            });
-            HawtioNav.on(Actions.ADD, 'PrimaryController', function (item) {
-                config.nav[item.id] = item;
-            });
-            HawtioNav.on(Actions.REMOVE, 'PrimaryController', function (item) {
-                delete config.nav[item.id];
-            });
-            HawtioNav.on(Actions.CHANGED, 'PrimaryController', function (items) {
-                config.numKeys = items.length;
-                config.numValid = 0;
-                items.forEach(iterationFunc);
-            });
-            return {
-                restrict: 'A',
-                replace: false,
-                controller: ["$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
-                        $scope.config = config;
-                        $scope.$on('hawtio-nav-redraw', function () {
-                            log.debug("Redrawing main nav");
-                            $element.empty();
-                            var rankedContexts = [];
-                            // first add any contextual menus (like perspectives)
-                            HawtioNav.iterate(function (item) {
-                                if (!('context' in item)) {
-                                    return;
-                                }
-                                if (!item.context) {
-                                    return;
-                                }
-                                rankItem(item, rankedContexts);
-                            });
-                            rankedContexts.forEach(function (item) {
-                                drawNavItem($templateCache, $compile, $scope, $element, item);
-                            });
-                            // then add the rest of the nav items
-                            var rankedTabs = [];
-                            HawtioNav.iterate(function (item) {
-                                if (item.context) {
-                                    return;
-                                }
-                                rankItem(item, rankedTabs);
-                            });
-                            rankedTabs.forEach(function (item) {
-                                drawNavItem($templateCache, $compile, $scope, $element, item);
-                            });
-                        });
-                    }],
-                link: function (scope, element, attr) {
-                    scope.$watch(_.debounce(function () {
-                        var oldValid = config.numValid;
-                        var oldKeys = config.numKeys;
-                        config.numValid = 0;
-                        config.numKeys = 0;
-                        HawtioNav.iterate(iterationFunc);
-                        if (config.numValid !== oldValid || config.numKeys !== oldKeys) {
-                            scope.$broadcast('hawtio-nav-redraw');
-                            scope.$apply();
-                        }
-                    }, 500, { trailing: true }));
-                    scope.$broadcast('hawtio-nav-redraw');
-                }
-            };
-        }]);
-    var BuilderFactory = /** @class */ (function () {
-        function BuilderFactory() {
-        }
-        BuilderFactory.prototype.$get = function () {
-            return {};
-        };
-        BuilderFactory.prototype.create = function () {
-            return createBuilder();
-        };
-        BuilderFactory.prototype.join = function () {
-            var paths = [];
-            for (var _a = 0; _a < arguments.length; _a++) {
-                paths[_a] = arguments[_a];
-            }
-            return join.apply(void 0, paths);
-        };
-        BuilderFactory.prototype.setRoute = function ($routeProvider, tab) {
-            log.debug("Setting route: ", tab.href(), " to template URL: ", tab['page']());
-            var config = {
-                templateUrl: tab['page']()
-            };
-            if (!_.isUndefined(tab['reload'])) {
-                config['reloadOnSearch'] = tab['reload'];
-            }
-            $routeProvider.when(tab.href(), config);
-        };
-        BuilderFactory.prototype.configureRouting = function ($routeProvider, tab) {
-            var _this = this;
-            if (_.isUndefined(tab['page'])) {
-                if (tab.tabs) {
-                    var target = _.first(tab.tabs)['href'];
-                    if (target) {
-                        log.debug("Setting route: ", tab.href(), " to redirect to ", target());
-                        $routeProvider.when(tab.href(), {
-                            reloadOnSearch: tab['reload'],
-                            redirectTo: target()
-                        });
-                    }
-                }
+        HawtioTabsController.prototype.activateTab = function (changesObj) {
+            if (changesObj.activeTab && changesObj.activeTab.currentValue) {
+                this.activeTab = _.find(this.tabs, function (tab) { return tab === changesObj.activeTab.currentValue; });
             }
             else {
-                this.setRoute($routeProvider, tab);
-            }
-            if (tab.tabs) {
-                tab.tabs.forEach(function (tab) { return _this.setRoute($routeProvider, tab); });
+                var tab = _.find(this.tabs, { path: this.$location.path() });
+                if (tab) {
+                    this.activeTab = tab;
+                    this.$location.path(this.activeTab.path);
+                }
+                else if (this.tabs.length > 0) {
+                    this.activeTab = this.tabs[0];
+                    this.$location.path(this.activeTab.path);
+                }
             }
         };
-        return BuilderFactory;
+        HawtioTabsController.prototype.adjustTabs = function () {
+            var _this = this;
+            this.adjustingTabs = true;
+            // wait for the tabs to be rendered by AngularJS before calculating the widths
+            this.$timeout(function () {
+                var $ul = _this.$document.find('.hawtio-tabs');
+                var $liTabs = $ul.find('.hawtio-tab');
+                var $liDropdown = $ul.find('.dropdown');
+                var availableWidth = $ul.width() - $liDropdown.width();
+                var tabsWidth = 0;
+                $liTabs.each(function (i, element) {
+                    tabsWidth += element.clientWidth;
+                    _this.tabs[i].visible = tabsWidth < availableWidth;
+                });
+                _this.adjustingTabs = false;
+            });
+        };
+        Object.defineProperty(HawtioTabsController.prototype, "visibleTabs", {
+            get: function () {
+                return _.filter(this.tabs, { 'visible': true });
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(HawtioTabsController.prototype, "moreTabs", {
+            get: function () {
+                return _.filter(this.tabs, { 'visible': false });
+            },
+            enumerable: true,
+            configurable: true
+        });
+        HawtioTabsController.prototype.onClick = function (tab) {
+            this.activeTab = tab;
+            this.onChange({ tab: tab });
+        };
+        return HawtioTabsController;
     }());
-    Nav.BuilderFactory = BuilderFactory;
-    // provider so it's possible to get a nav builder in _module.config()
-    Nav._module.provider('HawtioNavBuilder', BuilderFactory);
-    Nav._module.factory('HawtioPerspective', [function () {
-            var log = Logger.get('hawtio-dummy-perspective');
-            return {
-                add: function (id, perspective) {
-                    log.debug("add called for id: ", id);
-                },
-                remove: function (id) {
-                    log.debug("remove called for id: ", id);
-                    return undefined;
-                },
-                setCurrent: function (id) {
-                    log.debug("setCurrent called for id: ", id);
-                },
-                getCurrent: function (id) {
-                    log.debug("getCurrent called for id: ", id);
-                    return undefined;
-                },
-                getLabels: function () {
-                    return [];
-                }
-            };
-        }]);
-    Nav._module.factory('WelcomePageRegistry', [function () {
-            return {
-                pages: []
-            };
-        }]);
-    Nav._module.factory('HawtioNav', ['$window', '$rootScope', function ($window, $rootScope) {
-            var registry = createRegistry(window);
-            return registry;
-        }]);
-    Nav._module.component('hawtioVerticalNav', {
-        templateUrl: 'navigation/templates/verticalNav.html',
-        controller: function () {
-            this.showSecondaryNav = false;
-            this.onHover = function (item) {
-                if (item.tabs && item.tabs.length > 0) {
-                    item.isHover = true;
-                    this.showSecondaryNav = true;
-                }
-            };
-            this.onUnHover = function (item) {
-                if (this.showSecondaryNav) {
-                    item.isHover = false;
-                    this.showSecondaryNav = false;
-                }
-            };
+    Nav.HawtioTabsController = HawtioTabsController;
+    Nav.hawtioTabsComponent = {
+        bindings: {
+            tabs: '<',
+            activeTab: '<',
+            onChange: '&',
+        },
+        template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\" ng-if=\"$ctrl.tabs\">\n        <li ng-repeat=\"tab in $ctrl.visibleTabs track by tab.path\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.moreTabs.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"tab in $ctrl.moreTabs track by tab.label\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
+        controller: HawtioTabsController
+    };
+})(Nav || (Nav = {}));
+var Nav;
+(function (Nav) {
+    var HawtioTabsLayoutController = /** @class */ (function () {
+        HawtioTabsLayoutController.$inject = ["$location"];
+        function HawtioTabsLayoutController($location) {
+            'ngInject';
+            this.$location = $location;
         }
-    });
+        HawtioTabsLayoutController.prototype.goto = function (tab) {
+            this.$location.path(tab.path);
+        };
+        return HawtioTabsLayoutController;
+    }());
+    Nav.HawtioTabsLayoutController = HawtioTabsLayoutController;
+    Nav.hawtioTabsLayoutComponent = {
+        bindings: {
+            tabs: '<'
+        },
+        template: "\n      <div class=\"nav-tabs-main\">\n        <hawtio-tabs tabs=\"$ctrl.tabs\" on-change=\"$ctrl.goto(tab)\"></hawtio-tabs>\n        <div class=\"contents\" ng-view></div>\n      </div>\n    ",
+        controller: HawtioTabsLayoutController
+    };
+})(Nav || (Nav = {}));
+/// <reference path="../../init/init.service.ts"/>
+/// <reference path="main-nav.service.ts"/>
+var Nav;
+(function (Nav) {
+    var MainNavController = /** @class */ (function () {
+        MainNavController.$inject = ["configManager", "mainNavService", "$location"];
+        function MainNavController(configManager, mainNavService, $location) {
+            'ngInject';
+            this.mainNavService = mainNavService;
+            this.$location = $location;
+            this.brandSrc = configManager.getBrandingValue('appLogoUrl');
+        }
+        MainNavController.prototype.$onInit = function () {
+            this.navigationItems = this.mainNavService.getValidItems();
+            this.mainNavService.setActiveItem(this.navigationItems, this.$location);
+        };
+        MainNavController.prototype.loadContent = function () {
+            var path = this.$location.path();
+            this.templateUrl = this.mainNavService.getTemplateUrlByPath(path);
+        };
+        return MainNavController;
+    }());
+    Nav.MainNavController = MainNavController;
+    Nav.mainNavComponent = {
+        template: "\n      <div id=\"main\">\n        <pf-vertical-navigation items=\"$ctrl.navigationItems\" brand-src=\"{{$ctrl.brandSrc}}\" item-click-callback=\"$ctrl.loadContent()\">\n          <ul class=\"nav navbar-nav navbar-right navbar-iconic\">\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"helpDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Help\" class=\"fa pficon-help\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"helpDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-help\"></li>\n                <li hawtio-extension name=\"hawtio-about\"></li>\n              </ul>\n            </li>\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"userDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Username\" class=\"fa pficon-user\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"userDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-preferences\"></li>\n                <li hawtio-extension name=\"hawtio-logout\"></li>\n              </ul>\n            </li>\n          </ul>\n        </pf-vertical-navigation>\n        <div class=\"container-fluid container-pf-nav-pf-vertical\">\n          <ng-include src=\"$ctrl.templateUrl\"></ng-include>\n        </div>\n      </div>\n    ",
+        controller: MainNavController
+    };
+})(Nav || (Nav = {}));
+/// <reference path="hawtio-tabs/hawtio-tabs.component.ts"/>
+/// <reference path="hawtio-tabs-layout/hawtio-tabs-layout.component.ts"/>
+/// <reference path="main-nav/main-nav.component.ts"/>
+/// <reference path="main-nav/main-nav.service.ts"/>
+var Nav;
+(function (Nav) {
+    Nav.navigationModule = angular
+        .module('hawtio-navigation', [])
+        .component('hawtioTabs', Nav.hawtioTabsComponent)
+        .component('hawtioTabsLayout', Nav.hawtioTabsLayoutComponent)
+        .component('mainNav', Nav.mainNavComponent)
+        .service('mainNavService', Nav.MainNavService)
+        .name;
 })(Nav || (Nav = {}));
 var Core;
 (function (Core) {
@@ -2708,21 +2008,9 @@ var Core;
     }());
     Core.PreferencesRegistry = PreferencesRegistry;
 })(Core || (Core = {}));
-var Nav;
-(function (Nav) {
-    var HawtioTab = /** @class */ (function () {
-        function HawtioTab(label, path) {
-            this.label = label;
-            this.path = path;
-            this.visible = true;
-        }
-        return HawtioTab;
-    }());
-    Nav.HawtioTab = HawtioTab;
-})(Nav || (Nav = {}));
 /// <reference path="../preferences.service.ts"/>
 /// <reference path="../preferences-registry.ts"/>
-/// <reference path="../../navigation/hawtio-tab.ts"/>
+/// <reference path="../../navigation/hawtio-tabs/hawtio-tab.ts"/>
 var Core;
 (function (Core) {
     PreferencesHomeController.$inject = ["$scope", "$location", "preferencesRegistry", "preferencesService"];
@@ -2873,6 +2161,40 @@ var Core;
         .service('preferencesRegistry', Core.PreferencesRegistry)
         .name;
 })(Core || (Core = {}));
+var Shared;
+(function (Shared) {
+    var HawtioLoadingController = /** @class */ (function () {
+        HawtioLoadingController.$inject = ["$timeout"];
+        function HawtioLoadingController($timeout) {
+            'ngInject';
+            this.$timeout = $timeout;
+            this.loading = true;
+            this.show = false;
+        }
+        HawtioLoadingController.prototype.$onInit = function () {
+            var _this = this;
+            this.$timeout(function () { return _this.show = true; }, 1000);
+        };
+        return HawtioLoadingController;
+    }());
+    Shared.HawtioLoadingController = HawtioLoadingController;
+    Shared.hawtioLoadingComponent = {
+        transclude: true,
+        bindings: {
+            loading: '<'
+        },
+        template: "\n      <div ng-if=\"$ctrl.loading\">\n        <div class=\"loading-centered\" ng-show=\"$ctrl.show\">\n          <div class=\"spinner spinner-lg\"></div>\n          <div class=\"loading-label\">Loading...</div>\n        </div>\n      </div>\n      <div class=\"loading-content\" ng-if=\"!$ctrl.loading\" ng-transclude></div>\n    ",
+        controller: HawtioLoadingController
+    };
+})(Shared || (Shared = {}));
+/// <reference path="loading/loading.component.ts"/>
+var Shared;
+(function (Shared) {
+    Shared.sharedModule = angular
+        .module('hawtio-shared', [])
+        .component('hawtioLoading', Shared.hawtioLoadingComponent)
+        .name;
+})(Shared || (Shared = {}));
 var Core;
 (function (Core) {
     templateCacheConfig.$inject = ["$provide"];
@@ -2957,8 +2279,10 @@ var Core;
 /// <reference path="event-services/event-services.module.ts"/>
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
-/// <reference path="navigation/hawtio-core-navigation.ts"/>
+/// <reference path="init/init.module.ts"/>
+/// <reference path="navigation/navigation.module.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
+/// <reference path="shared/shared.module.ts"/>
 /// <reference path="template-cache/hawtio-template-cache.ts"/>
 /// <reference path="app.config.ts"/>
 /// <reference path="app.component.ts"/>
@@ -2979,10 +2303,12 @@ var App;
         Core.coreModule,
         Core.eventServicesModule,
         Core.hawtioExtensionModule,
-        Help.helpModule,
-        Nav.pluginName,
         Core.preferencesModule,
-        Core.templateCacheModule
+        Core.templateCacheModule,
+        Help.helpModule,
+        Init.initModule,
+        Nav.navigationModule,
+        Shared.sharedModule
     ])
         .run(App.configureAboutPage)
         .component('hawtioApp', App.appComponent)
@@ -2994,138 +2320,6 @@ var App;
         task: Core.configLoader
     });
 })(App || (App = {}));
-/// <reference path="hawtio-tab.ts"/>
-var Nav;
-(function (Nav) {
-    var HawtioTabsController = /** @class */ (function () {
-        HawtioTabsController.$inject = ["$document", "$timeout", "$location"];
-        function HawtioTabsController($document, $timeout, $location) {
-            'ngInject';
-            this.$document = $document;
-            this.$timeout = $timeout;
-            this.$location = $location;
-        }
-        HawtioTabsController.prototype.$onChanges = function (changesObj) {
-            if (this.tabs) {
-                this.adjustTabs();
-                this.activateTab(changesObj);
-            }
-        };
-        HawtioTabsController.prototype.activateTab = function (changesObj) {
-            if (changesObj.activeTab && changesObj.activeTab.currentValue) {
-                this.activeTab = _.find(this.tabs, function (tab) { return tab === changesObj.activeTab.currentValue; });
-            }
-            else {
-                var tab = _.find(this.tabs, { path: this.$location.path() });
-                if (tab) {
-                    this.activeTab = tab;
-                    this.$location.path(tab.path);
-                }
-            }
-        };
-        HawtioTabsController.prototype.adjustTabs = function () {
-            var _this = this;
-            this.adjustingTabs = true;
-            // wait for the tabs to be rendered by AngularJS before calculating the widths
-            this.$timeout(function () {
-                var $ul = _this.$document.find('.hawtio-tabs');
-                var $liTabs = $ul.find('.hawtio-tab');
-                var $liDropdown = $ul.find('.dropdown');
-                var availableWidth = $ul.width() - $liDropdown.width();
-                var tabsWidth = 0;
-                $liTabs.each(function (i, element) {
-                    tabsWidth += element.clientWidth;
-                    _this.tabs[i].visible = tabsWidth < availableWidth;
-                });
-                _this.adjustingTabs = false;
-            });
-        };
-        Object.defineProperty(HawtioTabsController.prototype, "visibleTabs", {
-            get: function () {
-                return _.filter(this.tabs, { 'visible': true });
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(HawtioTabsController.prototype, "moreTabs", {
-            get: function () {
-                return _.filter(this.tabs, { 'visible': false });
-            },
-            enumerable: true,
-            configurable: true
-        });
-        HawtioTabsController.prototype.onClick = function (tab) {
-            this.activeTab = tab;
-            this.onChange({ tab: tab });
-        };
-        return HawtioTabsController;
-    }());
-    Nav.HawtioTabsController = HawtioTabsController;
-    Nav.hawtioTabsComponent = {
-        bindings: {
-            tabs: '<',
-            activeTab: '<',
-            onChange: '&',
-        },
-        template: "\n      <ul class=\"nav nav-tabs hawtio-tabs\" ng-if=\"$ctrl.tabs\">\n        <li ng-repeat=\"tab in $ctrl.visibleTabs track by tab.path\" class=\"hawtio-tab\" \n            ng-class=\"{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}\">\n          <a href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n        </li>\n        <li class=\"dropdown\" ng-class=\"{invisible: $ctrl.moreTabs.length === 0}\">\n          <a id=\"moreDropdown\" class=\"dropdown-toggle\" href=\"\" data-toggle=\"dropdown\">\n            More\n            <span class=\"caret\"></span>\n          </button>\n          <ul class=\"dropdown-menu dropdown-menu-right\" role=\"menu\" aria-labelledby=\"moreDropdown\">\n            <li role=\"presentation\" ng-repeat=\"tab in $ctrl.moreTabs track by tab.label\">\n              <a role=\"menuitem\" tabindex=\"-1\" href=\"#\" ng-click=\"$ctrl.onClick(tab)\">{{tab.label}}</a>\n            </li>\n          </ul>\n        </li>\n      </ul>\n    ",
-        controller: HawtioTabsController
-    };
-    Nav._module.component('hawtioTabs', Nav.hawtioTabsComponent);
-})(Nav || (Nav = {}));
-/// <reference path="hawtio-core-navigation.ts"/>
-var Nav;
-(function (Nav) {
-    var NavBarController = /** @class */ (function () {
-        function NavBarController() {
-            this.verticalNavCollapsed = false;
-        }
-        NavBarController.prototype.toggleVerticalNav = function () {
-            this.verticalNavCollapsed = !this.verticalNavCollapsed;
-            this.onToggleVerticalNav({ collapsed: this.verticalNavCollapsed });
-        };
-        return NavBarController;
-    }());
-    Nav.NavBarController = NavBarController;
-    Nav.navBarComponent = {
-        bindings: {
-            onToggleVerticalNav: '&'
-        },
-        template: "\n      <nav class=\"navbar navbar-pf-vertical\">\n        <div class=\"navbar-header\">\n          <button type=\"button\" class=\"navbar-toggle\" ng-click=\"$ctrl.toggleVerticalNav()\">\n            <span class=\"sr-only\">Toggle navigation</span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n          </button>        \n          <a href=\".\" class=\"navbar-brand\">\n            <hawtio-branding-image class=\"navbar-brand-name\" src=\"appLogoUrl\" alt=\"appName\"></hawtio-branding-image>\n          </a>\n        </div>\n        <nav class=\"collapse navbar-collapse\">\n          <ul class=\"nav navbar-nav navbar-right navbar-iconic\">\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"helpDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Help\" class=\"fa pficon-help\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"helpDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-help\"></li>\n                <li hawtio-extension name=\"hawtio-about\"></li>\n              </ul>\n            </li>\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"userDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Username\" class=\"fa pficon-user\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"userDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-preferences\"></li>\n                <li hawtio-extension name=\"hawtio-logout\"></li>\n              </ul>\n            </li>\n          </ul>\n        </nav>\n      </nav>\n    ",
-        controller: NavBarController
-    };
-    Nav._module.component('navBar', Nav.navBarComponent);
-})(Nav || (Nav = {}));
-/// <reference path="hawtio-core-navigation.ts"/>
-var Nav;
-(function (Nav) {
-    var VerticalNavController = /** @class */ (function () {
-        function VerticalNavController() {
-            this.showSecondaryNav = false;
-        }
-        VerticalNavController.prototype.onHover = function (item) {
-            if (item.tabs && item.tabs.length > 0) {
-                item.isHover = true;
-                this.showSecondaryNav = true;
-            }
-        };
-        VerticalNavController.prototype.onUnHover = function (item) {
-            if (this.showSecondaryNav) {
-                item.isHover = false;
-                this.showSecondaryNav = false;
-            }
-        };
-        return VerticalNavController;
-    }());
-    Nav.VerticalNavController = VerticalNavController;
-    Nav.verticalNavComponent = {
-        bindings: {
-            collapsed: '<'
-        },
-        template: "\n      <div class=\"nav-pf-vertical nav-pf-vertical-with-sub-menus hidden-icons-pf nav-hawtio-vertical\"\n           ng-class=\"{'hover-secondary-nav-pf': $ctrl.showSecondaryNav, collapsed: $ctrl.collapsed}\">\n        <ul class=\"list-group\" hawtio-main-nav></ul>\n      </div>\n    ",
-        controller: VerticalNavController
-    };
-    Nav._module.component('verticalNav', Nav.verticalNavComponent);
-})(Nav || (Nav = {}));
 var ArrayHelpers;
 (function (ArrayHelpers) {
     /**
@@ -4903,13 +4097,13 @@ var Core;
         }
         else if (angular.isString(value)) {
             var uriPrefixes = ["http://", "https://", "file://", "mailto:"];
-            var answer_2 = value;
+            var answer_1 = value;
             angular.forEach(uriPrefixes, function (prefix) {
-                if (_.startsWith(answer_2, prefix)) {
-                    answer_2 = "<a href='" + value + "'>" + value + "</a>";
+                if (_.startsWith(answer_1, prefix)) {
+                    answer_1 = "<a href='" + value + "'>" + value + "</a>";
                 }
             });
-            return answer_2;
+            return answer_1;
         }
         return value;
     }
@@ -6227,11 +5421,6 @@ var UI;
 })(UI || (UI = {}));
 
 angular.module('hawtio-core').run(['$templateCache', function($templateCache) {$templateCache.put('help/help.component.html','<div>\n  <h1>Help</h1>\n  <ul class="nav nav-tabs">\n    <li ng-repeat="topic in $ctrl.topics" ng-class="{active : topic === $ctrl.selectedTopic}">\n      <a href="#" ng-click="$ctrl.onSelectTopic(topic)">{{topic.label}}</a>\n    </li>\n  </ul>\n  <ul class="nav nav-tabs nav-tabs-pf help-secondary-tabs" ng-if="$ctrl.subTopics.length > 1">\n    <li ng-repeat="subTopic in $ctrl.subTopics" ng-class="{active : subTopic === $ctrl.selectedSubTopic}">\n      <a ng-href="#" ng-click="$ctrl.onSelectSubTopic(subTopic)">\n        {{subTopic.label === $ctrl.selectedTopic.label ? \'Home\' : subTopic.label}}\n      </a>\n    </li>\n  </ul>\n  <div ng-bind-html="$ctrl.html"></div>\n</div>\n');
-$templateCache.put('navigation/templates/layoutFull.html','<div ng-view class="nav-ht nav-ht-full-layout"></div>');
-$templateCache.put('navigation/templates/layoutTest.html','<div>\n  <h1>Test Layout</h1>\n  <div ng-view>\n\n\n  </div>\n</div>\n\n\n');
-$templateCache.put('navigation/templates/navItem.html','<li class="list-group-item" \n    ng-class="{ active: item.isSelected(), \n                \'secondary-nav-item-pf\': item.tabs,\n                \'is-hover\': item.isHover }" \n    ng-if="item.isValid === undefined || item.isValid()"\n    ng-hide="item.hide()"\n    ng-mouseenter="$ctrl.onHover(item)"\n    ng-mouseleave="$ctrl.onUnHover(item)"\n    data-target="#{{item.id}}-secondary">\n  <a ng-href="{{item.href()}}" ng-click="item.click($event)">\n    <span class="list-group-item-value">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </span>\n  </a>\n  <div id="#{{item.id}}-secondary" class="nav-pf-secondary-nav nav-hawtio-secondary-nav" ng-if="item.tabs">\n    <div class="nav-item-pf-header">\n      <ng-bind-html ng-bind-html="item.title()"></ng-bind-html>\n    </div>\n    <ul class="list-group" item="item" hawtio-sub-tabs></ul>\n  </div>\n</li>\n');
-$templateCache.put('navigation/templates/subTabHeader.html','<li class="header">\n  <a href=""><strong>{{item.title()}}</strong></a>\n</li>\n');
-$templateCache.put('navigation/templates/welcome.html','<div ng-controller="HawtioNav.WelcomeController"></div>\n');
 $templateCache.put('preferences/logging-preferences/logging-preferences.html','<div ng-controller="PreferencesLoggingController">\n  <form class="form-horizontal logging-preferences-form">\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">\n        Log buffer\n        <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>\n      </label>\n      <div class="col-md-6">\n        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-level">Global log level</label>\n      <div class="col-md-6">\n        <select id="log-level" class="form-control" ng-model="logLevel"\n                ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                ng-change="onLogLevelChange(logLevel)">\n        </select>\n      </div>\n    </div>\n    <div class="form-group">\n      <label class="col-md-2 control-label" for="log-buffer">Child loggers</label>\n      <div class="col-md-6">\n        <div class="form-group" ng-repeat="childLogger in childLoggers track by childLogger.name">\n          <label class="col-md-4 control-label child-logger-label" for="log-level">\n            {{childLogger.name}}\n          </label>\n          <div class="col-md-8">\n            <select id="log-level" class="form-control child-logger-select" ng-model="childLogger.filterLevel"\n                    ng-options="logLevel.name for logLevel in availableLogLevels track by logLevel.name"\n                    ng-change="onChildLoggersChange(childLoggers)">\n            </select>\n            <button type="button" class="btn btn-default child-logger-delete-button" ng-click="removeChildLogger(childLogger)">\n              <span class="pficon pficon-delete"></span>\n            </button>\n          </div>\n        </div>\n        <div>\n          <div class="dropdown">\n            <button class="btn btn-default dropdown-toggle" type="button" id="addChildLogger" data-toggle="dropdown">\n              Add\n              <span class="caret"></span>\n            </button>\n            <ul class="dropdown-menu" role="menu" aria-labelledby="addChildLogger">\n              <li role="presentation" ng-repeat="availableChildLogger in availableChildLoggers track by availableChildLogger.name">\n                <a role="menuitem" tabindex="-1" href="#" ng-click="addChildLogger(availableChildLogger)">\n                  {{ availableChildLogger.name }}\n                </a>\n              </li>\n            </ul>\n          </div>          \n        </div>\n      </div>\n    </div>\n  </form>\n</div>\n');
 $templateCache.put('preferences/preferences-home/preferences-home.html','<div ng-controller="PreferencesHomeController">\n  <button class="btn btn-primary pull-right" ng-click="close()">Close</button>\n  <h1>\n    Preferences\n  </h1>\n  <hawtio-tabs tabs="tabs" active-tab="getTab(pref)" on-change="setPanel(tab)"></hawtio-tabs>\n  <div ng-include="getPrefs(pref)"></div>\n</div>\n');
 $templateCache.put('preferences/reset-preferences/reset-preferences.html','<div ng-controller="ResetPreferencesController">\n  <div class="alert alert-success preferences-reset-alert" ng-if="showAlert">\n    <span class="pficon pficon-ok"></span>\n    Settings reset successfully!\n  </div>\n  <h3>Reset settings</h3>\n  <p>\n    Clear all custom settings stored in your browser\'s local storage and reset to defaults.\n  </p>\n  <p>\n    <button class="btn btn-danger" ng-click="doReset()">Reset settings</button>\n  </p>\n</div>');

@@ -8,18 +8,21 @@ var path = require('path');
 var templateCache = require('gulp-angular-templatecache');
 var ts = require('gulp-typescript');
 var tsProject = ts.createProject('tsconfig.json');
+var tsProjectExample = ts.createProject('tsconfig-example.json');
 var ngAnnotate = require('gulp-ng-annotate');
 var Server = require('karma').Server;
 var hawtio = require('@hawtio/node-backend');
 var packageJson = require('./package.json');
+var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 
 var config = {
   dist: argv.out || './dist/',
+  distExample: './dist-example/'
 };
 
 gulp.task('clean', function() {
-  return del('dist/*');
+  return del(config.dist + '*');
 });
 
 gulp.task('tsc', ['clean'], function() {
@@ -61,6 +64,24 @@ gulp.task('less', ['clean'], function () {
     .pipe(gulp.dest(config.dist));
 });
 
+gulp.task('clean-example', function() {
+  return del(config.distExample + '*');
+});
+
+gulp.task('hawtio-core-types', ['tsc'], function() {
+  gulp.src("./dist/hawtio-core.d.ts")
+    .pipe(rename("index.d.ts"))
+    .pipe(gulp.dest("./dist-example/types/hawtio-core"));
+});
+
+gulp.task('tsc-example', ['clean-example', 'hawtio-core-types'], function() {
+  tsProjectExample.src()
+    .pipe(tsProjectExample())
+    .js
+    .pipe(ngAnnotate())
+    .pipe(gulp.dest(config.distExample));
+});    
+
 gulp.task('connect', function() {
   hawtio.setConfig({
     port: 2772,
@@ -94,8 +115,8 @@ gulp.task('reload', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch(['src/**/*'], ['build']);
-  gulp.watch(['index.html', config.dist + '**/*'], ['reload']);
+  gulp.watch(['src/**/*'], ['build-example']);
+  gulp.watch(['index.html', config.distExample + '**/*'], ['reload']);
 });
 
 gulp.task('test', ['build'], function (done) {
@@ -111,4 +132,5 @@ gulp.task('version', function() {
 });
 
 gulp.task('build', ['tsc', 'templates', 'copy-images', 'less']);
-gulp.task('default', ['build', 'connect', 'watch']);
+gulp.task('build-example', ['build', 'tsc-example']);
+gulp.task('default', ['build-example', 'connect', 'watch']);

@@ -1,6 +1,6 @@
 /// <reference path="../preferences.service.ts"/>
 /// <reference path="../preferences-registry.ts"/>
-/// <reference path="../../navigation/hawtio-tab.ts"/>
+/// <reference path="../../navigation/hawtio-tabs/hawtio-tab.ts"/>
 
 namespace Core {
 

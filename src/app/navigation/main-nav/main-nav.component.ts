@@ -28,7 +28,7 @@ namespace Nav {
   export const mainNavComponent: angular.IComponentOptions = {
     template: `
       <div id="main">
-        <pf-vertical-navigation items="$ctrl.navigationItems" brand-src="{{$ctrl.brandSrc}}" item-click-callback="$ctrl.loadContent()">
+        <pf-vertical-navigation brand-src="{{$ctrl.brandSrc}}" hidden-icons="true" items="$ctrl.navigationItems" item-click-callback="$ctrl.loadContent()">
           <ul class="nav navbar-nav navbar-right navbar-iconic">
             <li class="dropdown">
               <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

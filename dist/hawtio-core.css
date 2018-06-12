@@ -59,6 +59,7 @@ body {
   padding-right: 0;
 }
 #main > .container-fluid div[ng-view] {
+  height: 100%;
   padding-left: 20px;
   padding-right: 20px;
 }

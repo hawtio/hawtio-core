@@ -178,8 +178,9 @@
     "extend-shallow": "2.0.1",
     "type-is": "1.6.16",
     "bootstrap-select": "1.12.4",
-    "angular": "1.7.1",
-    "angular-animate": "1.7.1",
-    "angular-sanitize": "1.7.1"
+    "angular": "1.7.2",
+    "angular-animate": "1.7.2",
+    "angular-sanitize": "1.7.2",
+    "typescript": "2.9.2"
   }
 }

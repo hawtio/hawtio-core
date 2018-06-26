@@ -11,7 +11,7 @@ namespace Section1 {
     .run(configureHelp)
     .run(configureLayout)
     .run(registerInitFunction)
-    .component('section1Layout', section1Component)
+    .component('section1', section1Component)
     .component('section1Page1', section1Page1Component)
     .component('section1Page2', section1Page2Component)
     .service('section1Service', Section1Service)

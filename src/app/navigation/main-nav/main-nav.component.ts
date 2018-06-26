@@ -28,10 +28,12 @@ namespace Nav {
   export const mainNavComponent: angular.IComponentOptions = {
     template: `
       <div id="main">
-        <pf-vertical-navigation brand-src="{{$ctrl.brandSrc}}" hidden-icons="true" items="$ctrl.navigationItems" item-click-callback="$ctrl.loadContent()">
+        <pf-vertical-navigation brand-src="{{$ctrl.brandSrc}}" hidden-icons="true" items="$ctrl.navigationItems"
+                                item-click-callback="$ctrl.loadContent()" ignore-mobile="true">
           <ul class="nav navbar-nav navbar-right navbar-iconic">
             <li class="dropdown">
-              <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown"
+                 aria-haspopup="true" aria-expanded="true">
                 <span title="Help" class="fa pficon-help"></span>
                 <span class="caret"></span>
               </a>
@@ -41,7 +43,8 @@ namespace Nav {
               </ul>
             </li>
             <li class="dropdown">
-              <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown"
+                 aria-haspopup="true" aria-expanded="true">
                 <span title="Username" class="fa pficon-user"></span>
                 <span class="caret"></span>
               </a>

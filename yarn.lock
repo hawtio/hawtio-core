@@ -33,8 +33,8 @@
     "@types/angular" "*"
 
 "@types/angular@*":
-  version "1.6.45"
-  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.45.tgz#5b0b91a51d717f6fc816d59e1234d5292f33f7b9"
+  version "1.6.47"
+  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.47.tgz#f7a31279a02c0892ed9aa76aae2da1b17791bacd"
 
 "@types/c3@^0.6.0":
   version "0.6.0"
@@ -219,8 +219,8 @@
     "@types/d3-zoom" "*"
 
 "@types/geojson@*":
-  version "7946.0.3"
-  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.3.tgz#e5791534ab0acfb2b3a39b713966cfcee85d469f"
+  version "7946.0.4"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.4.tgz#4e049756383c3f055dd8f3d24e63fb543e98eb07"
 
 "@types/jasmine@2.8.2":
   version "2.8.2"
@@ -313,17 +313,17 @@ alter@~0.2.0:
   dependencies:
     stable "~0.1.3"
 
-angular-animate@1.5.*, angular-animate@1.7.1, angular-animate@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.1.tgz#cc80ac4dc626f7223fa61495f0d0ed98cee90832"
+angular-animate@1.5.*, angular-animate@1.7.2, angular-animate@~1.7.0:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.2.tgz#48d1d22caf0057b57b50f882b68d51c297aa7747"
 
 angular-drag-and-drop-lists@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-2.0.0.tgz#a01d44b94cf233c9c2d45a31842cb35a9d0882ca"
 
 angular-patternfly@^4.0.0:
-  version "4.18.0"
-  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.18.0.tgz#802a4604f232afde39ec1009e7580913a3456b65"
+  version "4.18.2"
+  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.18.2.tgz#74f1bcc3071ed3a1894af286622ea077c66fc24f"
   dependencies:
     angular "1.5.*"
     angular-animate "1.5.*"
@@ -346,12 +346,12 @@ angular-patternfly@^4.0.0:
     moment "~2.19.3"
 
 angular-route@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.1.tgz#8e2c1ce1d01b0d9b944692de7eba900b9a3ec451"
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.2.tgz#a24b7a0c8ef09a3d4e2ca20de7f84e0e857a61ae"
 
-angular-sanitize@1.5.*, angular-sanitize@1.7.1, angular-sanitize@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.1.tgz#a181fa5bef5a05625e412a3d2a4c1c2f58bf7992"
+angular-sanitize@1.5.*, angular-sanitize@1.7.2, angular-sanitize@~1.7.0:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.2.tgz#e9f6e6a3e966c479c02dbc5712bee6de031f8eef"
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
@@ -361,9 +361,9 @@ angular-ui-bootstrap@2.3.x:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.3.2.tgz#bfec894ed983ade1e5d3f402fc10f8829652ac99"
 
-angular@1.5.*, angular@1.7.1, angular@>=1.3.0, angular@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.1.tgz#274bd432e3c8b321f41c25c79e20d4f3b0fbaf79"
+angular@1.5.*, angular@1.7.2, angular@>=1.3.0, angular@~1.7.0:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.2.tgz#687b955dbe5c533f8d73460461707af00360251f"
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -976,10 +976,10 @@ dashdash@^1.12.0:
     assert-plus "^1.0.0"
 
 datatables.net-bs@>=1.10.9:
-  version "1.10.16"
-  resolved "https://registry.yarnpkg.com/datatables.net-bs/-/datatables.net-bs-1.10.16.tgz#b0854f5b374f713ae3db4156c7cea8a760c3de76"
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net-bs/-/datatables.net-bs-1.10.19.tgz#08763b4e4d0cef1a427d019dc15e717c7ed67a4d"
   dependencies:
-    datatables.net "1.10.16"
+    datatables.net "1.10.19"
     jquery ">=1.7"
 
 datatables.net-colreorder-bs@~1.3.2:
@@ -998,22 +998,22 @@ datatables.net-colreorder@1.4.1, datatables.net-colreorder@>=1.2.0, datatables.n
     jquery ">=1.7"
 
 datatables.net-dt@^1.10.11:
-  version "1.10.16"
-  resolved "https://registry.yarnpkg.com/datatables.net-dt/-/datatables.net-dt-1.10.16.tgz#6758a308fb9e5f9629fb6541cc301e48ec9ec555"
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net-dt/-/datatables.net-dt-1.10.19.tgz#fc668e4942ac6e331be2707975d0f33e01afb60f"
   dependencies:
-    datatables.net "1.10.16"
+    datatables.net "1.10.19"
     jquery ">=1.7"
 
 datatables.net-select@~1.2.0:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/datatables.net-select/-/datatables.net-select-1.2.5.tgz#4f764669b464d5576a59c576c1250a5d069aa2e9"
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/datatables.net-select/-/datatables.net-select-1.2.7.tgz#7d5badfca49c438f8b51df04483d8d77857e917c"
   dependencies:
     datatables.net "^1.10.15"
     jquery ">=1.7"
 
-datatables.net@1.10.16, datatables.net@^1.10.11, datatables.net@^1.10.12, datatables.net@^1.10.15:
-  version "1.10.16"
-  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.16.tgz#4b052d1082824261b68eed9d22741b711d3d2469"
+datatables.net@1.10.19, datatables.net@^1.10.11, datatables.net@^1.10.12, datatables.net@^1.10.15:
+  version "1.10.19"
+  resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.19.tgz#97a1ed41c85e62d61040603481b59790a172dd1f"
   dependencies:
     jquery ">=1.7"
 
@@ -2893,8 +2893,8 @@ patternfly-bootstrap-treeview@~2.1.0:
     jquery ">= 2.1.x"
 
 patternfly@^3.37.1:
-  version "3.48.4"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.48.4.tgz#0c4f8d8ac5bfc49b32464a4f5420c3e6a6e079d4"
+  version "3.51.2"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.51.2.tgz#6a2cf76377495ebea8f1f17329bcf87e07f2f61a"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
@@ -3618,9 +3618,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.0.0, typescript@^2.1.4:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.1.tgz#fdb19d2c67a15d11995fd15640e373e09ab09961"
+typescript@2.9.2, typescript@^2.0.0, typescript@^2.1.4:
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
 
 uglify-js@^2.8.22:
   version "2.8.29"

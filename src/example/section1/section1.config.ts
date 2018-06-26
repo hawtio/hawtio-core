@@ -5,7 +5,6 @@ namespace Section1 {
   export function configureRoutes($routeProvider: ng.route.IRouteProvider) {
     'ngInject';
     $routeProvider
-      .when('/section1', {redirectTo: '/section1/page1'})
       .when('/section1/page1', {template: '<section1-page1></section1-page1>'})
       .when('/section1/page2', {template: '<section1-page2></section1-page2>'})
   }
@@ -22,7 +21,7 @@ namespace Section1 {
     mainNavService.addItem({
       title: 'Section 1',
       href: '/section1',
-      template: '<section1-layout></section1-layout>',
+      template: '<section1></section1>',
       isValid: () => {
         console.log('section1: ' + (section1Service.isValid() ? 'valid' : 'invalid'));
         return section1Service.isValid();

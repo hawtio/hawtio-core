@@ -67,7 +67,6 @@ var Section1;
     function configureRoutes($routeProvider) {
         'ngInject';
         $routeProvider
-            .when('/section1', { redirectTo: '/section1/page1' })
             .when('/section1/page1', { template: '<section1-page1></section1-page1>' })
             .when('/section1/page2', { template: '<section1-page2></section1-page2>' });
     }
@@ -84,7 +83,7 @@ var Section1;
         mainNavService.addItem({
             title: 'Section 1',
             href: '/section1',
-            template: '<section1-layout></section1-layout>',
+            template: '<section1></section1>',
             isValid: function () {
                 console.log('section1: ' + (section1Service.isValid() ? 'valid' : 'invalid'));
                 return section1Service.isValid();
@@ -112,7 +111,7 @@ var Section1;
         .run(Section1.configureHelp)
         .run(Section1.configureLayout)
         .run(Section1.registerInitFunction)
-        .component('section1Layout', Section1.section1Component)
+        .component('section1', Section1.section1Component)
         .component('section1Page1', Section1.section1Page1Component)
         .component('section1Page2', Section1.section1Page2Component)
         .service('section1Service', Section1.Section1Service)

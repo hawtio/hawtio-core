@@ -17,12 +17,12 @@ var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 
 var config = {
-  dist: argv.out || './dist/',
+  dist: './dist/',
   distExample: './dist-example/'
 };
 
 gulp.task('clean', function() {
-  return del(config.dist + '*');
+  return del(config.dist);
 });
 
 gulp.task('tsc', ['clean'], function() {
@@ -65,7 +65,7 @@ gulp.task('less', ['clean'], function () {
 });
 
 gulp.task('clean-example', function() {
-  return del(config.distExample + '*');
+  return del(config.distExample);
 });
 
 gulp.task('hawtio-core-types', ['tsc'], function() {
@@ -82,7 +82,7 @@ gulp.task('tsc-example', ['clean-example', 'hawtio-core-types'], function() {
     .pipe(gulp.dest(config.distExample));
 });    
 
-gulp.task('connect', function() {
+gulp.task('connect', ['build-example'], function() {
   hawtio.setConfig({
     port: 2772,
     staticAssets: [{
@@ -114,7 +114,7 @@ gulp.task('reload', function() {
     .pipe(hawtio.reload());
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', ['build-example'], function() {
   gulp.watch(['src/**/*'], ['build-example']);
   gulp.watch(['index.html', config.distExample + '**/*'], ['reload']);
 });
@@ -133,4 +133,4 @@ gulp.task('version', function() {
 
 gulp.task('build', ['tsc', 'templates', 'copy-images', 'less']);
 gulp.task('build-example', ['build', 'tsc-example']);
-gulp.task('default', ['build-example', 'connect', 'watch']);
+gulp.task('default', ['connect', 'watch']);

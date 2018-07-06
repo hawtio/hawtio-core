@@ -1,2 +1,4 @@
-node_modules/
-yarn-error.log
+/dist/
+/dist-example/
+/node_modules/
+/yarn-error.log

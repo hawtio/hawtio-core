@@ -5,6 +5,15 @@ namespace Nav {
   export class NavBarController {
     onToggleVerticalNav: Function;
     verticalNavCollapsed = false;
+    username: string;
+
+    constructor(
+      private userDetails: Core.AuthService,
+    ) {
+      'ngInject';
+      this.username = userDetails['fullName'];
+      console.log(userDetails)
+    }
 
     toggleVerticalNav() {
       this.verticalNavCollapsed = !this.verticalNavCollapsed;
@@ -43,8 +52,8 @@ namespace Nav {
             </li>
             <li class="dropdown">
               <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span title="Username" class="fa pficon-user"></span>
-                <span class="caret"></span>
+                <span class="fa pf-icon pficon-user" aria-hidden="true"></span>
+                <span class="username truncate">{{$ctrl.username}}</span> <span class="caret" aria-hidden="true"></span>
               </a>
               <ul class="dropdown-menu" aria-labelledby="userDropdownMenu">
                 <li hawtio-extension name="hawtio-preferences"></li>

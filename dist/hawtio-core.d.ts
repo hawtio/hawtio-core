@@ -89,7 +89,7 @@ declare namespace Core {
          * Log out the current user.
          */
         logout(): void;
-        private clear();
+        private clear;
         readonly username: string;
         readonly password: string;
         token: string;
@@ -249,11 +249,11 @@ declare namespace Core {
          * It is invoked from HawtioCore's bootstrapping.
          */
         loadPlugins(callback: () => void): void;
-        private loadScripts(plugins, callback);
-        private bootstrap(callback);
-        private executeTasks(callback);
-        private listTasks(tasks);
-        private intersection(search, needle);
+        private loadScripts;
+        private bootstrap;
+        private executeTasks;
+        private listTasks;
+        private intersection;
         /**
          * Dumps the current list of configured modules and URLs to the console
          */
@@ -303,7 +303,7 @@ declare namespace Core {
         constructor(name: string);
         addTask(name: string, task: () => void): Tasks;
         execute(callback?: () => void): void;
-        private executeTask(name, task);
+        private executeTask;
         reset(): void;
     }
     class ParameterizedTasks extends Tasks {
@@ -311,7 +311,7 @@ declare namespace Core {
         constructor(name: string);
         addTask(name: string, task: (...params: any[]) => void): Tasks;
         execute(...params: any[]): void;
-        private executeParameterizedTask(name, task, params);
+        private executeParameterizedTask;
     }
 }
 declare namespace Core {
@@ -586,8 +586,8 @@ declare namespace Nav {
         activeTab: HawtioTab;
         constructor($document: ng.IDocumentService, $timeout: ng.ITimeoutService, $location: ng.ILocationService);
         $onChanges(changesObj: ng.IOnChangesObject): void;
-        private activateTab(changesObj);
-        private adjustTabs();
+        private activateTab;
+        private adjustTabs;
         readonly visibleTabs: HawtioTab[];
         readonly moreTabs: HawtioTab[];
         onClick(tab: HawtioTab): void;
@@ -596,8 +596,11 @@ declare namespace Nav {
 }
 declare namespace Nav {
     class NavBarController {
+        private userDetails;
         onToggleVerticalNav: Function;
         verticalNavCollapsed: boolean;
+        username: string;
+        constructor(userDetails: Core.AuthService);
         toggleVerticalNav(): void;
     }
     const navBarComponent: angular.IComponentOptions;
@@ -1598,7 +1601,7 @@ declare namespace ObjectHelpers {
      * @param index
      * @param decorator
      */
-    function toMap(arr: Array<any>, index: string, decorator?: (any) => void): any;
+    function toMap(arr: Array<any>, index: string, decorator?: (any: any) => void): any;
 }
 declare namespace PluginHelpers {
     interface PluginModule {
@@ -1637,7 +1640,7 @@ declare namespace Core {
 }
 declare namespace SelectionHelpers {
     function selectNone(group: any[]): void;
-    function selectAll(group: any[], filter?: (any) => boolean): void;
+    function selectAll(group: any[], filter?: (any: any) => boolean): void;
     function toggleSelection(item: any): void;
     function selectOne(group: any[], item: any): void;
     function sync(selections: any[], group: any[], index: string): any[];

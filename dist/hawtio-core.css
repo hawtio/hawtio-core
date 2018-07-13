@@ -54,6 +54,17 @@ body {
   padding-left: 20px;
   padding-right: 20px;
 }
+.navbar-pf-vertical .navbar-iconic .nav-item-iconic {
+  line-height: normal;
+  padding-right: 15px;
+}
+.navbar-pf-vertical .navbar-iconic .nav-item-iconic .username {
+  display: inline-block;
+  font-weight: 300;
+  max-width: 140px;
+  padding-right: 2px;
+  vertical-align: top;
+}
 
 .navbar-brand-icon,
 .navbar-brand-name {

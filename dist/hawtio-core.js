@@ -67,7 +67,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('Hawtio Core', '3.2.26');
+        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));
@@ -2398,7 +2398,7 @@ var Nav;
             $routeProvider.when(tab.href(), config);
         };
         BuilderFactory.prototype.configureRouting = function ($routeProvider, tab) {
-            var _this = this;
+            var _this_1 = this;
             if (_.isUndefined(tab['page'])) {
                 if (tab.tabs) {
                     var target = _.first(tab.tabs)['href'];
@@ -2415,7 +2415,7 @@ var Nav;
                 this.setRoute($routeProvider, tab);
             }
             if (tab.tabs) {
-                tab.tabs.forEach(function (tab) { return _this.setRoute($routeProvider, tab); });
+                tab.tabs.forEach(function (tab) { return _this_1.setRoute($routeProvider, tab); });
             }
         };
         return BuilderFactory;
@@ -3076,8 +3076,13 @@ var Nav;
 var Nav;
 (function (Nav) {
     var NavBarController = /** @class */ (function () {
-        function NavBarController() {
+        NavBarController.$inject = ["userDetails"];
+        function NavBarController(userDetails) {
+            'ngInject';
+            this.userDetails = userDetails;
             this.verticalNavCollapsed = false;
+            this.username = userDetails['fullName'];
+            console.log(userDetails);
         }
         NavBarController.prototype.toggleVerticalNav = function () {
             this.verticalNavCollapsed = !this.verticalNavCollapsed;
@@ -3090,7 +3095,7 @@ var Nav;
         bindings: {
             onToggleVerticalNav: '&'
         },
-        template: "\n      <nav class=\"navbar navbar-pf-vertical\">\n        <div class=\"navbar-header\">\n          <button type=\"button\" class=\"navbar-toggle\" ng-click=\"$ctrl.toggleVerticalNav()\">\n            <span class=\"sr-only\">Toggle navigation</span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n          </button>        \n          <a href=\".\" class=\"navbar-brand\">\n            <hawtio-branding-image class=\"navbar-brand-name\" src=\"appLogoUrl\" alt=\"appName\"></hawtio-branding-image>\n          </a>\n        </div>\n        <nav class=\"collapse navbar-collapse\">\n          <ul class=\"nav navbar-nav navbar-right navbar-iconic\">\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"helpDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Help\" class=\"fa pficon-help\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"helpDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-help\"></li>\n                <li hawtio-extension name=\"hawtio-about\"></li>\n              </ul>\n            </li>\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"userDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Username\" class=\"fa pficon-user\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"userDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-preferences\"></li>\n                <li hawtio-extension name=\"hawtio-logout\"></li>\n              </ul>\n            </li>\n          </ul>\n        </nav>\n      </nav>\n    ",
+        template: "\n      <nav class=\"navbar navbar-pf-vertical\">\n        <div class=\"navbar-header\">\n          <button type=\"button\" class=\"navbar-toggle\" ng-click=\"$ctrl.toggleVerticalNav()\">\n            <span class=\"sr-only\">Toggle navigation</span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n            <span class=\"icon-bar\"></span>\n          </button>        \n          <a href=\".\" class=\"navbar-brand\">\n            <hawtio-branding-image class=\"navbar-brand-name\" src=\"appLogoUrl\" alt=\"appName\"></hawtio-branding-image>\n          </a>\n        </div>\n        <nav class=\"collapse navbar-collapse\">\n          <ul class=\"nav navbar-nav navbar-right navbar-iconic\">\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"helpDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span title=\"Help\" class=\"fa pficon-help\"></span>\n                <span class=\"caret\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"helpDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-help\"></li>\n                <li hawtio-extension name=\"hawtio-about\"></li>\n              </ul>\n            </li>\n            <li class=\"dropdown\">\n              <a class=\"dropdown-toggle nav-item-iconic\" id=\"userDropdownMenu\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">\n                <span class=\"fa pf-icon pficon-user\" aria-hidden=\"true\"></span>\n                <span class=\"username truncate\">{{$ctrl.username}}</span> <span class=\"caret\" aria-hidden=\"true\"></span>\n              </a>\n              <ul class=\"dropdown-menu\" aria-labelledby=\"userDropdownMenu\">\n                <li hawtio-extension name=\"hawtio-preferences\"></li>\n                <li hawtio-extension name=\"hawtio-logout\"></li>\n              </ul>\n            </li>\n          </ul>\n        </nav>\n      </nav>\n    ",
         controller: NavBarController
     };
     Nav._module.component('navBar', Nav.navBarComponent);

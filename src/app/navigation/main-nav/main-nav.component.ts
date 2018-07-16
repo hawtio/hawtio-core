@@ -7,11 +7,17 @@ namespace Nav {
     navigationItems: Nav.MainNavItem[];
     brandSrc: string;
     templateUrl: string;
+    username: string;
 
-    constructor(configManager: Core.ConfigManager, private mainNavService: Nav.MainNavService,
-      private $location: ng.ILocationService) {
+    constructor(
+      configManager: Core.ConfigManager,
+      private mainNavService: Nav.MainNavService,
+      private $location: ng.ILocationService,
+      private userDetails: Core.AuthService,
+    ) {
       'ngInject';
       this.brandSrc = configManager.getBrandingValue('appLogoUrl');
+      this.username = userDetails['fullName'];
     }
 
     $onInit() {
@@ -45,8 +51,8 @@ namespace Nav {
             <li class="dropdown">
               <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown"
                  aria-haspopup="true" aria-expanded="true">
-                <span title="Username" class="fa pficon-user"></span>
-                <span class="caret"></span>
+                <span class="fa pf-icon pficon-user" aria-hidden="true"></span>
+                <span class="username truncate">{{$ctrl.username}}</span> <span class="caret" aria-hidden="true"></span>
               </a>
               <ul class="dropdown-menu" aria-labelledby="userDropdownMenu">
                 <li hawtio-extension name="hawtio-preferences"></li>

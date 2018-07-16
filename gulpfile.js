@@ -17,12 +17,14 @@ var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 
 var config = {
-  dist: './dist/',
+  dist: argv.out || './dist/',
   distExample: './dist-example/'
 };
 
-gulp.task('clean', function() {
-  return del(config.dist);
+gulp.task('clean', function () {
+  if (!argv.out) {
+    return del(config.dist);
+  }
 });
 
 gulp.task('tsc', ['clean'], function() {

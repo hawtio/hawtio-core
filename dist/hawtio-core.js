@@ -67,7 +67,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('Hawtio Core', '3.3.0');
+        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));
@@ -3082,7 +3082,6 @@ var Nav;
             this.userDetails = userDetails;
             this.verticalNavCollapsed = false;
             this.username = userDetails['fullName'];
-            console.log(userDetails);
         }
         NavBarController.prototype.toggleVerticalNav = function () {
             this.verticalNavCollapsed = !this.verticalNavCollapsed;

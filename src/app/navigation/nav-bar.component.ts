@@ -12,7 +12,6 @@ namespace Nav {
     ) {
       'ngInject';
       this.username = userDetails['fullName'];
-      console.log(userDetails)
     }
 
     toggleVerticalNav() {

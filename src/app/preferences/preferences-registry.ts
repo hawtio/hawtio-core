@@ -4,17 +4,12 @@ namespace Core {
 
     private tabs: any = {};
 
-    constructor(private $rootScope: ng.IRootScopeService) {
-      'ngInject';
-    }
-
     addTab(label: string, templateUrl: string, isValid: () => boolean = () => true) {
       this.tabs[label] = {
         label: label,
         templateUrl: templateUrl,
         get isValid() { return isValid() },
       };
-      this.$rootScope.$broadcast('HawtioPreferencesTabAdded');
     }
 
     getTab(label: string) {

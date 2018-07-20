@@ -8,10 +8,7 @@ namespace Core {
       'ngInject';
     }
 
-    addTab(label: string, templateUrl: string, isValid: () => boolean = undefined) {
-      if (!isValid) {
-        isValid = () => { return true; };
-      }
+    addTab(label: string, templateUrl: string, isValid: () => boolean = () => true) {
       this.tabs[label] = {
         label: label,
         templateUrl: templateUrl,
@@ -25,11 +22,7 @@ namespace Core {
     }
 
     getTabs() {
-      var answer = {};
-      angular.forEach(this.tabs, (value, key) => answer[key] = value);
-      return answer;
+      return _.clone(this.tabs);
     }
-
   }
-
 }

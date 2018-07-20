@@ -22,15 +22,11 @@ namespace Core {
     $scope.$watch('panels', value => $scope.tabs = tabsFromPanels(value), true);
 
     // pick the first one as the default
-    preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);
+    preferencesService.bindModelToSearchParam($scope, $location, 'pref', 'pref', $scope.tabs[0].label);
 
-    $scope.setPanel = (tab: Nav.HawtioTab) => {
-      $scope.pref = tab.label;
-    };
+    $scope.setPanel = (tab: Nav.HawtioTab) => $scope.pref = tab.label;
 
-    $scope.close = () => {
-      preferencesService.restoreLocation($location);
-    };
+    $scope.close = () => preferencesService.restoreLocation($location);
 
     $scope.getPrefs = (pref) => {
       const panel = $scope.panels.find(panel => panel.label === pref);
@@ -40,22 +36,18 @@ namespace Core {
       return undefined;
     };
 
-    $scope.getTab = (pref: string): Nav.HawtioTab => {
-      return _.find($scope.tabs, {label: pref});
-    };
+    $scope.getTab = (pref: string): Nav.HawtioTab => _.find($scope.tabs, {label: pref});
 
     /**
      * Sort the preference by names (and ensure Reset is last).
      */
     function byLabel(a, b) {
-      if ("Reset" == a.label) {
+      if ('Reset' == a.label) {
         return 1;
-      } else if ("Reset" == b.label) {
+      } else if ('Reset' == b.label) {
         return -1;
       }
       return a.label.localeCompare(b.label);
     }
-
   }
-
 }

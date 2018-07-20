@@ -67,7 +67,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
+        aboutService.addProductInfo('Hawtio Core', '3.3.2');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));

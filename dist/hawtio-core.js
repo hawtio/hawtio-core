@@ -67,7 +67,7 @@ var App;
     configureAboutPage.$inject = ["aboutService"];
     function configureAboutPage(aboutService) {
         'ngInject';
-        aboutService.addProductInfo('Hawtio Core', '3.3.1');
+        aboutService.addProductInfo('Hawtio Core', 'PACKAGE_VERSION_PLACEHOLDER');
     }
     App.configureAboutPage = configureAboutPage;
 })(App || (App = {}));
@@ -2398,7 +2398,7 @@ var Nav;
             $routeProvider.when(tab.href(), config);
         };
         BuilderFactory.prototype.configureRouting = function ($routeProvider, tab) {
-            var _this_1 = this;
+            var _this = this;
             if (_.isUndefined(tab['page'])) {
                 if (tab.tabs) {
                     var target = _.first(tab.tabs)['href'];
@@ -2415,7 +2415,7 @@ var Nav;
                 this.setRoute($routeProvider, tab);
             }
             if (tab.tabs) {
-                tab.tabs.forEach(function (tab) { return _this_1.setRoute($routeProvider, tab); });
+                tab.tabs.forEach(function (tab) { return _this.setRoute($routeProvider, tab); });
             }
         };
         return BuilderFactory;
@@ -2687,8 +2687,9 @@ var Core;
                 isValid = function () { return true; };
             }
             this.tabs[label] = {
+                label: label,
                 templateUrl: templateUrl,
-                isValid: isValid
+                get isValid() { return isValid(); },
             };
             this.$rootScope.$broadcast('HawtioPreferencesTabAdded');
         };
@@ -2697,39 +2698,27 @@ var Core;
         };
         PreferencesRegistry.prototype.getTabs = function () {
             var answer = {};
-            angular.forEach(this.tabs, function (value, key) {
-                if (value.isValid()) {
-                    answer[key] = value;
-                }
-            });
+            angular.forEach(this.tabs, function (value, key) { return answer[key] = value; });
             return answer;
         };
         return PreferencesRegistry;
     }());
     Core.PreferencesRegistry = PreferencesRegistry;
 })(Core || (Core = {}));
-var Nav;
-(function (Nav) {
-    var HawtioTab = /** @class */ (function () {
-        function HawtioTab(label, path) {
-            this.label = label;
-            this.path = path;
-            this.visible = true;
-        }
-        return HawtioTab;
-    }());
-    Nav.HawtioTab = HawtioTab;
-})(Nav || (Nav = {}));
 /// <reference path="../preferences.service.ts"/>
 /// <reference path="../preferences-registry.ts"/>
-/// <reference path="../../navigation/hawtio-tab.ts"/>
 var Core;
 (function (Core) {
     PreferencesHomeController.$inject = ["$scope", "$location", "preferencesRegistry", "preferencesService"];
     function PreferencesHomeController($scope, $location, preferencesRegistry, preferencesService) {
         'ngInject';
-        var panels = preferencesRegistry.getTabs();
-        $scope.tabs = _.keys(panels).sort(byLabel).map(function (label) { return new Nav.HawtioTab(label, label); });
+        $scope.panels = _.values(preferencesRegistry.getTabs());
+        var tabsFromPanels = function (tabs) { return tabs.sort(byLabel)
+            .filter(function (panel) { return panel.isValid; })
+            .map(function (panel) { return new Nav.HawtioTab(panel.label, panel.label); }); };
+        $scope.tabs = tabsFromPanels($scope.panels);
+        // Deep watch for async isValid attributes that may change depending on plugin runtimes
+        $scope.$watch('panels', function (value) { return $scope.tabs = tabsFromPanels(value); }, true);
         // pick the first one as the default
         preferencesService.bindModelToSearchParam($scope, $location, "pref", "pref", $scope.tabs[0].label);
         $scope.setPanel = function (tab) {
@@ -2739,7 +2728,7 @@ var Core;
             preferencesService.restoreLocation($location);
         };
         $scope.getPrefs = function (pref) {
-            var panel = panels[pref];
+            var panel = $scope.panels.find(function (panel) { return panel.label === pref; });
             if (panel) {
                 return panel.templateUrl;
             }
@@ -2752,13 +2741,13 @@ var Core;
          * Sort the preference by names (and ensure Reset is last).
          */
         function byLabel(a, b) {
-            if ("Reset" == a) {
+            if ("Reset" == a.label) {
                 return 1;
             }
-            else if ("Reset" == b) {
+            else if ("Reset" == b.label) {
                 return -1;
             }
-            return a.localeCompare(b);
+            return a.label.localeCompare(b.label);
         }
     }
     Core.PreferencesHomeController = PreferencesHomeController;
@@ -2994,6 +2983,18 @@ var App;
         task: Core.configLoader
     });
 })(App || (App = {}));
+var Nav;
+(function (Nav) {
+    var HawtioTab = /** @class */ (function () {
+        function HawtioTab(label, path) {
+            this.label = label;
+            this.path = path;
+            this.visible = true;
+        }
+        return HawtioTab;
+    }());
+    Nav.HawtioTab = HawtioTab;
+})(Nav || (Nav = {}));
 /// <reference path="hawtio-tab.ts"/>
 var Nav;
 (function (Nav) {

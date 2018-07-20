@@ -1681,7 +1681,7 @@ hosted-git-info@^2.1.4:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.5.0.tgz#6d60e34b3abbc8313062c3b798ef8d901a07af3c"
 
-http-errors@1.3.1, http-errors@1.6.2, http-errors@~1.3.1, http-errors@~1.6.2:
+http-errors@1.3.1, http-errors@1.6.2, http-errors@1.6.3, http-errors@~1.3.1, http-errors@~1.6.2, http-errors@~1.6.3:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.3.1.tgz#197e22cdebd4198585e8694ef6786197b91ed942"
   dependencies:
@@ -1714,7 +1714,7 @@ https-proxy-agent@^2.1.0:
     agent-base "^4.1.0"
     debug "^3.1.0"
 
-iconv-lite@0.4.11, iconv-lite@0.4.13, iconv-lite@0.4.19:
+iconv-lite@0.4.11, iconv-lite@0.4.13, iconv-lite@0.4.19, iconv-lite@0.4.23:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
 
@@ -2843,7 +2843,7 @@ qjobs@^1.1.4:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/qjobs/-/qjobs-1.1.5.tgz#659de9f2cf8dcc27a1481276f205377272382e73"
 
-qs@4.0.0, qs@5.1.0, qs@5.2.0, qs@6.5.1, qs@^6.4.0, qs@~6.4.0:
+qs@4.0.0, qs@5.1.0, qs@5.2.0, qs@6.5.1, qs@6.5.2, qs@^6.4.0, qs@~6.4.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-5.1.0.tgz#4d932e5c7ea411cca76a312d39a606200fd50cd9"
 
@@ -2862,7 +2862,7 @@ range-parser@1.0.3, range-parser@^1.2.0, range-parser@~1.0.3, range-parser@~1.2.
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.0.3.tgz#6872823535c692e2c2a0103826afd82c2e0ff175"
 
-raw-body@2.1.7, raw-body@2.3.2, raw-body@~1.1.0, raw-body@~2.1.2, raw-body@~2.1.5:
+raw-body@2.1.7, raw-body@2.3.2, raw-body@2.3.3, raw-body@~1.1.0, raw-body@~2.1.2, raw-body@~2.1.5:
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.1.7.tgz#adfeace2e4fb3098058014d08c072dcc59758774"
   dependencies:
@@ -3033,6 +3033,10 @@ safe-buffer@5.1.1, safe-buffer@^5.0.1, safe-buffer@~5.0.1, safe-buffer@~5.1.0, s
 safe-json-parse@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/safe-json-parse/-/safe-json-parse-1.0.1.tgz#3e76723e38dfdda13c9b1d29a1e07ffee4b30b57"
+
+"safer-buffer@>= 2.1.2 < 3":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
 "semver@2 || 3 || 4 || 5", semver@4.3.6, semver@^4.1.0, semver@^5.3.0, semver@~4.3.3:
   version "4.3.6"
@@ -3415,12 +3419,12 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
 
-type-is@~1.6.10, type-is@~1.6.15, type-is@~1.6.6:
-  version "1.6.15"
-  resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.15.tgz#cab10fb4909e441c82842eafe1ad646c81804410"
+type-is@~1.6.10, type-is@~1.6.15, type-is@~1.6.16, type-is@~1.6.6:
+  version "1.6.16"
+  resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.16.tgz#f89ce341541c672b25ee7ae3c73dee3b2be50194"
   dependencies:
     media-typer "0.3.0"
-    mime-types "~2.1.15"
+    mime-types "~2.1.18"
 
 typedarray@^0.0.6:
   version "0.0.6"

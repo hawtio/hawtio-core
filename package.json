@@ -177,6 +177,7 @@
     "lodash.templatesettings": "4.1.0",
     "arr-diff": "2.0.0",
     "source-map": "0.6.1",
-    "extend-shallow": "2.0.1"
+    "extend-shallow": "2.0.1",
+    "type-is": "1.6.16"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@hawtio/core",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "main": "dist/hawtio-core.js",
   "types": "dist/hawtio-core.d.ts",
   "files": [
@@ -10,8 +10,8 @@
     "start": "gulp",
     "build": "gulp build",
     "test": "gulp test",
-    "prepublishOnly": "gulp test",
-    "version": "gulp version"
+    "prepack": "gulp version",
+    "prepublishOnly": "gulp test"
   },
   "dependencies": {
     "@hawtio/core-dts": "3.0.18",

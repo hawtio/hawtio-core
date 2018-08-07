@@ -4,38 +4,82 @@
 namespace Nav {
 
   export class MainNavController {
-    navigationItems: Nav.MainNavItem[];
     brandSrc: string;
-    templateUrl: string;
     username: string;
+    items: Nav.MainNavItem[];
+    templateUrl: string;
+    unregisterRouteChangeListener: Function;
+    itemsChecker: ng.IPromise<any>;
 
-    constructor(
-      configManager: Core.ConfigManager,
-      private mainNavService: Nav.MainNavService,
-      private $location: ng.ILocationService,
-      private userDetails: Core.AuthService,
-    ) {
+    constructor(configManager: Core.ConfigManager, userDetails: Core.AuthService,
+      private mainNavService: Nav.MainNavService, private $rootScope: ng.IRootScopeService,
+      private $interval: ng.IIntervalService) {
       'ngInject';
       this.brandSrc = configManager.getBrandingValue('appLogoUrl');
       this.username = userDetails['fullName'];
     }
 
     $onInit() {
-      this.navigationItems = this.mainNavService.getValidItems();
-      this.mainNavService.setActiveItem(this.navigationItems, this.$location);
+      this.loadDataAndSetActiveItem();
+     
+      this.unregisterRouteChangeListener = this.$rootScope.$on('$routeChangeStart', () => {
+        const item = this.mainNavService.findItemByPath();
+        this.updateTemplateUrl(item);
+      });
+
+      this.itemsChecker = this.$interval(() => {
+        const items = this.mainNavService.getValidItems();
+        if (items.length !== this.items.length) {
+          const previousActiveItem = this.getActiveItem();
+          if (previousActiveItem) {
+            this.loadDataAndSetActiveItem();
+          } else {
+            this.loadData();
+          }
+        }
+      }, 10000);
     }
 
-    loadContent() {
-      const path = this.$location.path();
-      this.templateUrl = this.mainNavService.getTemplateUrlByPath(path);
+    getActiveItem(): Nav.MainNavItem {
+      return _.find(this.items, item => item['isActive']);
+    }
+
+    $onDestroy() {
+      this.unregisterRouteChangeListener();
+      this.$interval.cancel(this.itemsChecker);
+    }
+
+    loadData() {
+      this.items = this.mainNavService.getValidItems();
+    }
+
+    loadDataAndSetActiveItem() {
+      this.items = this.mainNavService.getValidItems();
+      let activeItem = this.mainNavService.getActiveItem();
+      if (!activeItem) {
+        activeItem = this.mainNavService.findItemByPath() || this.items[0];
+      }
+      this.updateTemplateUrl(activeItem);
+      this.mainNavService.changeRouteIfRequired();
+    }
+
+    updateTemplateUrl = (item: Nav.MainNavItem) => {
+      if (item) {
+        this.templateUrl = item.templateUrl;
+        this.mainNavService.activateItem(item);
+      } else {
+        this.templateUrl = DEFAULT_TEMPLATE_URL;
+        this.mainNavService.clearActiveItem();
+      }
     }
   }
 
   export const mainNavComponent: angular.IComponentOptions = {
     template: `
       <div id="main">
-        <pf-vertical-navigation brand-src="{{$ctrl.brandSrc}}" hidden-icons="true" items="$ctrl.navigationItems"
-                                item-click-callback="$ctrl.loadContent()" ignore-mobile="true">
+        <pf-vertical-navigation brand-src="{{$ctrl.brandSrc}}" hidden-icons="true" items="$ctrl.items"
+                                item-click-callback="$ctrl.updateTemplateUrl" update-active-items-on-click="true"
+                                ignore-mobile="true">
           <ul class="nav navbar-nav navbar-right navbar-iconic">
             <li class="dropdown">
               <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown"

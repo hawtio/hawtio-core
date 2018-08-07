@@ -3,55 +3,50 @@
 namespace Nav {
 
   export class MainNavService {
-    private defaultTemplateUrl = '/defaultTemplateUrl.html';
-    private items: MainNavItem[] = [];
+    private allItems: MainNavItem[] = [];
 
-    constructor(private $templateCache: ng.ITemplateCacheService) {
+    constructor(private $location: ng.ILocationService, private $templateCache: ng.ITemplateCacheService) {
       'ngInject';
-      $templateCache.put(this.defaultTemplateUrl, '<div ng-view></div>');
+      $templateCache.put(DEFAULT_TEMPLATE_URL, DEFAULT_TEMPLATE);
     }
 
-    addItem(item: IMainNavItem) {
-      const mainNavItem = new MainNavItem(item);
+    addItem(props: MainNavItemProps): void {
+      const mainNavItem = new MainNavItem(props);
+      this.allItems.push(mainNavItem);
       this.$templateCache.put(mainNavItem.templateUrl, mainNavItem.template);
-      this.items.push(mainNavItem);
     }
 
     getValidItems(): MainNavItem[] {
-      return this.items
+      return this.allItems
         .filter(item => item.isValid())
         .sort((a, b) => a.rank !== b.rank ? b.rank - a.rank : a.title.localeCompare(b.title));
     }
 
-    getTemplateUrlByPath(path: string): string {
-      const mainNavItem = _.find(this.items, item => _.startsWith(path, item.href));
-      return mainNavItem ? mainNavItem.templateUrl : this.defaultTemplateUrl;
+    getActiveItem(): Nav.MainNavItem {
+      const items = this.getValidItems();
+      return _.find(items, item => item['isActive']);
     }
 
-    setActiveItem(navigationItems: Nav.MainNavItem[], $location: ng.ILocationService) {
-      if (navigationItems.length > 0) {
-        const path = $location.path();
-        if (path === '/') {
-          this.activateFirstNavItem(navigationItems, $location);
-        } else {
-          this.activateNavItemBasedOnPath(navigationItems, path);
-        }
-      }
-    }
-    
-    private activateFirstNavItem(navigationItems: Nav.MainNavItem[], $location: ng.ILocationService) {
-      const activeItem = navigationItems[0];
-      activeItem['isActive'] = true;
-      $location.path(activeItem.href);
+    activateItem(item: Nav.MainNavItem) {
+      this.clearActiveItem();
+      item['isActive'] = true;
     }
 
-    private activateNavItemBasedOnPath(navigationItems: Nav.MainNavItem[], path: string) {
-      const activeItem = _.find(navigationItems, item => _.startsWith(path, item.href));
-      if (activeItem) {
-        activeItem['isActive'] = true;
+    clearActiveItem(): void {
+      this.allItems.forEach(item => item['isActive'] = false);
+    }
+
+    changeRouteIfRequired(): void {
+      const activeItem = this.getActiveItem();
+      if (activeItem && activeItem.href) {
+        this.$location.path(activeItem.href);
       }
     }
 
+    findItemByPath(): Nav.MainNavItem {
+      const items = this.getValidItems();
+      return _.find(items, item => _.startsWith(this.$location.path(), item.href || item.basePath));
+    }
   }
 
 }

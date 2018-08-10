@@ -7,14 +7,15 @@ describe("MainNavItem", function () {
     it("should construct object with default values", function () {
       // given
       const props: Nav.MainNavItemProps = {
-        title: 'My Title'
+        title: 'My Title',
+        basePath: '/base/path'
       };
       // when
       let item = new Nav.MainNavItem(props);
       // then
       expect(item.title).toBe('My Title');
       expect(item.href).toBeUndefined();
-      expect(item.basePath).toBeUndefined();
+      expect(item.basePath).toBe('/base/path');
       expect(item.template).toBe(Nav.DEFAULT_TEMPLATE);
       expect(item.templateUrl).toBe('my-title.html');
       expect(item.isValid()).toBe(true);
@@ -25,8 +26,7 @@ describe("MainNavItem", function () {
       // given
       const props: Nav.MainNavItemProps = {
         title: 'My Title',
-        href: '/test/href',
-        basePath: '/test/path',
+        href: '/href',
         template: '<my-template></my-template>',
         isValid: () => false,
         rank: 1
@@ -35,12 +35,27 @@ describe("MainNavItem", function () {
       let item = new Nav.MainNavItem(props);
       // then
       expect(item.title).toBe('My Title');
-      expect(item.href).toBe('/test/href');
-      expect(item.basePath).toBe('/test/path');
+      expect(item.href).toBe('/href');
       expect(item.template).toBe('<my-template></my-template>');
       expect(item.templateUrl).toBe('my-title.html');
       expect(item.isValid()).toBe(false);
       expect(item.rank).toBe(1);
+    });
+
+    it("should not construct object with 'href' and 'basePath' properties", function () {
+      // given
+      const props: Nav.MainNavItemProps = {
+        title: 'My Title',
+        href: '/href',
+        basePath: '/base/path'
+      };
+      // when
+      try {
+        new Nav.MainNavItem(props);
+        fail('did not throw error');
+      } catch (error) {
+        // then
+      }
     });
 
   });

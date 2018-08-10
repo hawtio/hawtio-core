@@ -8,11 +8,17 @@ namespace Nav {
    * https://www.patternfly.org/angular-patternfly/#/api/patternfly.navigation.component:pfVerticalNavigation%20-%20Basic
    */
   export interface MainNavItemProps {
+    /** Name to be displayed on the menu */
     title: string;
+    /** Route path to navigate to on click. pfVerticalNavigation invokes $location.path(href) internally. */
     href?: string;
+    /** Base path of hawtioTabs route paths. Should be used instead of 'href' when the template has second level navigation. */
     basePath?: string;
+    /** HTML template that should be rendered when the item is clicked. */
     template?: string;
+    /** Function that checks whether the item should be added to the menu. */
     isValid?: () => boolean;
+    /** Affects the position of the item in the menu. Items with higher ranks are shown on the top. */
     rank?: number;
   }
 
@@ -25,6 +31,9 @@ namespace Nav {
     rank = 0;
 
     constructor(item: MainNavItemProps) {
+      if (item.href && item.basePath) {
+        throw new Error("Must specify 'href' or 'basePath', not both.");
+      }
       _.assign(this, item);
     }
 

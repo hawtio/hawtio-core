@@ -20,7 +20,7 @@ namespace Section1 {
     'ngInject';
     mainNavService.addItem({
       title: 'Section 1',
-      href: '/section1',
+      basePath: '/section1',
       template: '<section1></section1>',
       isValid: () => {
         console.log('section1: ' + (section1Service.isValid() ? 'valid' : 'invalid'));

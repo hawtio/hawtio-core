@@ -41,7 +41,7 @@ namespace Nav {
     }
 
     getActiveItem(): Nav.MainNavItem {
-      return _.find(this.items, item => item['isActive']);
+      return <Nav.MainNavItem> _.find(this.items, item => item['isActive']);
     }
 
     $onDestroy() {

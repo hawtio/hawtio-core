@@ -36,7 +36,7 @@ namespace Core {
       return undefined;
     };
 
-    $scope.getTab = (pref: string): Nav.HawtioTab => _.find($scope.tabs, {label: pref});
+    $scope.getTab = (pref: string): Nav.HawtioTab => <Nav.HawtioTab> _.find($scope.tabs, {label: pref});
 
     /**
      * Sort the preference by names (and ensure Reset is last).

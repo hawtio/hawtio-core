@@ -24,7 +24,7 @@ namespace Nav {
 
     getActiveItem(): Nav.MainNavItem {
       const items = this.getValidItems();
-      return _.find(items, item => item['isActive']);
+      return <Nav.MainNavItem> _.find(items, item => item['isActive']);
     }
 
     activateItem(item: Nav.MainNavItem) {

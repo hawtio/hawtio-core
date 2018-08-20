@@ -19,7 +19,7 @@
     "@types/angular-route": "*",
     "@types/jasmine": "2.8.2",
     "@types/jquery": "~2.0.0",
-    "@types/lodash": "4.14.91",
+    "@types/lodash": "^4.0.0",
     "@types/marked": "0.3.0",
     "@types/urijs": "1.15.34",
     "angular": "~1.7.0",
@@ -30,7 +30,7 @@
     "gulp-rename": "~1.2.3",
     "jquery": "2.2.4",
     "js-logger": "1.4.1",
-    "lodash": "4.17.4",
+    "lodash": "~4.17.0",
     "marked": "0.3.9",
     "urijs": "1.19.0"
   },
@@ -67,7 +67,6 @@
   "flat": true,
   "resolutions": {
     "jquery": "2.2.4",
-    "lodash": "4.17.4",
     "moment": "2.14.1",
     "object-assign": "4.1.1",
     "glob": "7.1.2",
@@ -175,8 +174,6 @@
     "process-nextick-args": "2.0.0",
     "datatables.net-colreorder": "1.4.1",
     "readable-stream": "2.3.5",
-    "lodash.template": "4.4.0",
-    "lodash.templatesettings": "4.1.0",
     "arr-diff": "2.0.0",
     "source-map": "0.6.1",
     "extend-shallow": "2.0.1",
@@ -185,6 +182,9 @@
     "angular": "1.7.2",
     "angular-animate": "1.7.2",
     "angular-sanitize": "1.7.2",
-    "typescript": "2.9.2"
+    "typescript": "2.9.2",
+    "lodash": "4.17.10",
+    "lodash.template": "4.4.0",
+    "lodash.templatesettings": "4.1.0"
   }
 }

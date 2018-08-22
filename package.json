@@ -37,14 +37,13 @@
   "devDependencies": {
     "@hawtio/node-backend": "~3.0.0",
     "del": "^2.0.0",
-    "event-stream": "~3.3.2",
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
     "gulp-concat": "^2.0.0",
     "gulp-less": "~3.3.2",
     "gulp-ng-annotate": "^2.0.0",
     "gulp-replace": "~0.6.1",
-    "gulp-typescript": "^3.1.7",
+    "gulp-typescript": "^4.0.0",
     "jasmine-core": "~2.8.0",
     "karma": "~1.7.1",
     "karma-chrome-launcher": "~2.2.0",
@@ -53,7 +52,7 @@
     "karma-typescript-preprocessor": "~0.3.1",
     "path": "~0.12.7",
     "puppeteer": "~1.1.1",
-    "typescript": "^2.0.0",
+    "typescript": "^3.0.0",
     "yargs": "^8.0.0"
   },
   "repository": {
@@ -179,12 +178,16 @@
     "extend-shallow": "2.0.1",
     "type-is": "1.6.16",
     "bootstrap-select": "1.12.4",
-    "angular": "1.7.2",
-    "angular-animate": "1.7.2",
-    "angular-sanitize": "1.7.2",
-    "typescript": "2.9.2",
     "lodash": "4.17.10",
     "lodash.template": "4.4.0",
-    "lodash.templatesettings": "4.1.0"
+    "lodash.templatesettings": "4.1.0",
+    "typescript": "3.0.1",
+    "is-windows": "1.0.2",
+    "is-absolute": "1.0.0",
+    "is-relative": "1.0.0",
+    "is-unc-path": "1.0.0",
+    "angular": "1.7.3",
+    "angular-animate": "1.7.3",
+    "angular-sanitize": "1.7.3"
   }
 }

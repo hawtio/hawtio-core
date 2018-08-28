@@ -23,6 +23,7 @@ module.exports = function(config) {
       'node_modules/bootstrap/dist/js/bootstrap.min.js',
       'node_modules/patternfly/dist/js/patternfly.min.js',
       'node_modules/angular/angular.js',
+      'node_modules/angular-animate/angular-animate.min.js',
       'node_modules/angular-sanitize/angular-sanitize.js',
       'node_modules/angular-route/angular-route.min.js',
       'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
@@ -39,7 +40,7 @@ module.exports = function(config) {
       {pattern: 'hawtconfig.json', watched: false, included: false, served: true}
     ],
 
-    
+
     proxies: {
       "/hawtconfig.json": "/base/hawtconfig.json"
     },

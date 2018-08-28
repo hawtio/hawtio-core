@@ -1,6 +1,6 @@
 {
   "name": "@hawtio/core",
-  "version": "4.0.9",
+  "version": "4.0.10",
   "main": "dist/hawtio-core.js",
   "types": "dist/hawtio-core.d.ts",
   "files": [
@@ -23,7 +23,6 @@
     "@types/marked": "0.3.0",
     "@types/urijs": "1.15.34",
     "angular": "~1.7.0",
-    "angular-animate": "~1.7.0",
     "angular-patternfly": "^4.0.0",
     "angular-route": "~1.7.0",
     "angular-sanitize": "~1.7.0",
@@ -187,7 +186,6 @@
     "is-relative": "1.0.0",
     "is-unc-path": "1.0.0",
     "angular": "1.7.3",
-    "angular-animate": "1.7.3",
     "angular-sanitize": "1.7.3"
   }
 }

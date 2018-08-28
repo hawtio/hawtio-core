@@ -21,7 +21,7 @@ namespace Nav {
 
     $onInit() {
       this.loadDataAndSetActiveItem();
-     
+
       this.unregisterRouteChangeListener = this.$rootScope.$on('$routeChangeStart', () => {
         const item = this.mainNavService.findItemByPath();
         this.updateTemplateUrl(item);
@@ -56,7 +56,7 @@ namespace Nav {
     loadDataAndSetActiveItem() {
       this.items = this.mainNavService.getValidItems();
       let activeItem = this.mainNavService.getActiveItem();
-      if (!activeItem) {
+      if (!activeItem && (this.mainNavService.isRootPath() || this.mainNavService.isMainNavPath())) {
         activeItem = this.mainNavService.findItemByPath() || this.items[0];
       }
       this.updateTemplateUrl(activeItem);

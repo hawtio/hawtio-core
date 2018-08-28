@@ -8,27 +8,42 @@ namespace Nav {
     adjustingTabs: boolean;
     onChange: Function;
     activeTab: HawtioTab;
+    unregisterRouteChangeListener: Function;
 
     constructor(private $document: ng.IDocumentService, private $timeout: ng.ITimeoutService,
-      private $location: ng.ILocationService) {
-      'ngInject';      
+      private $location: ng.ILocationService, private $rootScope: ng.IRootScopeService) {
+      'ngInject';
+    }
+
+    $onInit() {
+      this.unregisterRouteChangeListener = this.$rootScope.$on('$routeChangeSuccess', () => {
+        let tab = _.find(this.tabs, tab => _.startsWith(this.$location.path(), tab.path));
+        // a route change could potentially load the content of a different tab, e.g., via a link,
+        // so activate the tab based on the current location
+        if (tab) {
+          this.activateTab(tab);
+        }
+      });
+    }
+
+    $onDestroy() {
+      this.unregisterRouteChangeListener();
     }
 
     $onChanges(changesObj: ng.IOnChangesObject) {
       if (this.tabs) {
         this.adjustTabs();
-        this.activateTab(changesObj);
+        this.activateTab(changesObj.activeTab ? changesObj.activeTab.currentValue : null);
       }
     }
-    
-    private activateTab(changesObj: ng.IOnChangesObject) {
-      if (changesObj.activeTab && changesObj.activeTab.currentValue) {
-        this.activeTab = _.find(this.tabs, tab => tab === changesObj.activeTab.currentValue);
+
+    private activateTab(tab: HawtioTab) {
+      if (tab) {
+        this.activeTab = tab;
       } else {
-        let tab = _.find(this.tabs, {path: this.$location.path()});
+        tab = _.find(this.tabs, tab => _.startsWith(this.$location.path(), tab.path));
         if (tab) {
           this.activeTab = tab;
-          this.$location.path(this.activeTab.path);
         } else if (this.tabs.length > 0) {
           this.activeTab = this.tabs[0];
           this.$location.path(this.activeTab.path);
@@ -44,7 +59,7 @@ namespace Nav {
         let $ul = this.$document.find('.hawtio-tabs');
         let $liTabs = $ul.find('.hawtio-tab');
         let $liDropdown = $ul.find('.dropdown');
-        
+
         let availableWidth = $ul.width() - $liDropdown.width();
         let tabsWidth = 0;
 
@@ -64,7 +79,7 @@ namespace Nav {
     get moreTabs() {
       return _.filter(this.tabs, {'visible': false});
     }
-    
+
     onClick(tab: HawtioTab) {
       this.activeTab = tab;
       this.onChange({tab: tab});
@@ -80,7 +95,7 @@ namespace Nav {
     },
     template: `
       <ul class="nav nav-tabs hawtio-tabs" ng-if="$ctrl.tabs">
-        <li ng-repeat="tab in $ctrl.visibleTabs track by tab.path" class="hawtio-tab" 
+        <li ng-repeat="tab in $ctrl.visibleTabs track by tab.path" class="hawtio-tab"
             ng-class="{invisible: $ctrl.adjustingTabs, active: tab === $ctrl.activeTab}">
           <a href="#" ng-click="$ctrl.onClick(tab)">{{tab.label}}</a>
         </li>

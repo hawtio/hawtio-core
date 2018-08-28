@@ -1,5 +1,6 @@
 /// <reference path="section1-page1.component.ts"/>
 /// <reference path="section1-page2.component.ts"/>
+/// <reference path="section1-page2-details.component.ts"/>
 /// <reference path="section1.component.ts"/>
 /// <reference path="section1.config.ts"/>
 /// <reference path="section1.service.ts"/>
@@ -14,6 +15,7 @@ namespace Section1 {
     .component('section1', section1Component)
     .component('section1Page1', section1Page1Component)
     .component('section1Page2', section1Page2Component)
+    .component('section1Page2Details', section1Page2DetailsComponent)
     .service('section1Service', Section1Service)
     .name;
 

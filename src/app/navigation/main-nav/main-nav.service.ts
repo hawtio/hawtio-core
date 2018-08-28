@@ -24,7 +24,7 @@ namespace Nav {
 
     getActiveItem(): Nav.MainNavItem {
       const items = this.getValidItems();
-      return <Nav.MainNavItem> _.find(items, item => item['isActive']);
+      return <Nav.MainNavItem>_.find(items, item => item['isActive']);
     }
 
     activateItem(item: Nav.MainNavItem) {
@@ -45,8 +45,21 @@ namespace Nav {
 
     findItemByPath(): Nav.MainNavItem {
       const items = this.getValidItems();
+      return this.getItemThatMatcheslocation(items);
+    }
+
+    isMainNavPath(): boolean {
+      return this.getItemThatMatcheslocation(this.allItems) !== undefined;
+    }
+
+    private getItemThatMatcheslocation(items: MainNavItem[]): MainNavItem {
       return _.find(items, item => _.startsWith(this.$location.path(), item.href || item.basePath));
     }
+
+    isRootPath(): boolean {
+      return this.$location.path() === '/';
+    }
+
   }
 
 }

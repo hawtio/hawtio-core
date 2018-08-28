@@ -156,31 +156,64 @@ describe("MainNavService", function () {
   });
 
   describe("findItemByPath", function () {
-    
+
     it("should return undefined when item is not found", function () {
       // given
-      const props1: Nav.MainNavItemProps = {title: 'Item 1', href: '/path1'};
-      const props2: Nav.MainNavItemProps = {title: 'Item 2', basePath: '/path2'};
+      mainNavService.addItem({ title: 'Item 1', href: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
       $location.path.and.returnValue('/path3/blah');
       // when
-      mainNavService.addItem(props1);
-      mainNavService.addItem(props2);
-      // then
       const item = mainNavService.findItemByPath();
+      // then
       expect(item).toBeUndefined();
     });
 
     it("should find item with href or basePath that is a prefix of the current location path", function () {
       // given
-      const props1: Nav.MainNavItemProps = {title: 'Item 1', href: '/path1'};
-      const props2: Nav.MainNavItemProps = {title: 'Item 2', basePath: '/path2'};
+      mainNavService.addItem({ title: 'Item 1', href: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
       $location.path.and.returnValue('/path2/blah');
       // when
-      mainNavService.addItem(props1);
-      mainNavService.addItem(props2);
-      // then
       const item = mainNavService.findItemByPath();
+      // then
       expect(item.title).toBe('Item 2');
+    });
+
+  });
+
+  describe("isMainNavPath", function () {
+
+    it("should return false when path is not used in main navigation", function () {
+      // given
+      mainNavService.addItem({ title: 'Item 1', href: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', href: '/path2' });
+      $location.path.and.returnValue('/path3');
+      // when
+      const result = mainNavService.isMainNavPath();
+      // then
+      expect(result).toBe(false);
+    });
+
+    it("should return true when path is used in main navigation", function () {
+      // given
+      mainNavService.addItem({ title: 'Item 1', href: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', href: '/path2', isValid: () => false });
+      $location.path.and.returnValue('/path1');
+      // when
+      const result = mainNavService.isMainNavPath();
+      // then
+      expect(result).toBe(true);
+    });
+
+    it("should return true when path is used in main navigation, even if item is not valid", function () {
+      // given
+      mainNavService.addItem({ title: 'Item 1', href: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', href: '/path2', isValid: () => false });
+      $location.path.and.returnValue('/path2');
+      // when
+      const result = mainNavService.isMainNavPath();
+      // then
+      expect(result).toBe(true);
     });
 
   });

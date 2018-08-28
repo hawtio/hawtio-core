@@ -5,8 +5,9 @@ namespace Section1 {
   export function configureRoutes($routeProvider: ng.route.IRouteProvider) {
     'ngInject';
     $routeProvider
-      .when('/section1/page1', {template: '<section1-page1></section1-page1>'})
-      .when('/section1/page2', {template: '<section1-page2></section1-page2>'})
+      .when('/section1/page1', { template: '<section1-page1></section1-page1>' })
+      .when('/section1/page2', { template: '<section1-page2></section1-page2>' })
+      .when('/section1/page2/details', { template: '<section1-page2-details></section1-page2-details>' })
   }
 
   export function configureHelp(helpRegistry, $templateCache: ng.ITemplateCacheService) {
@@ -15,7 +16,7 @@ namespace Section1 {
     helpRegistry.addUserDoc('section1', key);
     $templateCache.put(key, '## Section 1\n\nTest documentation for Section 1\n');
   }
-  
+
   export function configureLayout(mainNavService: Nav.MainNavService, section1Service: Section1Service) {
     'ngInject';
     mainNavService.addItem({
@@ -35,5 +36,5 @@ namespace Section1 {
       return section1Service.init();
     });
   }
-  
+
 }

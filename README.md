@@ -20,9 +20,10 @@ Register any AngularJS modules you want to load using `hawtioPluginLoader` in yo
   export const myModule = angular
     .module('my-module', [])
     .name;
-  
+
   hawtioPluginLoader.addModule(myModule);
 ```
+
 By default hawtio-core already adds `ng`, `ng-route` and `ng-sanitize`.
 
 ### Registering plugins dynamically
@@ -161,6 +162,7 @@ myModule.run(['helpRegistry', function(helpRegistry) {
   helpRegistry.addUserDoc('myName', 'path/to/my/doc.md');
 }
 ```
+
 ## UI extensions
 
 An extension registration service and a rendering directive are provided to extend the UI. The extension points are named locations in the UI and plugins can register callbacks to produce the HTML that will be added to the DOM.

@@ -5,15 +5,23 @@ namespace Nav {
   export class MainNavService {
     private allItems: MainNavItem[] = [];
 
-    constructor(private $location: ng.ILocationService, private $templateCache: ng.ITemplateCacheService) {
+    constructor(private $location: ng.ILocationService, private $templateCache: ng.ITemplateCacheService,
+      private configManager: Core.ConfigManager) {
       'ngInject';
       $templateCache.put(DEFAULT_TEMPLATE_URL, DEFAULT_TEMPLATE);
     }
 
     addItem(props: MainNavItemProps): void {
       const mainNavItem = new MainNavItem(props);
-      this.allItems.push(mainNavItem);
-      this.$templateCache.put(mainNavItem.templateUrl, mainNavItem.template);
+      if (this.isMainNavItemEnabled(mainNavItem)) {
+        this.allItems.push(mainNavItem);
+        this.$templateCache.put(mainNavItem.templateUrl, mainNavItem.template);
+      }
+    }
+
+    private isMainNavItemEnabled(mainNavItem: MainNavItem): boolean {
+      return (mainNavItem.basePath && this.configManager.isRouteEnabled(mainNavItem.basePath)) ||
+        (mainNavItem.href && this.configManager.isRouteEnabled(mainNavItem.href));
     }
 
     getValidItems(): MainNavItem[] {

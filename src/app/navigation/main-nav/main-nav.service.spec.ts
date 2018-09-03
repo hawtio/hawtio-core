@@ -6,11 +6,14 @@ describe("MainNavService", function () {
   let mainNavService: Nav.MainNavService;
   let $location;
   let $templateCache;
+  let configManager;
 
-  beforeEach(function() {
+  beforeEach(function () {
     $location = jasmine.createSpyObj('$location', ['path']);
     $templateCache = jasmine.createSpyObj('$templateCache', ['put']);
-    mainNavService = new Nav.MainNavService($location, $templateCache);
+    configManager = jasmine.createSpyObj('configManager', ['isRouteEnabled']);
+    configManager.isRouteEnabled.and.returnValue(true);
+    mainNavService = new Nav.MainNavService($location, $templateCache, configManager);
   });
 
   describe("constructor", function () {
@@ -23,17 +26,27 @@ describe("MainNavService", function () {
 
   describe("addItem", function () {
 
-    it("should add item to array and template to cache", function () {
+    it("should add item to array and template to cache when item's route is enabled", function () {
       // given
-      const props: Nav.MainNavItemProps = {title: 'My Title'};
+      configManager.isRouteEnabled.and.returnValue(true);
       // when
-      mainNavService.addItem(props);
+      mainNavService.addItem({ title: 'Item1', href: '/path1' });
       // then
       const items = mainNavService.getValidItems();
       expect(items.length).toBe(1);
       const item = items[0];
-      expect(item.title).toBe('My Title');
+      expect(item.title).toBe('Item1');
       expect($templateCache.put).toHaveBeenCalledWith(item.templateUrl, item.template);
+    });
+
+    it("should not add item to array and template to cache when item's route is disabled", function () {
+      // given
+      configManager.isRouteEnabled.and.returnValue(false);
+      // when
+      mainNavService.addItem({ title: 'Item1', href: '/path1' });
+      // then
+      const items = mainNavService.getValidItems();
+      expect(items.length).toBe(0);
     });
 
   });
@@ -42,22 +55,16 @@ describe("MainNavService", function () {
 
     it("should return valid items sorted by rank and title", function () {
       // given
-      const props7: Nav.MainNavItemProps = {title: 'Item 7', isValid: () => false};
-      const props6: Nav.MainNavItemProps = {title: 'Item 6', rank: 1};
-      const props5: Nav.MainNavItemProps = {title: 'Item 5'};
-      const props4: Nav.MainNavItemProps = {title: 'Item 4', rank: -1};
-      const props3: Nav.MainNavItemProps = {title: 'Item 3', rank: 1};
-      const props2: Nav.MainNavItemProps = {title: 'Item 2'};
-      const props1: Nav.MainNavItemProps = {title: 'Item 1', rank: -1};
+      mainNavService.addItem({ title: 'Item 7', basePath: '/path7', isValid: () => false });
+      mainNavService.addItem({ title: 'Item 6', basePath: '/path6', rank: 1 });
+      mainNavService.addItem({ title: 'Item 5', basePath: '/path5' });
+      mainNavService.addItem({ title: 'Item 4', basePath: '/path4', rank: -1 });
+      mainNavService.addItem({ title: 'Item 3', basePath: '/path3', rank: 1 });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
+      mainNavService.addItem({ title: 'Item 1', basePath: '/path1', rank: -1 });
       // when
-      mainNavService.addItem(props6);
-      mainNavService.addItem(props5);
-      mainNavService.addItem(props4);
-      mainNavService.addItem(props3);
-      mainNavService.addItem(props2);
-      mainNavService.addItem(props1);
-      // then
       const items = mainNavService.getValidItems();
+      // then
       expect(items.length).toBe(6);
       expect(items[0].title).toBe('Item 3');
       expect(items[1].title).toBe('Item 6');
@@ -73,8 +80,8 @@ describe("MainNavService", function () {
 
     it("should return undefined when there is no active item", function () {
       // given
-      mainNavService.addItem({title: 'Item 1'});
-      mainNavService.addItem({title: 'Item 2'});
+      mainNavService.addItem({ title: 'Item 1', basePath: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
       // when
       const activeItem = mainNavService.getActiveItem();
       // then
@@ -83,8 +90,8 @@ describe("MainNavService", function () {
 
     it("should return active item when there is one", function () {
       // given
-      mainNavService.addItem({title: 'Item 1'});
-      mainNavService.addItem({title: 'Item 2'});
+      mainNavService.addItem({ title: 'Item 1', basePath: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
       const items = mainNavService.getValidItems();
       mainNavService.activateItem(items[1]);
       // when
@@ -99,8 +106,8 @@ describe("MainNavService", function () {
 
     it("should activate item", function () {
       // given
-      mainNavService.addItem({title: 'Item 1'});
-      mainNavService.addItem({title: 'Item 2'});
+      mainNavService.addItem({ title: 'Item 1', basePath: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
       const items = mainNavService.getValidItems();
       mainNavService.activateItem(items[0]);
       // when
@@ -116,8 +123,8 @@ describe("MainNavService", function () {
 
     it("should clear activate item", function () {
       // given
-      mainNavService.addItem({title: 'Item 1'});
-      mainNavService.addItem({title: 'Item 2'});
+      mainNavService.addItem({ title: 'Item 1', basePath: '/path1' });
+      mainNavService.addItem({ title: 'Item 2', basePath: '/path2' });
       const items = mainNavService.getValidItems();
       mainNavService.activateItem(items[0]);
       // when
@@ -133,7 +140,7 @@ describe("MainNavService", function () {
 
     it("should not change route when 'href' property is undefined", function () {
       // given
-      mainNavService.addItem({title: 'Item 1'});
+      mainNavService.addItem({ title: 'Item 1', basePath: '/path1' });
       const items = mainNavService.getValidItems();
       mainNavService.activateItem(items[0]);
       // when
@@ -144,7 +151,7 @@ describe("MainNavService", function () {
 
     it("should change route when 'href' property is defined", function () {
       // given
-      mainNavService.addItem({title: 'Item 1', href: '/path'});
+      mainNavService.addItem({ title: 'Item 1', href: '/path' });
       const items = mainNavService.getValidItems();
       mainNavService.activateItem(items[0]);
       // when

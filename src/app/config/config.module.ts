@@ -12,10 +12,10 @@ namespace Core {
     .component('hawtioBrandingText', brandingTextComponent)
     .name;
 
-  function initConfigManager($provide: ng.auto.IProvideService, $routeProvider: ng.route.IRouteProvider): void {
+  function initConfigManager($provide: ng.auto.IProvideService): void {
     'ngInject';
     const config: Config = window['hawtconfig'];
-    const configManager = new ConfigManager(config, $routeProvider);
+    const configManager = new ConfigManager(config);
     $provide.constant('configManager', configManager);
     delete window['hawtconfig'];
   }

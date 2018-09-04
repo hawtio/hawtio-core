@@ -9,14 +9,19 @@
 
   & > .container-fluid {
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     padding-left: 0;
     padding-right: 0;
-  
+
     div[ng-view] {
       height: 100%;
       padding-left: @pf-padding;
       padding-right: @pf-padding;
+
+      .hawtio-tabs {
+        margin-left: 0;
+        margin-right: 0;
+      }
     }
   }
 
@@ -25,7 +30,7 @@
       .nav-item-iconic {
         line-height: normal; // align text and icon
         padding-right: 15px;
-  
+
         .username {
           display: inline-block;
           font-weight: 300;

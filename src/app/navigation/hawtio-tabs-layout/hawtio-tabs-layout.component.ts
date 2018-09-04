@@ -25,7 +25,7 @@ namespace Nav {
     template: `
       <div class="nav-tabs-main">
         <hawtio-tabs tabs="$ctrl.tabs" on-change="$ctrl.goto(tab)"></hawtio-tabs>
-        <div class="contents" ng-view></div>
+        <div ng-view></div>
       </div>
     `,
     controller: HawtioTabsLayoutController

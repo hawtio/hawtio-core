@@ -3,7 +3,6 @@
 namespace Nav {
 
   export class HawtioTabsController {
-
     tabs: HawtioTab[];
     adjustingTabs: boolean;
     onChange: Function;
@@ -11,7 +10,8 @@ namespace Nav {
     unregisterRouteChangeListener: Function;
 
     constructor(private $document: ng.IDocumentService, private $timeout: ng.ITimeoutService,
-      private $location: ng.ILocationService, private $rootScope: ng.IRootScopeService) {
+      private $location: ng.ILocationService, private $rootScope: ng.IRootScopeService,
+      private configManager: Core.ConfigManager) {
       'ngInject';
     }
 
@@ -32,9 +32,14 @@ namespace Nav {
 
     $onChanges(changesObj: ng.IOnChangesObject) {
       if (this.tabs) {
+        this.discardDisabledTabs();
         this.adjustTabs();
         this.activateTab(changesObj.activeTab ? changesObj.activeTab.currentValue : null);
       }
+    }
+
+    private discardDisabledTabs() {
+      this.tabs = this.tabs.filter(tab => this.configManager.isRouteEnabled(tab.path));
     }
 
     private activateTab(tab: HawtioTab) {

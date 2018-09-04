@@ -3,14 +3,8 @@ namespace Nav {
   export class HawtioTabsLayoutController {
     tabs: HawtioTab[];
 
-    constructor(private $location: ng.ILocationService, private configManager: Core.ConfigManager) {
+    constructor(private $location: ng.ILocationService) {
       'ngInject';
-    }
-
-    $onChanges() {
-      if (this.tabs) {
-        this.tabs = this.tabs.filter(tab => this.configManager.isRouteEnabled(tab.path));
-      }
     }
 
     goto(tab: Nav.HawtioTab) {

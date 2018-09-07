@@ -14,7 +14,7 @@
     "prepack": "gulp version"
   },
   "dependencies": {
-    "@hawtio/core-dts": "3.0.18",
+    "@hawtio/core-dts": "3.2.0",
     "@types/angular": "*",
     "@types/angular-route": "*",
     "@types/jasmine": "2.8.2",

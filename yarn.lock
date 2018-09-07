@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@hawtio/core-dts@3.0.18":
-  version "3.0.18"
-  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.18.tgz#20d1ff7e839c0e3180c18e954ad7a305c4ba2b24"
+"@hawtio/core-dts@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.2.0.tgz#9a685349dcfb9733234f6de71da5005d69b613fb"
   dependencies:
     "@types/jquery" "~2.0.46"
 
@@ -2473,7 +2473,7 @@ map-cache@^0.2.0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/map-cache/-/map-cache-0.2.2.tgz#c32abd0bd6525d9b051645bb4f26ac5dc98a0dbf"
 
-map-stream@0.0.7, map-stream@~0.1.0:
+map-stream@0.0.7, map-stream@0.1.0, map-stream@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
 
@@ -3481,7 +3481,7 @@ spdx-license-ids@^1.0.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-1.2.2.tgz#c9df7a3424594ade6bd11900d596696dc06bac57"
 
-split@0.3, split@^1.0.1:
+split@0.3, split@1.0.1, split@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/split/-/split-1.0.1.tgz#605bd9be303aa59fb35f9229fbea0ddec9ea07d9"
   dependencies:
@@ -3513,7 +3513,7 @@ statuses@1, statuses@1.4.0, "statuses@>= 1.3.1 < 2", "statuses@>= 1.4.0 < 2", st
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
 
-stream-combiner@^0.2.2, stream-combiner@~0.0.4:
+stream-combiner@0.2.2, stream-combiner@^0.2.2, stream-combiner@~0.0.4:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/stream-combiner/-/stream-combiner-0.2.2.tgz#aec8cbac177b56b6f4fa479ced8c1912cee52858"
   dependencies:

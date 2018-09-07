@@ -1,5 +1,7 @@
 namespace Core {
 
+  declare var Jolokia;
+
   export type PluginLoaderCallback = {
     scriptLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void,
     urlLoaderCallback: (self: PluginLoaderCallback, total: number, remaining: number) => void
@@ -7,7 +9,7 @@ namespace Core {
 
   /**
    * Task to be run before bootstrapping
-   * 
+   *
    * name: the task name
    * depends: an array of task names this task needs to have executed first,
    *          or '*'
@@ -167,7 +169,7 @@ namespace Core {
 
     /**
      * Return the current list of configured modules.
-     * 
+     *
      * It is invoked from HawtioCore's bootstrapping.
      */
     getModules(): string[] {
@@ -175,7 +177,7 @@ namespace Core {
     }
 
     /**
-     * Set a callback to be notified as URLs are checked and plugin 
+     * Set a callback to be notified as URLs are checked and plugin
      * scripts are downloaded
      */
     setLoaderCallback(callback: PluginLoaderCallback): PluginLoader {
@@ -185,7 +187,7 @@ namespace Core {
 
     /**
      * Downloads plugins at any configured URLs and bootstraps the app.
-     * 
+     *
      * It is invoked from HawtioCore's bootstrapping.
      */
     loadPlugins(callback: () => void): void {

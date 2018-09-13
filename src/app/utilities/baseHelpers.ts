@@ -54,22 +54,6 @@ namespace Core {
   }
 
   /**
-   * Private method to support testing.
-   *
-   * @private
-   */
-  export function _resetJolokiaUrls(): Array<String> {
-    // Add any other known possible jolokia URLs here
-    jolokiaUrls = [
-      Core.url("jolokia"), // instance configured by hawtio-web war file
-      "/jolokia" // instance that's already installed in a karaf container for example
-    ];
-    return jolokiaUrls;
-  }
-
-  var jolokiaUrls: Array<String> = Core._resetJolokiaUrls();
-
-  /**
    * Trims the leading prefix from a string if its present
    * @method trimLeading
    * @for Core

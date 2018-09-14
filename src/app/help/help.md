@@ -4,7 +4,7 @@ Browse the available help topics for plugin specific documentation using the hel
 
 ### Further Reading
 
-- [hawtio](http://hawt.io "hawtio") website
-- Chat with the hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**
-- Help improve hawtio by [contributing](http://hawt.io/docs/contributing/)
-- hawtio on [GitHub](https://github.com/hawtio/hawtio)
+- [Hawtio](http://hawt.io "Hawtio") website
+- Chat with the Hawtio team on IRC by joining **#hawtio** on **irc.freenode.net**
+- Help improve Hawtio by [contributing](http://hawt.io/docs/contributing/)
+- Hawtio on [GitHub](https://github.com/hawtio/hawtio)

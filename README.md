@@ -1,6 +1,6 @@
 # Hawtio Core
 
-This package contains the core parts of the **[hawtio](http://hawt.io)** web console.
+This package contains the core parts of the **[Hawtio](http://hawt.io)** web console.
 
 hawtio-core features include:
 
@@ -52,7 +52,7 @@ Remove any ng-app annotation from your HTML template, hawtio-core manually boots
 
 ## Routing and navigation
 
-In your hawtio plugin you can configure your routes and the navigation bar in one go. For example:
+In your Hawtio plugin you can configure your routes and the navigation bar in one go. For example:
 
 ```javascript
   var tab = undefined;
@@ -169,7 +169,7 @@ An extension registration service and a rendering directive are provided to exte
 
 ### Register an extension point callback
 
-In your hawtio plugin you can register an extension point callback like:
+In your Hawtio plugin you can register an extension point callback like:
 
 ```javascript
   var module = angular.module("MyAwesomePlugin", []);

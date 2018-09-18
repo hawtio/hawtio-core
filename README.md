@@ -32,7 +32,7 @@ Plugins can also be dynamically discovered by registering URLs to check with `ha
 
 ```json
 {
-  some_plugin: {
+  "some_plugin": {
     "Name": "dummy",
     "Context": "/hawtio",
     "Scripts": [

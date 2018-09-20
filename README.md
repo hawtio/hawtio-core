@@ -1,5 +1,7 @@
 # Hawtio Core
 
+[![CircleCI](https://circleci.com/gh/hawtio/hawtio-core.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-core)
+
 This package contains the core parts of the **[Hawtio](http://hawt.io)** web console.
 
 hawtio-core features include:

@@ -308,7 +308,7 @@ var hawtioPluginLoader = (function(self) {
 
   self.setBootstrapElement = function(el) {
     log.debug("Setting bootstrap element to: ", el);
-    bootstrapEl = el; 
+    bootstrapEl = el;
   }
 
   self.getBootstrapElement = function() {
@@ -484,7 +484,7 @@ var hawtioPluginLoader = (function(self) {
             if (next.notFired) {
               next.notFired = false;
               executedTasks.push(tObj.name);
-              setTimeout(executeTask, 1); 
+              setTimeout(executeTask, 1);
             }
           }
           next.notFired = true;
@@ -707,8 +707,8 @@ var HawtioCore = (function () {
     });
 
 
-    // Holds a mapping of plugins to layouts, plugins use 
-    // this to specify a full width view, tree view or their 
+    // Holds a mapping of plugins to layouts, plugins use
+    // this to specify a full width view, tree view or their
     // own custom view
     _module.factory('viewRegistry', function() {
       return {};
@@ -767,7 +767,7 @@ var HawtioCore = (function () {
         getAddLink: function() {
           return '';
         }
-      }; 
+      };
     });
 
     // Placeholder service for branding
@@ -832,7 +832,7 @@ var HawtioCore = (function () {
         // to add providers
         HawtioCore.UpgradeAdapter = new ng.upgrade.UpgradeAdapter();
       }
-      
+
       hawtioPluginLoader.loadPlugins(function() {
 
         if (HawtioCore.injector || HawtioCore.UpgradeAdapterRef) {
@@ -840,25 +840,11 @@ var HawtioCore = (function () {
           return;
         }
 
-        var strictDi = localStorage['hawtioCoreStrictDi'] || false;
-        if (strictDi) {
-          log.debug("Using strict dependency injection");
-        }
-
         var bootstrapEl = hawtioPluginLoader.getBootstrapElement();
         log.debug("Using bootstrap element: ", bootstrapEl);
 
-        // bootstrap in hybrid mode if angular2 is detected
-        if (HawtioCore.UpgradeAdapter) {
-          log.debug("ngUpgrade detected, bootstrapping in Angular 1/2 hybrid mode");
-          HawtioCore.UpgradeAdapterRef = HawtioCore.UpgradeAdapter.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), { strictDi: strictDi });
-          HawtioCore._injector = HawtioCore.UpgradeAdapterRef.ng1Injector;
-        } else {
+        HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), { strictDi: true });
 
-          HawtioCore._injector = angular.bootstrap(bootstrapEl, hawtioPluginLoader.getModules(), {
-            strictDi: strictDi
-          });
-        }
         log.debug("Bootstrapped application");
       });
     });

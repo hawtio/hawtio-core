@@ -13,7 +13,8 @@ namespace Nav {
 
     constructor(configManager: Core.ConfigManager, userDetails: Core.AuthService,
       private mainNavService: Nav.MainNavService, private $rootScope: ng.IRootScopeService,
-      private $interval: ng.IIntervalService) {
+      private $interval: ng.IIntervalService, private $timeout: ng.ITimeoutService,
+      private $document: ng.IDocumentService) {
       'ngInject';
       this.brandSrc = configManager.getBrandingValue('appLogoUrl');
       this.username = userDetails['fullName'];
@@ -42,6 +43,17 @@ namespace Nav {
 
     getActiveItem(): Nav.MainNavItem {
       return <Nav.MainNavItem> _.find(this.items, item => item['isActive']);
+    }
+
+    $postLink() {
+      // Add a 'data-target' attribute to each navigation item to avoid changing existing UI tests
+      this.$timeout(() => {
+        this.$document.find('.nav-pf-vertical > ul > li').each((i, elem) => {
+          const li = $(elem);
+          const dataTarget = `#${_.kebabCase(li.text())}-secondary`;
+          li.attr('data-target', dataTarget);
+        });
+      });
     }
 
     $onDestroy() {

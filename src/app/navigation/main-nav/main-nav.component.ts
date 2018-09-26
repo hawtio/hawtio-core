@@ -50,7 +50,8 @@ namespace Nav {
       this.$timeout(() => {
         this.$document.find('.nav-pf-vertical > ul > li').each((i, elem) => {
           const li = $(elem);
-          const dataTarget = `#${_.kebabCase(li.text())}-secondary`;
+          const id = _.kebabCase(li.text().toLowerCase());
+          const dataTarget = `#${id}-secondary`;
           li.attr('data-target', dataTarget);
         });
       });

@@ -33,8 +33,8 @@
     "@types/angular" "*"
 
 "@types/angular@*":
-  version "1.6.50"
-  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.50.tgz#8b6599088d80f68ef0cad7d3a2062248ebe72b3d"
+  version "1.6.51"
+  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.51.tgz#a67515b0ba6a2ff68894a39405c1343cbf9c36d4"
 
 "@types/c3@^0.6.0":
   version "0.6.1"
@@ -313,9 +313,9 @@ alter@~0.2.0:
   dependencies:
     stable "~0.1.3"
 
-angular-animate@1.5.*, angular-animate@1.7.3, angular-animate@~1.7.0:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.3.tgz#99aa794d3417aa6a794f603c9c27ec0ee4c4b3b4"
+angular-animate@1.5.*, angular-animate@1.7.4, angular-animate@~1.7.0:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.4.tgz#14cee98e6aebab27642391c94c872009f2e3cd62"
 
 angular-drag-and-drop-lists@2.0.0:
   version "2.0.0"
@@ -346,12 +346,12 @@ angular-patternfly@^4.0.0:
     moment "~2.19.3"
 
 angular-route@~1.7.0:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.3.tgz#245c7ea7d18514c1d08201588092db7df210e7c6"
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.4.tgz#2af79395b7bc0d92d2a394efea255a912255fea9"
 
-angular-sanitize@1.5.*, angular-sanitize@1.7.3, angular-sanitize@~1.7.0:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.3.tgz#e1ddaa7337724f9554066fd9e9123486b8881c4a"
+angular-sanitize@1.5.*, angular-sanitize@1.7.4, angular-sanitize@~1.7.0:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.4.tgz#c7d80176ed31507fd0e08bbb3a6c25bf09db2a61"
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
@@ -361,9 +361,9 @@ angular-ui-bootstrap@2.3.x:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.3.2.tgz#bfec894ed983ade1e5d3f402fc10f8829652ac99"
 
-angular@1.5.*, angular@1.7.3, angular@>=1.3.0, angular@~1.7.0:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.3.tgz#0f25a661d079fc84d5ccc877a2ef9d7178575ddb"
+angular@1.5.*, angular@1.7.4, angular@>=1.3.0, angular@~1.7.0:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.4.tgz#c1bf4884c2d470c06907737a1bf0835a9f646f31"
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -1481,6 +1481,10 @@ flagged-respawn@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/flagged-respawn/-/flagged-respawn-0.3.2.tgz#ff191eddcd7088a675b2610fffc976be9b8074b5"
 
+flatmap-stream@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/flatmap-stream/-/flatmap-stream-0.1.0.tgz#ed54e01422cd29281800914fcb968d58b685d5f1"
+
 flush-write-stream@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/flush-write-stream/-/flush-write-stream-1.0.3.tgz#c5d586ef38af6097650b49bc41b55fabb19f35bd"
@@ -2216,11 +2220,11 @@ karma-mocha-reporter@~2.2.5:
     log-symbols "^2.1.0"
     strip-ansi "^4.0.0"
 
-karma-typescript-preprocessor@~0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/karma-typescript-preprocessor/-/karma-typescript-preprocessor-0.3.1.tgz#a4ed4976af02a0801d17843756ad8ccc80053d5a"
+karma-typescript-preprocessor@~0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/karma-typescript-preprocessor/-/karma-typescript-preprocessor-0.4.0.tgz#49adde8ae382b23dc7e30b06494509f79eea3e25"
   dependencies:
-    typescript "^2.1.4"
+    typescript "^3.0.3"
 
 karma@~1.7.1:
   version "1.7.1"
@@ -2444,9 +2448,9 @@ lodash.uniq@^4.3.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@4.17.10, lodash@4.x, lodash@^3.8.0, lodash@^4.17.4, lodash@^4.5.0, lodash@~1.0.1, lodash@~4.17.0:
-  version "4.17.10"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+lodash@4.17.11, lodash@4.x, lodash@^3.8.0, lodash@^4.17.4, lodash@^4.5.0, lodash@~1.0.1, lodash@~4.17.0:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 log-symbols@^2.1.0:
   version "2.1.0"
@@ -2584,7 +2588,7 @@ morgan@~1.6.1:
     on-finished "~2.3.0"
     on-headers "~1.0.0"
 
-ms@0.7.1, ms@0.7.2, ms@2.0.0:
+ms@0.7.1, ms@0.7.2, ms@2.0.0, ms@^2.1.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
 
@@ -3710,9 +3714,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@3.0.1, typescript@^2.1.4, typescript@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
+typescript@3.0.3, typescript@^3.0.0, typescript@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.3.tgz#4853b3e275ecdaa27f78fda46dc273a7eb7fc1c8"
 
 uglify-js@^2.8.22:
   version "2.8.29"

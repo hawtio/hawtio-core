@@ -11,7 +11,7 @@ namespace Nav {
     unregisterRouteChangeListener: Function;
     itemsChecker: ng.IPromise<any>;
 
-    constructor(configManager: Core.ConfigManager, userDetails: Core.AuthService,
+    constructor(configManager: Core.ConfigManager, private userDetails: Core.AuthService,
       private mainNavService: Nav.MainNavService, private $rootScope: ng.IRootScopeService,
       private $interval: ng.IIntervalService, private $timeout: ng.ITimeoutService,
       private $document: ng.IDocumentService) {
@@ -113,9 +113,9 @@ namespace Nav {
               </a>
               <ul class="dropdown-menu" aria-labelledby="userDropdownMenu">
                 <li hawtio-extension name="hawtio-preferences"></li>
-                <li hawtio-extension name="hawtio-logout"></li>
+                <li ng-if="$ctrl.userDetails.loggedIn"><a ng-click="$ctrl.userDetails.logout()">Logout</a></li>
               </ul>
-            </li>
+            </lihawtio-extension>
           </ul>
         </pf-vertical-navigation>
         <div class="container-fluid container-pf-nav-pf-vertical">

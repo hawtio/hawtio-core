@@ -14,24 +14,4 @@ describe("AuthService", function () {
     authService = new Core.AuthService(postLoginTasks, preLogoutTasks, postLogoutTasks);
   });
 
-  describe("isDefaultUser()", function () {
-
-    it("should return true when user is default user", function () {
-      // when
-      let isDefaultUser = authService.isDefaultUser();
-      // then
-      expect(isDefaultUser).toBe(true);
-    });
-
-    it("should return false when user is not default user", function () {
-      // given
-      authService.login('bob', 'password');
-      // when
-      let isDefaultUser = authService.isDefaultUser();
-      // then
-      expect(isDefaultUser).toBe(false);
-    });
-
-  });
-
 });

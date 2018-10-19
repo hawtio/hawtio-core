@@ -20,8 +20,7 @@ namespace Core {
     constructor(
       private postLoginTasks: Tasks,
       private preLogoutTasks: Tasks,
-      private postLogoutTasks: Tasks,
-      private localStorage: Storage) {
+      private postLogoutTasks: Tasks) {
       'ngInject';
     }
 
@@ -84,6 +83,10 @@ namespace Core {
 
     get loggedIn(): boolean {
       return this._loggedIn;
+    }
+
+    isDefaultUser(): boolean {
+      return this._username === DEFAULT_USER;
     }
   }
 

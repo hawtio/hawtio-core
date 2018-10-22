@@ -113,7 +113,7 @@ namespace Nav {
               </a>
               <ul class="dropdown-menu" aria-labelledby="userDropdownMenu">
                 <li hawtio-extension name="hawtio-preferences"></li>
-                <li ng-if="$ctrl.userDetails.loggedIn"><a ng-click="$ctrl.userDetails.logout()">Logout</a></li>
+                <li hawtio-extension name="hawtio-logout"></li>
               </ul>
             </lihawtio-extension>
           </ul>

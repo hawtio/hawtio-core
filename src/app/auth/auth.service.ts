@@ -84,6 +84,11 @@ namespace Core {
     get loggedIn(): boolean {
       return this._loggedIn;
     }
+
+    isDefaultUser(): boolean {
+      return this._username === DEFAULT_USER;
+    }
+
   }
 
 }

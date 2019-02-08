@@ -50,6 +50,8 @@
     "karma-jasmine": "~1.1.0",
     "karma-mocha-reporter": "~2.2.5",
     "karma-typescript-preprocessor": "~0.4.0",
+    "merge2": "~1.2.3",
+    "natives": "~1.1.6",
     "path": "~0.12.7",
     "puppeteer": "~1.1.1",
     "typescript": "^3.0.0",
@@ -146,6 +148,10 @@
     "wordwrap": "0.0.3",
     "string-width": "2.1.1",
     "is-fullwidth-code-point": "2.0.0",
-    "component-emitter": "1.2.1"
+    "component-emitter": "1.2.1",
+    "event-stream": "3.3.4",
+    "map-stream": "0.1.0",
+    "split": "1.0.1",
+    "stream-combiner": "0.2.2"
   }
 }

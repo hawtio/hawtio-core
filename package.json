@@ -22,11 +22,11 @@
     "@types/lodash": "^4.0.0",
     "@types/marked": "0.3.0",
     "@types/urijs": "1.15.34",
-    "angular": "~1.7.0",
-    "angular-animate": "~1.7.0",
+    "angular": "1.7.7",
+    "angular-animate": "1.7.7",
     "angular-patternfly": "^4.0.0",
-    "angular-route": "~1.7.0",
-    "angular-sanitize": "~1.7.0",
+    "angular-route": "1.7.7",
+    "angular-sanitize": "1.7.7",
     "gulp-rename": "~1.2.3",
     "jquery": "2.2.4",
     "js-logger": "1.4.1",
@@ -191,9 +191,9 @@
     "stream-combiner": "0.2.2",
     "typescript": "3.0.3",
     "angular": "1.7.4",
-    "angular-animate": "1.7.4",
-    "angular-sanitize": "1.7.4",
     "lodash": "4.17.11",
-    "natives": "1.1.6"
+    "natives": "1.1.6",
+    "angular-animate": "1.7.7",
+    "angular-sanitize": "1.7.7"
   }
 }

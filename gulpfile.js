@@ -82,7 +82,7 @@ gulp.task('tsc-example', ['clean-example', 'hawtio-core-types'], function() {
     .js
     .pipe(ngAnnotate())
     .pipe(gulp.dest(config.distExample));
-});    
+});
 
 gulp.task('connect', ['build-example'], function() {
   hawtio.setConfig({
@@ -124,7 +124,9 @@ gulp.task('watch', ['build-example'], function() {
 gulp.task('test', ['build'], function (done) {
   new Server({
     configFile: __dirname + '/karma.conf.js'
-  }, done).start();
+  }, function() {
+    done();
+  }).start();
 });
 
 gulp.task('version', function() {

@@ -50,6 +50,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-mocha-reporter": "~2.2.5",
     "karma-typescript-preprocessor": "~0.4.0",
+    "natives": "~1.1.6",
     "path": "~0.12.7",
     "puppeteer": "~1.1.1",
     "typescript": "^3.0.0",
@@ -191,6 +192,7 @@
     "angular": "1.7.4",
     "angular-animate": "1.7.4",
     "angular-sanitize": "1.7.4",
-    "lodash": "4.17.11"
+    "lodash": "4.17.11",
+    "natives": "1.1.6"
   }
 }

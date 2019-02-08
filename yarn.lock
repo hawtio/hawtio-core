@@ -2,11 +2,12 @@
 # yarn lockfile v1
 
 
-"@hawtio/core-dts@3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.2.0.tgz#9a685349dcfb9733234f6de71da5005d69b613fb"
+"@hawtio/core-dts@~3.3.0":
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.3.2.tgz#816c61ff16fd7ae3126a34be965cb2f13c132cdc"
+  integrity sha512-BIbNKMx3JSbE4wbcDT406Ps7NhdFU8zuZy0+ic40mlttGx+3zQhGYu4RxEnCSKvr7BQBnOUBq3o42ruMUPSG/A==
   dependencies:
-    "@types/jquery" "~2.0.46"
+    "@types/jquery" "2.0.53"
 
 "@hawtio/node-backend@~3.0.0":
   version "3.0.8"
@@ -33,8 +34,9 @@
     "@types/angular" "*"
 
 "@types/angular@*":
-  version "1.6.51"
-  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.51.tgz#a67515b0ba6a2ff68894a39405c1343cbf9c36d4"
+  version "1.6.54"
+  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.54.tgz#f9d5a03e4da7b021a6dabe5d63e899ed4567a5bd"
+  integrity sha512-xA1FuozWXeRQ7FClUbvk8ePL+dydBeDoCWRPFTHU5+8uvVtIIfLGiHA8CMkwsbddFCYnTDVbLxG85a/HBx7LtA==
 
 "@types/c3@^0.6.0":
   version "0.6.1"
@@ -222,29 +224,34 @@
   version "7946.0.4"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.4.tgz#4e049756383c3f055dd8f3d24e63fb543e98eb07"
 
-"@types/jasmine@2.8.2":
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.8.2.tgz#6ae4d8740c0da5d5a627df725b4eed71b8e36668"
+"@types/jasmine@~2.8.0":
+  version "2.8.16"
+  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.8.16.tgz#a6cb24b1149d65293bd616923500014838e14e7d"
+  integrity sha512-056oRlBBp7MDzr+HoU5su099s/s7wjZ3KcHxLfv+Byqb9MwdLUvsfLgw1VS97hsh3ddxSPyQu+olHMnoVTUY6g==
 
-"@types/jquery@*", "@types/jquery@~2.0.46":
-  version "2.0.49"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.49.tgz#95bd7064caebf65bde10429dff491a1aea05b67d"
+"@types/jquery@*", "@types/jquery@2.0.53":
+  version "2.0.53"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.53.tgz#89c53bc83d820e50c3b667ae2fdf4276df8b3aba"
+  integrity sha512-MZKPWUhp5TKkoJ/58NSq6io+CSUCOHm2b3Z6U4+r9v70kktB0JM+eRjdp6YmDHtw0kK2XB7L2K7/FMIoziHjUA==
 
 "@types/lodash@^4.0.0":
-  version "4.14.116"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
+  version "4.14.120"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.120.tgz#cf265d06f6c7a710db087ed07523ab8c1a24047b"
+  integrity sha512-jQ21kQ120mo+IrDs1nFNVm/AsdFxIx2+vZ347DbogHJPd/JzKNMOqU6HCYin1W6v8l5R9XSO2/e9cxmn7HAnVw==
 
-"@types/marked@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.3.0.tgz#583c223dd33385a1dda01aaf77b0cd0411c4b524"
+"@types/marked@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.6.0.tgz#e4ac316144a84afda5c2474488d7b9fef3ab9995"
+  integrity sha512-TxwhgR9VsIfRDJ3WwFokG8Xu+ea0nYGDRHdI783WJ983uffatz0ytIeUEIBOwPvRy241KRSNVyywQltuTqDh0w==
 
 "@types/node@^7.0.31":
   version "7.0.51"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.51.tgz#1fb9bd2c7d28b1e8b1fe438f01494d0da8e451af"
 
-"@types/urijs@1.15.34":
-  version "1.15.34"
-  resolved "https://registry.yarnpkg.com/@types/urijs/-/urijs-1.15.34.tgz#b9d5954e9beaabb6fc48c2127d8df15ac6393256"
+"@types/urijs@~1.15.38":
+  version "1.15.38"
+  resolved "https://registry.yarnpkg.com/@types/urijs/-/urijs-1.15.38.tgz#733ff7f18d42de60d0cdba40d8e92673b27cd5a4"
+  integrity sha512-5VWXqu6V2IxXsPuSXYwCZHbh25U7pE+UJTFtKnNQRJLZA7o0D7fOQRJdgwBTMLNY0uc5F9GsFSang1VwNcPguA==
   dependencies:
     "@types/jquery" "*"
 
@@ -322,9 +329,10 @@ angular-drag-and-drop-lists@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-2.0.0.tgz#a01d44b94cf233c9c2d45a31842cb35a9d0882ca"
 
-angular-patternfly@^4.0.0:
-  version "4.18.5"
-  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.18.5.tgz#9a1fe340b222a3befd2f4f5b814b8ee6a321c5e4"
+angular-patternfly@4.18.6:
+  version "4.18.6"
+  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.18.6.tgz#4f62fc235d93aecd1c03f7ed70e08ec1ea2e5fdb"
+  integrity sha512-QWEwBniEQoengjMJMLh/qUCRfEPuDaZ2eH6kmOd74O9sImcOQjYTz4CFGoIS6PkVD2ZpvG0QL/or6Nnhf3SbUw==
   dependencies:
     angular "1.5.*"
     angular-animate "1.5.*"
@@ -364,9 +372,10 @@ angular-ui-bootstrap@2.3.x:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.3.2.tgz#bfec894ed983ade1e5d3f402fc10f8829652ac99"
 
-angular@1.5.*, angular@1.7.4, angular@1.7.7, angular@>=1.3.0:
-  version "1.7.4"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.4.tgz#c1bf4884c2d470c06907737a1bf0835a9f646f31"
+angular@1.5.*, angular@1.7.7, angular@>=1.3.0:
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.7.tgz#26bd87693deadcbd5944610a7a0463fc79a18803"
+  integrity sha512-MH3JEGd8y/EkNCKJ8EV6Ch0j9X0rZTta/QVIDpBWaIdfh85/e5KO8+ZKgvWIb02MQuiS20pDFmMFlv4ZaLcLWg==
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -850,6 +859,7 @@ concat-stream@1.6.0:
 concat-with-sourcemaps@*, concat-with-sourcemaps@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/concat-with-sourcemaps/-/concat-with-sourcemaps-1.1.0.tgz#d4ea93f05ae25790951b99e7b3b09e3908a4082e"
+  integrity sha512-4gEjHJFT9e+2W/77h/DS5SGUgwDaOwprX8L/gl5+3ixnzkVJJsZWDSelmN3Oilw3LNDZjZV0yqH1hLG3k6nghg==
   dependencies:
     source-map "^0.6.1"
 
@@ -944,6 +954,7 @@ core-js@^2.2.0:
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
+  integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
 crc@3.3.0:
   version "3.3.0"
@@ -1136,6 +1147,7 @@ duplexer2@0.0.2:
 duplexer@^0.1.1, duplexer@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.1.tgz#ace6ff808c1ce66b57d1ebf97977acb02334cfc1"
+  integrity sha1-rOb/gIwc5mtX0ev5eXessCM0z8E=
 
 duplexify@^3.6.0:
   version "3.6.0"
@@ -1266,7 +1278,7 @@ etag@1.7.0, etag@~1.7.0, etag@~1.8.1:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.7.0.tgz#03d30b5f67dd6e632d2945d30d6652731a34d5d8"
 
-event-stream@*, event-stream@3.3.2, event-stream@3.3.4, event-stream@^3.3.4:
+event-stream@3.3.2, event-stream@^3.3.4:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/event-stream/-/event-stream-3.3.2.tgz#3cc310feb1f28d2f62b2a085d736a9ef566378b8"
   integrity sha1-PMMQ/rHyjS9isqCF1zap71ZjeLg=
@@ -1533,6 +1545,7 @@ fresh@0.3.0, fresh@0.5.2:
 from@^0.1.7, from@~0:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/from/-/from-0.1.7.tgz#83c60afc58b9c56997007ed1a768b3ab303a44fe"
+  integrity sha1-g8YK/Fi5xWmXAH7Rp2izqzA6RP4=
 
 fs-access@^1.0.0:
   version "1.0.1"
@@ -1715,15 +1728,17 @@ graceful-fs@3.0.11, graceful-fs@^3.0.0, graceful-fs@^4.0.0, graceful-fs@^4.1.11,
     natives "^1.1.0"
 
 gulp-angular-templatecache@^2.0.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/gulp-angular-templatecache/-/gulp-angular-templatecache-2.2.1.tgz#f08088fd4b1a80733d627c4ba24728d4e9cca8a9"
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/gulp-angular-templatecache/-/gulp-angular-templatecache-2.2.6.tgz#2f2bee43797d204e61ccd66b85c3f34104d9871f"
+  integrity sha512-ZSL5vPPqtUvZ+FX9ujL1RTg1L1Y2EBeJuNNs9i3c/qRyrdeoLEBcC9TRTHAqwpgpBBZmSY+Dvm2aQe1UTSFDIQ==
   dependencies:
-    event-stream "3.3.4"
     gulp-concat "2.6.1"
-    gulp-footer "2.0.1"
+    gulp-footer "2.0.2"
     gulp-header "2.0.5"
     jsesc "2.5.1"
     lodash.template "^4.4.0"
+    map-stream "0.0.7"
+    stream-combiner "0.2.2"
     through2 "^2.0.3"
 
 gulp-concat@2.6.1, gulp-concat@^2.0.0:
@@ -1734,19 +1749,21 @@ gulp-concat@2.6.1, gulp-concat@^2.0.0:
     through2 "^2.0.0"
     vinyl "^2.0.0"
 
-gulp-footer@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/gulp-footer/-/gulp-footer-2.0.1.tgz#76578359feb72aa280a97cb980bcfbe0e6216f3e"
+gulp-footer@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/gulp-footer/-/gulp-footer-2.0.2.tgz#2cf58e1cc046b8a3a479f1a41bcd1b7baae076cd"
+  integrity sha512-HsG5VOgKHFRqZXnHGI6oGhPDg70p9pobM+dYOnjBZVLMQUHzLG6bfaPNRJ7XG707E+vWO3TfN0CND9UrYhk94g==
   dependencies:
-    event-stream "*"
     lodash._reescape "^3.0.0"
     lodash._reevaluate "^3.0.0"
     lodash._reinterpolate "^3.0.0"
     lodash.template "^3.6.2"
+    map-stream "0.0.7"
 
 gulp-header@2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/gulp-header/-/gulp-header-2.0.5.tgz#16e229c73593ade301168024fea68dab75d9d38c"
+  integrity sha512-7bOIiHvM1GUHIG3LRH+UIanOxyjSys0FbzzgUBlV2cZIIZihEW+KKKKm0ejUBNGvRdhISEFFr6HlptXoa28gtQ==
   dependencies:
     concat-with-sourcemaps "*"
     lodash.template "^4.4.0"
@@ -1774,9 +1791,10 @@ gulp-ng-annotate@^2.0.0:
     through2 "^2.0.1"
     vinyl-sourcemaps-apply "^0.2.1"
 
-gulp-rename@~1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/gulp-rename/-/gulp-rename-1.2.3.tgz#37b75298e9d3e6c0fe9ac4eac13ce3be5434646b"
+gulp-rename@~1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/gulp-rename/-/gulp-rename-1.4.0.tgz#de1c718e7c4095ae861f7296ef4f3248648240bd"
+  integrity sha512-swzbIGb/arEoFK89tPY58vg3Ok1bw+d35PfUNwWqdo7KM4jkmuGA78JiDNqR+JeZFaeeHnRg9N7aihX3YPmsyg==
 
 gulp-replace@~0.6.1:
   version "0.6.1"
@@ -2118,6 +2136,7 @@ is-windows@1.0.2, is-windows@^0.2.0, is-windows@^1.0.1:
 isarray@0.0.1, isarray@1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
+  integrity sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE=
 
 isbinaryfile@^3.0.0:
   version "3.0.2"
@@ -2169,6 +2188,7 @@ jsbn@~0.1.0:
 jsesc@2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-2.5.1.tgz#e421a2a8e20d6b0819df28908f782526b96dd1fe"
+  integrity sha1-5CGiqOINawgZ3yiQj3glJrlt0f4=
 
 json-schema@0.2.3:
   version "0.2.3"
@@ -2361,14 +2381,17 @@ lodash._isiterateecall@^3.0.0:
 lodash._reescape@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reescape/-/lodash._reescape-3.0.0.tgz#2b1d6f5dfe07c8a355753e5f27fac7f1cde1616a"
+  integrity sha1-Kx1vXf4HyKNVdT5fJ/rH8c3hYWo=
 
 lodash._reevaluate@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reevaluate/-/lodash._reevaluate-3.0.0.tgz#58bc74c40664953ae0b124d806996daca431e2ed"
+  integrity sha1-WLx0xAZklTrgsSTYBpltrKQx4u0=
 
 lodash._reinterpolate@^3.0.0, lodash._reinterpolate@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
+  integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
 
 lodash._root@^3.0.0:
   version "3.0.1"
@@ -2446,6 +2469,7 @@ lodash.template@4.4.0, lodash.template@^3.0.0, lodash.template@^3.6.2, lodash.te
 lodash.templatesettings@4.1.0, lodash.templatesettings@^3.0.0, lodash.templatesettings@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/lodash.templatesettings/-/lodash.templatesettings-4.1.0.tgz#2b4d4e95ba440d915ff08bc899e4553666713316"
+  integrity sha1-K01OlbpEDZFf8IvImeRVNmZxMxY=
   dependencies:
     lodash._reinterpolate "~3.0.0"
 
@@ -2453,7 +2477,7 @@ lodash.uniq@^4.3.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@4.17.11, lodash@4.x, lodash@^3.8.0, lodash@^4.17.4, lodash@^4.5.0, lodash@~1.0.1, lodash@~4.17.0:
+lodash@4.17.11, lodash@4.x, lodash@^3.8.0, lodash@^4.17.4, lodash@^4.5.0, lodash@~1.0.1:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
@@ -2485,10 +2509,12 @@ map-cache@^0.2.0:
 map-stream@0.0.7, map-stream@0.1.0, map-stream@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
+  integrity sha1-5WqpTEyAVaFkBKBnS3jyFffI4ZQ=
 
-marked@0.3.9:
-  version "0.3.9"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.9.tgz#54ce6a57e720c3ac6098374ec625fcbcc97ff290"
+marked@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.6.0.tgz#a18d01cfdcf8d15c3c455b71c8329e5e0f01faa1"
+  integrity sha512-HduzIW2xApSXKXJSpCipSxKyvMbwRRa/TwMbepmlZziKdH8548WSoDP4SxzulEKjlo8BE39l+2fwJZuRKOln6g==
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -2996,6 +3022,7 @@ patternfly@^3.37.1:
 pause-stream@0.0.11, pause-stream@^0.0.11:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/pause-stream/-/pause-stream-0.0.11.tgz#fe5a34b0cbce12b5aa6a2b403ee2e73b602f1445"
+  integrity sha1-/lo0sMvOErWqaitAPuLnO2AvFEU=
   dependencies:
     through "~2.3"
 
@@ -3046,6 +3073,7 @@ pretty-hrtime@^1.0.0:
 process-nextick-args@2.0.0, process-nextick-args@^2.0.0, process-nextick-args@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
+  integrity sha512-MtEC1TqN0EU5nephaJ4rAtThHtC86dNN9qCuEhtshvpVBkAW5ZO7BASN9REnF9eoXGcRub+pFuKEpOHE+HbEMw==
 
 process@^0.11.1:
   version "0.11.10"
@@ -3646,6 +3674,7 @@ through2@2.0.3, through2@^0.6.1, through2@^2.0.0, through2@^2.0.1, through2@^2.0
 through@2, through@^2.3.8, through@~2.3, through@~2.3.1, through@~2.3.4:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
+  integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
 tildify@^1.0.0:
   version "1.2.0"
@@ -3726,9 +3755,10 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@3.0.3, typescript@^3.0.0, typescript@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.3.tgz#4853b3e275ecdaa27f78fda46dc273a7eb7fc1c8"
+typescript@^3.0.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.3.tgz#f1657fc7daa27e1a8930758ace9ae8da31403221"
+  integrity sha512-Y21Xqe54TBVp+VDSNbuDYdGw0BpoR/Q6wo/+35M8PAU0vipahnyduJWirxxdxjsAkS7hue53x2zp8gz7F05u0A==
 
 uglify-js@^2.8.22:
   version "2.8.29"
@@ -3800,6 +3830,7 @@ useragent@^2.1.12:
 util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
+  integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
 util@^0.10.3:
   version "0.10.3"
@@ -3959,6 +3990,7 @@ xmlhttprequest-ssl@1.5.3:
 "xtend@>=4.0.0 <4.1.0-0", xtend@~4.0.0, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
+  integrity sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
 
 y18n@^3.2.1:
   version "3.2.1"

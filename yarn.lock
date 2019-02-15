@@ -27,6 +27,11 @@
     underscore.string "^3.3.4"
     urijs "^1.18.10"
 
+"@patternfly/patternfly@~1.0.192":
+  version "1.0.192"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.192.tgz#dd2cb763b352c4c2fc3520d7c7377fc5658bef2b"
+  integrity sha512-XR4qnD3IaFr26G8Y9Fja1FQLsWcJBoZP4J0wv1Oq/F3kfWFkZotXH0PrwcGkQLQmdQffJOvM/A4Upppm3zqwdw==
+
 "@types/angular-route@*":
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@types/angular-route/-/angular-route-1.7.0.tgz#ba12d09df1aac3c88e3684500001daedfc97fb69"

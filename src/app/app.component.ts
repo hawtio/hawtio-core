@@ -1,5 +1,5 @@
 /// <reference path="init/init.service.ts"/>
-/// <reference path="navigation/main-nav/main-nav.service.ts"/>
+/// <reference path="navigation/page.component.ts"/>
 
 namespace App {
 
@@ -19,7 +19,7 @@ namespace App {
   export const appComponent: angular.IComponentOptions = {
     template: `
       <hawtio-loading loading="$ctrl.loading">
-        <main-nav></main-nav>
+        <page></page>
       </hawtio-loading>
     `,
     controller: AppController

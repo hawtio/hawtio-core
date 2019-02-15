@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hawtio/core-dts": "~3.3.0",
+    "@patternfly/patternfly": "~1.0.192",
     "@types/angular": "*",
     "@types/angular-route": "*",
     "@types/jasmine": "~2.8.0",

@@ -21,11 +21,11 @@ namespace About {
       productInfo = _.sortBy(productInfo, ['label']);
       return productInfo;
     }
-    
+
     addProductInfo(name: string, value: string) {
       this.moreProductInfo.push({name: name, value: value});
     }
-    
+
     getAdditionalInfo(): string {
       return this.configManager.getAboutValue('additionalInfo');
     }

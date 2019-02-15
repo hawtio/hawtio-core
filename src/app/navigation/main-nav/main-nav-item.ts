@@ -3,10 +3,6 @@ namespace Nav {
   export const DEFAULT_TEMPLATE = '<div ng-view></div>';
   export const DEFAULT_TEMPLATE_URL = '/defaultTemplateUrl.html';
 
-  /**
-   * This interface must include the mandatory fields of pfVerticalNavigation 'items' parameter
-   * https://www.patternfly.org/angular-patternfly/#/api/patternfly.navigation.component:pfVerticalNavigation%20-%20Basic
-   */
   export interface MainNavItemProps {
     /** Name to be displayed on the menu */
     title: string;

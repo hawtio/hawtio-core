@@ -15,15 +15,19 @@ var packageJson = require('./package.json');
 var rename = require('gulp-rename');
 var replace = require('gulp-replace');
 var merge2 = require('merge2');
+var sass = require('gulp-sass');
 
 var config = {
   dist: argv.out || './dist/',
-  distExample: './dist-example/'
+  distExample: 'dist-example/',
+  srcImg: 'src/img/*',
+  distImg: 'dist/img',
+  tempImg: 'img/'
 };
 
 gulp.task('clean', function () {
   if (!argv.out) {
-    return del(config.dist);
+    return del([config.dist, 'img']);
   }
 });
 
@@ -37,8 +41,9 @@ gulp.task('tsc', ['clean'], function () {
 });
 
 gulp.task('copy-images', ['clean'], function () {
-  return gulp.src('src/assets/img/**/*')
-    .pipe(gulp.dest(config.dist + 'img'));
+  return gulp.src(config.srcImg)
+  .pipe(gulp.dest(config.distImg))
+  .pipe(gulp.dest(config.tempImg));
 });
 
 gulp.task('less', ['clean'], function () {
@@ -51,6 +56,18 @@ gulp.task('less', ['clean'], function () {
     }))
     .pipe(concat('hawtio-core.css'))
     .pipe(gulp.dest(config.dist));
+});
+
+// temporary hack to avoid error in sass compilation
+gulp.task('delete-patternfly-base-css', function () {
+  return del('node_modules/@patternfly/patternfly/patternfly-base.css');
+});
+
+gulp.task('sass', ['clean', 'delete-patternfly-base-css'], function () {
+  gulp
+    .src('src/patternfly.scss')
+    .pipe(sass())
+    .pipe(gulp.dest('dist'));
 });
 
 gulp.task('clean-example', function () {
@@ -122,6 +139,6 @@ gulp.task('version', function () {
     .pipe(gulp.dest(config.dist));
 });
 
-gulp.task('build', ['tsc', 'copy-images', 'less']);
+gulp.task('build', ['tsc', 'copy-images', 'less', 'sass']);
 gulp.task('build-example', ['build', 'tsc-example']);
 gulp.task('default', ['connect', 'watch']);

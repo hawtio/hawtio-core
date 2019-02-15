@@ -1,0 +1,5 @@
+$pf-global--enable-reset: false !default;
+$pf-global--enable-font-overpass-cdn: true !default;
+$pf-global--disable-fontawesome: true !default;
+
+@import "../node_modules/@patternfly/patternfly/patternfly.scss"

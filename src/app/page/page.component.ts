@@ -1,7 +1,11 @@
-namespace Nav {
+namespace Page {
+
+  const DEFAULT_TEMPLATE = '<div ng-view></div>';
+  const DEFAULT_TEMPLATE_URL = '/defaultTemplateUrl.html';
 
   class PageController {
     isNavOpen = true;
+    templateUrl = DEFAULT_TEMPLATE_URL;
 
     onNavToggle = () => {
       this.isNavOpen = !this.isNavOpen;
@@ -30,8 +34,9 @@ namespace Nav {
       <div class="pf-c-page">
         <page-header role="banner" class="pf-c-page__header" on-nav-toggle="$ctrl.onNavToggle()"></page-header>
         <page-sidebar class="pf-c-page__sidebar" ng-show="$ctrl.isNavOpen"></page-sidebar>
-        <page-main role="main" class="pf-c-page__main"></page-main>
+        <page-main role="main" class="pf-c-page__main" template-url="$ctrl.templateUrl"></page-main>
       </div>
+      <about></about>
     `,
     controller: PageController
   };

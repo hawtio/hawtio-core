@@ -1,4 +1,4 @@
-namespace Nav {
+namespace Page {
 
   class PageHeaderController {
     brandSrc: string;
@@ -27,7 +27,7 @@ namespace Nav {
         </div>
       </div>
       <div class="pf-c-page__header-tools">
-        header-tools
+        <help-dropdown></icon-dropdown>
       </div>
     `,
     controller: PageHeaderController

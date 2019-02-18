@@ -1,6 +1,6 @@
 /// <reference path="page-main.component.ts"/>
 
-namespace Nav {
+namespace Page {
 
   export const pageMainModule = angular
     .module('hawtio-page-main', [])

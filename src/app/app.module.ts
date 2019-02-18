@@ -8,6 +8,7 @@
 /// <reference path="extension/hawtio-extension.module.ts"/>
 /// <reference path="help/help.module.ts"/>
 /// <reference path="init/init.module.ts"/>
+/// <reference path="page/page.module.ts"/>
 /// <reference path="navigation/navigation.module.ts"/>
 /// <reference path="preferences/preferences.module.ts"/>
 /// <reference path="shared/shared.module.ts"/>
@@ -36,6 +37,7 @@ namespace App {
       Core.templateCacheModule,
       Help.helpModule,
       Init.initModule,
+      Page.pageModule,
       Nav.navigationModule,
       Shared.sharedModule
     ])

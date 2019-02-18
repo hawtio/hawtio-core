@@ -1,4 +1,4 @@
-namespace Nav {
+namespace Page {
 
   class PageSidebarController {
 

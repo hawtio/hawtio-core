@@ -1,5 +1,4 @@
 /// <reference path="init/init.service.ts"/>
-/// <reference path="navigation/page.component.ts"/>
 
 namespace App {
 

@@ -1,6 +1,6 @@
 /// <reference path="page-sidebar.component.ts"/>
 
-namespace Nav {
+namespace Page {
 
   export const pageSidebarModule = angular
     .module('hawtio-page-sidebar', [])

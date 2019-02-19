@@ -27,7 +27,12 @@ namespace Page {
         </div>
       </div>
       <div class="pf-c-page__header-tools">
-        <help-dropdown></icon-dropdown>
+        <div class="pf-c-page__header-tools-group pf-m-icons pf-screen-reader">
+          <help-dropdown></help-dropdown>
+        </div>
+        <div class="pf-c-page__header-tools-group">
+          <user-dropdown></user-dropdown>
+        </div>
       </div>
     `,
     controller: PageHeaderController

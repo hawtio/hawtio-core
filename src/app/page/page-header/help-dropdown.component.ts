@@ -3,7 +3,7 @@ namespace Page {
   class HelpDropdownController {
     isVisible = false;
 
-    constructor(private $rootScope: ng.IScope) {
+    constructor(private $rootScope: ng.IScope, private $location: ng.ILocationService) {
       'ngInject';
     }
 
@@ -13,6 +13,10 @@ namespace Page {
 
     hideMenu() {
       this.isVisible = false;
+    }
+
+    onHelpClicked() {
+      this.$location.path('/help');
     }
 
     onAboutClicked() {
@@ -27,10 +31,8 @@ namespace Page {
           <i class="pf-icon pf-icon-help"></i>
         </button>
         <ul class="pf-c-dropdown__menu pf-m-align-right" ng-show="$ctrl.isVisible">
-          <li hawtio-extension name="hawtio-help"></li>
-          <li>
-            <a class="pf-c-dropdown__menu-item" href="#" ng-focus="$ctrl.onAboutClicked()">About</a>
-          </li>
+          <li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="$ctrl.onHelpClicked()">Help</a></li>
+          <li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="$ctrl.onAboutClicked()">About</a></li>
         </ul>
       </div>
     `,

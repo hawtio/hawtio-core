@@ -1,16 +1,16 @@
 namespace Page {
 
-  const DEFAULT_TEMPLATE = '<div ng-view></div>';
-  const DEFAULT_TEMPLATE_URL = '/defaultTemplateUrl.html';
-
   class PageController {
     isNavOpen = true;
-    templateUrl = DEFAULT_TEMPLATE_URL;
+    templateUrl: string;
 
-    onNavToggle = () => {
+    onNavToggle() {
       this.isNavOpen = !this.isNavOpen;
     }
 
+    onTemplateChange(templateUrl: string) {
+      this.templateUrl = templateUrl;
+    }
   }
 
   export const pageComponent: angular.IComponentOptions = {
@@ -33,8 +33,8 @@ namespace Page {
       </div>
       <div class="pf-c-page">
         <page-header role="banner" class="pf-c-page__header" on-nav-toggle="$ctrl.onNavToggle()"></page-header>
-        <page-sidebar class="pf-c-page__sidebar" ng-show="$ctrl.isNavOpen"></page-sidebar>
-        <page-main role="main" class="pf-c-page__main" template-url="$ctrl.templateUrl"></page-main>
+        <page-sidebar class="pf-c-page__sidebar" ng-show="$ctrl.isNavOpen" on-template-change="$ctrl.onTemplateChange(templateUrl)"></page-sidebar>
+        <page-main role="main" class="pf-c-page__main" template-url="{{$ctrl.templateUrl}}"></page-main>
       </div>
       <about></about>
     `,

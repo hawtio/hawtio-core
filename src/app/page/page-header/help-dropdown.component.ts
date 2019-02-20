@@ -27,7 +27,8 @@ namespace Page {
   export const helpDropdownComponent: angular.IComponentOptions = {
     template: `
       <div class="pf-c-dropdown">
-        <button class="pf-c-dropdown__toggle pf-m-plain" ng-click="$ctrl.toggleMenu()" ng-blur="$ctrl.hideMenu()">
+        <button id="helpDropdownMenu" class="pf-c-dropdown__toggle pf-m-plain" ng-click="$ctrl.toggleMenu()"
+          ng-blur="$ctrl.hideMenu()">
           <i class="pf-icon pf-icon-help"></i>
         </button>
         <ul class="pf-c-dropdown__menu pf-m-align-right" ng-show="$ctrl.isVisible">

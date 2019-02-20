@@ -23,7 +23,7 @@ var config = {
 
 gulp.task('clean', function () {
   if (!argv.out) {
-    return del(config.dist);
+    return del([config.dist, 'img']);
   }
 });
 
@@ -38,7 +38,8 @@ gulp.task('tsc', ['clean'], function () {
 
 gulp.task('copy-images', ['clean'], function () {
   return gulp.src('src/assets/img/**/*')
-    .pipe(gulp.dest(config.dist + 'img'));
+  .pipe(gulp.dest(config.dist + 'img'))
+  .pipe(gulp.dest('img'));
 });
 
 gulp.task('less', ['clean'], function () {

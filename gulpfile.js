@@ -18,7 +18,10 @@ var merge2 = require('merge2');
 
 var config = {
   dist: argv.out || './dist/',
-  distExample: './dist-example/'
+  distExample: 'dist-example/',
+  srcImg: 'src/img/*',
+  distImg: 'dist/img',
+  tempImg: 'img/'
 };
 
 gulp.task('clean', function () {
@@ -37,9 +40,9 @@ gulp.task('tsc', ['clean'], function () {
 });
 
 gulp.task('copy-images', ['clean'], function () {
-  return gulp.src('src/assets/img/**/*')
-  .pipe(gulp.dest(config.dist + 'img'))
-  .pipe(gulp.dest('img'));
+  return gulp.src(config.srcImg)
+  .pipe(gulp.dest(config.distImg))
+  .pipe(gulp.dest(config.tempImg));
 });
 
 gulp.task('less', ['clean'], function () {

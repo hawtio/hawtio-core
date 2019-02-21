@@ -82,16 +82,14 @@ namespace Page {
     },
     template: `
       <nav class="pf-c-nav">
-        <nav class="pf-c-nav" aria-label="Global">
-          <ul class="pf-c-nav__list">
-            <li class="pf-c-nav__item" ng-repeat="item in $ctrl.items">
-              <a href="#" class="pf-c-nav__link" ng-class="{'pf-m-current': item === $ctrl.activeItem}"
-                ng-click="$ctrl.updateView(item)">
-                {{item.title}}
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <ul class="pf-c-nav__list">
+          <li class="pf-c-nav__item" ng-repeat="item in $ctrl.items">
+            <a href="#" class="pf-c-nav__link" ng-class="{'pf-m-current': item === $ctrl.activeItem}"
+              ng-click="$ctrl.updateView(item)">
+              {{item.title}}
+            </a>
+          </li>
+        </ul>
       </nav>
     `,
     controller: PageSidebarController

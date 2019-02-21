@@ -27,7 +27,7 @@ namespace Page {
         </div>
       </div>
       <div class="pf-c-page__header-tools">
-        <div class="pf-c-page__header-tools-group pf-m-icons pf-screen-reader">
+        <div class="pf-c-page__header-tools-group pf-m-icons">
           <help-dropdown></help-dropdown>
         </div>
         <div class="pf-c-page__header-tools-group">

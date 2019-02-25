@@ -28,9 +28,9 @@
     urijs "^1.18.10"
 
 "@patternfly/patternfly@~1.0.192":
-  version "1.0.205"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.205.tgz#acd10f3765790f2f2907892c9472190d5a111d3a"
-  integrity sha512-MGlOTE9qr29R794g1Sz2GZR0sOf5NGkQEIQ/OBy7ZzknFIT+lmZWCLqRKFOhTEhNQq48ynR35KIcrY8uegehhQ==
+  version "1.0.209"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.209.tgz#6fa7af6cbbbcca3928fb619eb1c82e1031cf4a0a"
+  integrity sha512-i16e6M/Il9PS7UKNxsbFA9ch22cHEvSomhXn0dxAwQGvq8FXAOdHqZiUCRaw+tlKHpTva9CCi4IGUXTHBZiNAg==
 
 "@types/angular-route@*":
   version "1.7.0"
@@ -1090,7 +1090,7 @@ dateformat@2.2.0, dateformat@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.2.0.tgz#4065e2013cf9fb916ddfd82efb506ad4c6769062"
 
-debug@2.2.0, debug@2.3.3, debug@2.6.9, debug@^2.2.0, debug@^2.6.8, debug@^3.1.0, debug@~2.2.0, debug@~2.6.7:
+debug@2.2.0, debug@2.3.3, debug@2.6.9, debug@3.2.6, debug@^2.2.0, debug@^2.6.8, debug@^3.1.0, debug@~2.2.0, debug@~2.6.7:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
@@ -2754,7 +2754,7 @@ moment-timezone@^0.4.0, moment-timezone@^0.4.1:
   dependencies:
     moment ">= 2.6.0"
 
-"moment@>= 2.6.0", moment@^2.10, moment@^2.19.1, moment@~2.19.3:
+moment@2.24.0, "moment@>= 2.6.0", moment@^2.10, moment@^2.19.1, moment@~2.19.3:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==

@@ -58,15 +58,11 @@ gulp.task('less', ['clean'], function () {
     .pipe(gulp.dest(config.dist));
 });
 
-// temporary hack to avoid error in sass compilation
-gulp.task('delete-patternfly-base-css', function () {
-  return del('node_modules/@patternfly/patternfly/patternfly-base.css');
-});
-
-gulp.task('sass', ['clean', 'delete-patternfly-base-css'], function () {
+gulp.task('sass', ['clean'], function () {
   gulp
     .src('src/patternfly.scss')
     .pipe(sass())
+    .pipe(replace('./assets/images/', './img/'))
     .pipe(gulp.dest('dist'));
 });
 

@@ -62,8 +62,8 @@ gulp.task('sass', ['clean'], function () {
   gulp
     .src('src/patternfly.scss')
     .pipe(sass())
-    .pipe(replace('./assets/images/', './img/'))
-    .pipe(gulp.dest('dist'));
+    .pipe(replace('./assets/images/', '../img/'))
+    .pipe(gulp.dest('dist/css'));
 });
 
 gulp.task('clean-example', function () {

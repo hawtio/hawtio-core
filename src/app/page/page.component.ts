@@ -1,8 +1,33 @@
 namespace Page {
 
   class PageController {
+    readonly WIDTH_LIMIT = 768;
     isNavOpen = true;
+    previousWidth: number;
     templateUrl: string;
+
+    constructor(private $window: ng.IWindowService, private $timeout: ng.ITimeoutService) {
+      'ngInject';
+      this.previousWidth = this.$window.innerWidth;
+    }
+
+    $onInit() {
+      angular.element(this.$window).on('resize', () => {
+        this.$timeout(() => {
+          if (this.wasInDesktopView() && this.isInMobileView()) {
+            this.isNavOpen = false;
+          }
+          if (this.wasInMobileView() && this.isInDesktopView()) {
+            this.isNavOpen = true;
+          }
+          this.previousWidth = this.$window.innerWidth;
+        });
+      });
+    }
+
+    $onDestroy() {
+      angular.element(this.$window).off('resize');
+    }
 
     onNavToggle() {
       this.isNavOpen = !this.isNavOpen;
@@ -10,6 +35,28 @@ namespace Page {
 
     onTemplateChange(templateUrl: string) {
       this.templateUrl = templateUrl;
+    }
+
+    onSidebarItemClick() {
+      if (this.isInMobileView()) {
+        this.isNavOpen = false;
+      }
+    }
+
+    wasInDesktopView() {
+      return this.previousWidth >= this.WIDTH_LIMIT;
+    }
+
+    wasInMobileView() {
+      return this.previousWidth < this.WIDTH_LIMIT;
+    }
+
+    isInDesktopView() {
+      return this.$window.innerWidth >= this.WIDTH_LIMIT;
+    }
+
+    isInMobileView() {
+      return this.$window.innerWidth < this.WIDTH_LIMIT;
     }
   }
 
@@ -33,7 +80,10 @@ namespace Page {
       </div>
       <div class="pf-c-page">
         <page-header role="banner" class="pf-c-page__header" on-nav-toggle="$ctrl.onNavToggle()"></page-header>
-        <page-sidebar class="pf-c-page__sidebar" ng-show="$ctrl.isNavOpen" on-template-change="$ctrl.onTemplateChange(templateUrl)"></page-sidebar>
+        <page-sidebar class="pf-c-page__sidebar"
+          ng-class="{'pf-m-expanded': $ctrl.isNavOpen, 'pf-m-collapsed': !$ctrl.isNavOpen}"
+          on-template-change="$ctrl.onTemplateChange(templateUrl)"
+          on-item-click="$ctrl.onSidebarItemClick()"></page-sidebar>
         <page-main role="main" class="pf-c-page__main" template-url="{{$ctrl.templateUrl}}"></page-main>
       </div>
       <about></about>

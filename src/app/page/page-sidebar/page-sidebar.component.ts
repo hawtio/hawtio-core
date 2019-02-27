@@ -3,9 +3,6 @@
 
 namespace Page {
 
-  export const DEFAULT_TEMPLATE = '<div ng-view></div>';
-  export const DEFAULT_TEMPLATE_URL = '/defaultTemplateUrl.html';
-
   class PageSidebarController {
     items: Nav.MainNavItem[];
     activeItem: Nav.MainNavItem;
@@ -13,9 +10,10 @@ namespace Page {
     unregisterRouteChangeListener: Function;
     itemsChecker: ng.IPromise<any>;
     onTemplateChange: ({ templateUrl: string }) => void;
+    onItemClick: () => void;
 
     constructor(private mainNavService: Nav.MainNavService, private $rootScope: ng.IRootScopeService,
-      private $interval: ng.IIntervalService) {
+      private $interval: ng.IIntervalService, private $window: ng.IWindowService) {
       'ngInject';
     }
 
@@ -67,25 +65,31 @@ namespace Page {
         this.templateUrl = item.templateUrl;
         this.mainNavService.activateItem(item);
       } else {
-        this.templateUrl = DEFAULT_TEMPLATE_URL;
+        this.templateUrl = Nav.DEFAULT_TEMPLATE_URL;
         this.mainNavService.clearActiveItem();
       }
       this.onTemplateChange({ templateUrl: this.templateUrl });
       this.mainNavService.changeRouteIfRequired();
       this.activeItem = item;
     }
+
+    onClick(item: Nav.MainNavItem) {
+      this.updateView(item);
+      this.onItemClick();
+    }
   }
 
   export const pageSidebarComponent: angular.IComponentOptions = {
     bindings: {
-      onTemplateChange: '&'
+      onTemplateChange: '&',
+      onItemClick: '&'
     },
     template: `
       <nav class="pf-c-nav">
         <ul class="pf-c-nav__list">
           <li class="pf-c-nav__item" ng-repeat="item in $ctrl.items">
             <a href="#" class="pf-c-nav__link" ng-class="{'pf-m-current': item === $ctrl.activeItem}"
-              ng-click="$ctrl.updateView(item)">
+              ng-click="$ctrl.onClick(item)">
               {{item.title}}
             </a>
           </li>

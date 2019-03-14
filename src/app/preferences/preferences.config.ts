@@ -4,11 +4,11 @@
 
 namespace Core {
 
-  export function configureRoutes($routeProvider) {
+  export function configureRoutes($routeProvider: ng.route.IRouteProvider) {
     'ngInject';
-    $routeProvider.when('/preferences', { 
-      templateUrl: 'preferences/preferences-home/preferences-home.html', 
-      reloadOnSearch: false 
+    $routeProvider.when('/preferences', {
+      templateUrl: 'preferences/preferences-home/preferences-home.html',
+      reloadOnSearch: false
     });
   }
 
@@ -20,7 +20,8 @@ namespace Core {
     });
   }
 
-  export function savePreviousLocationWhenOpeningPreferences($rootScope: ng.IScope, preferencesService: PreferencesService) {
+  export function savePreviousLocationWhenOpeningPreferences($rootScope: ng.IScope,
+    preferencesService: PreferencesService) {
     'ngInject';
     $rootScope.$on("$locationChangeSuccess", function (event, newUrl, oldUrl) {
       if (newUrl.indexOf('/preferences') !== -1 && oldUrl.indexOf('/preferences') === -1) {
@@ -28,7 +29,7 @@ namespace Core {
         const url = oldUrl.substring(baseUrl.length);
         preferencesService.saveLocationUrl(url);
       }
-    });  
+    });
   }
 
   export function configureDocumentation(helpRegistry: Help.HelpRegistry) {

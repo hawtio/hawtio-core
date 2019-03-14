@@ -1,13 +1,13 @@
 namespace Page {
 
   class PageHeaderController {
-    brandSrc: string;
-    username: string;
+    appName: string;
+    appLogoUrl: string;
 
-    constructor(configManager: Core.ConfigManager, userDetails: Core.AuthService) {
+    constructor(configManager: Core.ConfigManager) {
       'ngInject';
-      this.brandSrc = configManager.getBrandingValue('appLogoUrl');
-      this.username = userDetails['fullName'];
+      this.appName = configManager.getBrandingValue('appName');
+      this.appLogoUrl = configManager.getBrandingValue('appLogoUrl');
     }
   }
 
@@ -23,11 +23,14 @@ namespace Page {
           </button>
         </div>
         <div class="pf-c-page__header-brand-link">
-          <img class="pf-c-brand" ng-src="{{$ctrl.brandSrc}}">
+          <img class="pf-c-brand" ng-src="{{$ctrl.appLogoUrl}}" alt="{{$ctrl.appName}}">
         </div>
+      </div>
+      <div class="pf-c-page__header-selector" hawtio-extension name="context-selector">
       </div>
       <div class="pf-c-page__header-tools">
         <div class="pf-c-page__header-tools-group pf-m-icons">
+          <span hawtio-extension name="header-tools"></span>
           <help-dropdown></help-dropdown>
         </div>
         <div class="pf-c-page__header-tools-group">

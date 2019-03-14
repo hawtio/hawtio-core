@@ -28,9 +28,9 @@
     urijs "^1.18.10"
 
 "@patternfly/patternfly@~1.0.192":
-  version "1.0.209"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.209.tgz#6fa7af6cbbbcca3928fb619eb1c82e1031cf4a0a"
-  integrity sha512-i16e6M/Il9PS7UKNxsbFA9ch22cHEvSomhXn0dxAwQGvq8FXAOdHqZiUCRaw+tlKHpTva9CCi4IGUXTHBZiNAg==
+  version "1.0.225"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.225.tgz#d1d637b905b84399acb0816555699dcf4adcf8c2"
+  integrity sha512-HHVhIP4xCYS2WR6AilkLEJp+VFZiNwLDVcgoyxcz6TbDfVNilPM97VgjojlMJ8AR5mO7ZtLWaCoAH+L/Miz6AA==
 
 "@types/angular-route@*":
   version "1.7.0"
@@ -240,9 +240,9 @@
   integrity sha512-MZKPWUhp5TKkoJ/58NSq6io+CSUCOHm2b3Z6U4+r9v70kktB0JM+eRjdp6YmDHtw0kK2XB7L2K7/FMIoziHjUA==
 
 "@types/lodash@^4.0.0":
-  version "4.14.121"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.121.tgz#9327e20d49b95fc2bf983fc2f045b2c6effc80b9"
-  integrity sha512-ORj7IBWj13iYufXt/VXrCNMbUuCTJfhzme5kx9U/UtcIPdJYuvPDUAlHlbNhz/8lKCLy9XGIZnGrqXOtQbPGoQ==
+  version "4.14.122"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.122.tgz#3e31394c38cf1e5949fb54c1192cbc406f152c6c"
+  integrity sha512-9IdED8wU93ty8gP06ninox+42SBSJHp2IAamsSYMUY76mshRTeUsid/gtbl8ovnOwy8im41ib4cxTiIYMXGKew==
 
 "@types/marked@0.6.0":
   version "0.6.0"

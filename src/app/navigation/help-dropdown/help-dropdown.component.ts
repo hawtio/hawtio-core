@@ -1,18 +1,20 @@
-namespace Page {
+/// <reference path="../../about/about.constants.ts"/>
+
+namespace Nav {
 
   class HelpDropdownController {
-    isVisible = false;
+    isOpen = false;
 
     constructor(private $rootScope: ng.IScope, private $location: ng.ILocationService) {
       'ngInject';
     }
 
-    toggleMenu() {
-      this.isVisible = !this.isVisible;
+    toggle() {
+      this.isOpen = !this.isOpen;
     }
 
-    hideMenu() {
-      this.isVisible = false;
+    close() {
+      this.isOpen = false;
     }
 
     onHelpClicked() {
@@ -20,18 +22,18 @@ namespace Page {
     }
 
     onAboutClicked() {
-      this.$rootScope.$emit('about-link-clicked');
+      this.$rootScope.$emit(About.SHOW_ABOUT_EVENT);
     }
   }
 
   export const helpDropdownComponent: angular.IComponentOptions = {
     template: `
       <div class="pf-c-dropdown">
-        <button id="helpDropdownMenu" class="pf-c-dropdown__toggle pf-m-plain" ng-click="$ctrl.toggleMenu()"
-          ng-blur="$ctrl.hideMenu()">
+        <button id="helpDropdownMenu" class="pf-c-dropdown__toggle pf-m-plain" ng-click="$ctrl.toggle()"
+          ng-blur="$ctrl.close()">
           <i class="pficon pficon-help" aria-hidden="true"></i>
         </button>
-        <ul class="pf-c-dropdown__menu pf-m-align-right" ng-show="$ctrl.isVisible">
+        <ul class="pf-c-dropdown__menu pf-m-align-right" ng-show="$ctrl.isOpen">
           <li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="$ctrl.onHelpClicked()">Help</a></li>
           <li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="$ctrl.onAboutClicked()">About</a></li>
         </ul>

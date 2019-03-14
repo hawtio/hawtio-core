@@ -21,7 +21,7 @@ namespace About {
       this.additionalInfo = this.aboutService.getAdditionalInfo();
       this.copyright = this.aboutService.getCopyright();
       this.imgSrc = this.aboutService.getImgSrc();
-      this.$rootScope.$on('about-link-clicked', () => {
+      this.$rootScope.$on(SHOW_ABOUT_EVENT, () => {
         this.open = true;
       });
     }

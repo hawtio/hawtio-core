@@ -6,7 +6,8 @@ namespace Page {
     previousWidth: number;
     templateUrl: string;
 
-    constructor(private $window: ng.IWindowService, private $timeout: ng.ITimeoutService) {
+    constructor(private $window: ng.IWindowService, private $timeout: ng.ITimeoutService,
+      private $rootScope: ng.IRootScopeService) {
       'ngInject';
       this.previousWidth = this.$window.innerWidth;
     }
@@ -23,6 +24,7 @@ namespace Page {
           this.previousWidth = this.$window.innerWidth;
         });
       });
+      this.$rootScope.$on(CLOSE_MAIN_NAV_EVENT, () => this.isNavOpen = false);
     }
 
     $onDestroy() {

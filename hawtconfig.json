@@ -5,9 +5,11 @@
   },
   "about": {
     "title": "Hawtio Management Console",
-    "productInfo": [],
-    "additionalInfo": "",
-    "copyright": "",
+    "productInfo": [
+      { "name": "XYZ", "value": "5.5.3" },
+      { "name": "ABC", "value": "4.1.0" }
+    ],
+    "copyright": "Trademark and copyright information here",
     "imgSrc": "img/hawtio-logo.svg"
   },
   "disabledRoutes": []

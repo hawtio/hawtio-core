@@ -5,39 +5,40 @@ namespace About {
 
   export class AboutController {
     open = false;
-    title: string;
-    productInfo: Core.AboutProductInfo[];
-    additionalInfo: string;
-    copyright: string;
-    imgSrc: string;
 
     constructor(private $rootScope: ng.IScope, private aboutService: AboutService) {
       'ngInject';
     }
 
     $onInit() {
-      this.title = this.aboutService.getTitle();
-      this.productInfo = this.aboutService.getProductInfo();
-      this.additionalInfo = this.aboutService.getAdditionalInfo();
-      this.copyright = this.aboutService.getCopyright();
-      this.imgSrc = this.aboutService.getImgSrc();
       this.$rootScope.$on(SHOW_ABOUT_EVENT, () => {
         this.open = true;
       });
     }
 
-    onClose() {
+    get title(): string {
+      return this.aboutService.getTitle();
+    }
+
+    get productInfo(): Core.AboutProductInfo[] {
+      return this.aboutService.getProductInfo();
+    }
+
+    get copyright(): string {
+      return this.aboutService.getCopyright();
+    }
+
+    get imgSrc(): string {
+      return this.aboutService.getImgSrc();
+    }
+
+    close() {
       this.open = false;
     }
   }
 
   export const aboutComponent: angular.IComponentOptions = {
-    template: `
-      <pf-about-modal is-open="$ctrl.open" on-close="$ctrl.onClose()" title="$ctrl.title"
-        product-info="$ctrl.productInfo" additional-info="$ctrl.additionalInfo" copyright="$ctrl.copyright"
-        img-src="$ctrl.imgSrc">
-      </pf-about-modal>
-    `,
+    templateUrl: 'about/about.component.html',
     controller: AboutController
   };
 

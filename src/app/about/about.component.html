@@ -1,0 +1,30 @@
+<div class="pf-c-backdrop" ng-if="$ctrl.open">
+  <div class="pf-l-bullseye">
+    <div class="pf-c-about-modal-box" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+      <div class="pf-c-about-modal-box__brand">
+        <img class="pf-c-about-modal-box__brand-image" ng-src="{{$ctrl.imgSrc}}">
+      </div>
+      <div class="pf-c-about-modal-box__close">
+        <button aria-label="Close Dialog" class="pf-c-button pf-m-plain" type="button" ng-click="$ctrl.close()">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="pf-c-about-modal-box__header">
+        <h1 class="pf-c-title pf-m-4xl">{{$ctrl.title}}</h1>
+      </div>
+      <div class="pf-c-about-modal-box__hero">
+      </div>
+      <div class="pf-c-about-modal-box__content">
+        <div class="pf-c-content">
+            <dl>
+              <dt ng-repeat-start="item in $ctrl.productInfo">{{item.name}}</dt>
+              <dd ng-repeat-end>{{item.value}}</dd>
+            </dl>
+        </div>
+        <div class="pf-c-about-modal-box__strapline">
+          <p class="pf-c-title pf-m-md">{{$ctrl.copyright}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

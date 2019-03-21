@@ -3,11 +3,12 @@
 namespace About {
 
   export class AboutService {
-
-    private moreProductInfo = [];
+    private productInfo: Core.AboutProductInfo[];
 
     constructor(private configManager: Core.ConfigManager) {
       'ngInject';
+      this.productInfo = this.configManager.getAboutValue('productInfo') || [];
+      this.productInfo = _.sortBy(this.productInfo, ['name']);
     }
 
     getTitle(): string {
@@ -15,19 +16,12 @@ namespace About {
     }
 
     getProductInfo(): Core.AboutProductInfo[] {
-      let productInfo = [];
-      productInfo = productInfo.concat(this.configManager.getAboutValue('productInfo') || []);
-      productInfo = this.moreProductInfo;
-      productInfo = _.sortBy(productInfo, ['label']);
-      return productInfo;
+      return this.productInfo;
     }
 
     addProductInfo(name: string, value: string) {
-      this.moreProductInfo.push({name: name, value: value});
-    }
-
-    getAdditionalInfo(): string {
-      return this.configManager.getAboutValue('additionalInfo');
+      this.productInfo.push({name: name, value: value});
+      this.productInfo = _.sortBy(this.productInfo, ['name']);
     }
 
     getCopyright(): string {

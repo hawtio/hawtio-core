@@ -54,105 +54,77 @@ Remove any ng-app annotation from your HTML template, hawtio-core manually boots
 
 ## Routing and navigation
 
-In your Hawtio plugin you can configure your routes and the navigation bar in one go. For example:
+### Single page
+
+Configure a single route to your component:
 
 ```javascript
-  var tab = undefined;
-  var module = angular.module("MyAwesomePlugin", []);
+export function configureRoutes($routeProvider: ng.route.IRouteProvider) {
+  'ngInject';
+  $routeProvider
+    .when('/my-plugin', {template: '<my-plugin></my-plugin>'});
+}
 
-  // configure our tabs and routing
-  module.config(['$routeProvider', 'HawtioNavBuilderProvider', function($routeProvider, builder) {
-    tab = builder.create()
-            .id("MyTab")
-            .title(function () { return "Hello"; })
-            .href(function () { return "/test1"l })
-            .subPath("World!", "page1", "partials/page1.html")
-            .build();
-    builder.configureRouting($routeProvider, tab);
-  }]);
-
-  // add our tabs to the nav bar
-  module.run(["HawtioNav", function(HawtioNav) {
-    HawtioNav.add(tab);
-  }]);
-
-  hawtioPluginLoader.addModule("MyAwesomePlugin");
+export const module = angular.module('my-plugin', [])
+  .config(configureRoutes)
+  ...
+  .name;
 ```
 
-You can also configure your routes separately for more control and configure the tabs in your module's run method. For example:
+Configure a menu item for your plugin:
 
 ```javascript
-  var module = angular.module("MyAwesomePlugin", []);
-  // configure routing...
-  module.config(['$routeProvider', function($routeProvider) {
-    /// snip
-  }]);
+export function configureNavigation(mainNavService: Nav.MainNavService) {
+  'ngInject';
+  mainNavService.addItem({
+    title: 'My Plugin',
+    href: '/my-plugin', // must match configured route
+    isValid: () => true, // dynamically show/hide menu item (optional)
+    rank: 1 // change item location in the menu (optional)
+  });
+}
 
-  module.run(["HawtioNav", function(HawtioNav) {
-    // get a builder object to create nav objects
-    var builder = HawtioNav.builder();
-
-    // Create a subtab
-    var subTab = builder.id('fooSubTab')
-                        .rank(30)
-                        .href(function() { return '/foo/bar'; })
-                        .title(function() { return 'My Sub Tab'; })
-                        .build();
-
-    // Create a top-level tab
-    var tab = builder.id('foo')
-                     .rank(10)
-                     .href(function() { return '/foo'; })
-                     .isValid(function() { return true; })
-                     .title(function() { return 'My Tab'; })
-                     .tabs(subTab);
-                     .build();
-
-    // Add to the nav bar
-    HawtioNav.add(tab);
-  }]);
+export const module = angular.module('my-plugin', [])
+  .run(configureNavigation)
+  ...
+  .name;
 ```
 
-Tabs can also influence what the initial page/route will be by adding a 'defaultPage' attribute. For example:
+### Multiple pages
+
+Configure routes to your components:
 
 ```javascript
-  var module = angular.module("MyAwesomePlugin", []);
-  // configure routing...
-  module.config(['$routeProvider', function($routeProvider) {
-    /// snip
-  }]);
+export function configureRoutes($routeProvider: ng.route.IRouteProvider) {
+  'ngInject';
+  $routeProvider
+    .when('/my-plugin/page1', {template: '<my-plugin-page1></my-plugin-page1>'})
+    .when('/my-plugin/page2', {template: '<my-plugin-page2></my-plugin-page2>'})
+    .when('/my-plugin/page2/details', {template: '<my-plugin-page2-details></my-plugin-page2-details>'})
+    ...
+}
 
-  module.run(["HawtioNav", function(HawtioNav) {
-    // get a builder object to create nav objects
-    var builder = HawtioNav.builder();
+export const module = angular.module('my-plugin', [])
+  .config(configureRoutes)
+  ...
+  .name;
+```
 
-    // Create a subtab
-    var subTab = builder.id('fooSubTab')
-                        .href(function() { return '/foo/bar'; })
-                        .title(function() { return 'My Sub Tab'; })
-                        .build();
+Configure a menu item for your plugin:
 
-    // Create a top-level tab
-    var tab = builder.id('foo')
-                     .defaultPage({
-                       rank: 30, // rank is used to handle multiple default pages, higher values win
-                       isValid: (yes, no) => { // isValid is used to test if a page can be the default page or not.  You need to call either the yes or no function passed in based on some criteria, can be async.
-                         if (someKindOfTest) {
-                           yes();
-                         } else {
-                           no();
-                         }
-                       }
-                     })
-                     .href(function() { return '/foo'; })
-                     .isValid(function() { return true; })
-                     .title(function() { return 'My Tab'; })
-                     .tabs(subTab);
-                     .build();
+```javascript
+export function configureNavigation(mainNavService: Nav.MainNavService) {
+  'ngInject';
+  mainNavService.addItem({
+    title: 'My Plugin',
+    basePath: '/my-plugin' // must match base path of configured routes
+  });
+}
 
-    // Add to the nav bar
-    HawtioNav.add(tab);
-  }]);
+export const module = angular.module('my-plugin', [])
+  .run(configureNavigation)
+  ...
+  .name;
 ```
 
 ## Help documentation
@@ -160,9 +132,15 @@ Tabs can also influence what the initial page/route will be by adding a 'default
 Plugins can register their associated help documentation via the `helpRegistry` service. Just inject it into a run block and add your custom documentation written in Markdown. For example:
 
 ```javascript
-myModule.run(['helpRegistry', function(helpRegistry) {
-  helpRegistry.addUserDoc('myName', 'path/to/my/doc.md');
+export function configureHelp(helpRegistry: Help.HelpRegistry) {
+  'ngInject';
+  helpRegistry.addUserDoc('my-plugin', 'plugins/my-plugin/help.md');
 }
+
+export const module = angular.module('my-plugin', [])
+  .run(configureHelp)
+  ...
+  .name;
 ```
 
 ## UI extensions

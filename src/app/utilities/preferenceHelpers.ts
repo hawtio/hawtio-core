@@ -37,7 +37,7 @@ namespace Core {
       let watchFunc = _default['override'];
       if (!watchFunc) {
         watchFunc = (newValue, oldValue) => {
-          if (newValue !== oldValue) {
+          if (newValue !== oldValue && newValue !== null && newValue !== undefined) {
             if (angular.isFunction(_default['pre'])) {
               _default.pre(newValue);
             }

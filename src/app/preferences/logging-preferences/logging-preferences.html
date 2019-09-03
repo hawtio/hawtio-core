@@ -1,12 +1,13 @@
 <div ng-controller="PreferencesLoggingController">
   <form class="form-horizontal logging-preferences-form">
-    <div class="form-group">
+    <div class="form-group" ng-class="{'has-error': logBuffer === null || logBuffer === undefined}">
       <label class="col-md-2 control-label" for="log-buffer">
         Log buffer
         <span class="pficon pficon-info" data-toggle="tooltip" data-placement="top" title="Number of log statements to keep in the console"></span>
       </label>
       <div class="col-md-6">
-        <input type="number" id="log-buffer" class="form-control" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">
+        <input type="number" id="log-buffer" class="form-control" min="1" ng-model="logBuffer" ng-blur="onLogBufferChange(logBuffer)">
+        <span class="help-block" ng-show="logBuffer === null || logBuffer === undefined">Invalid value</span>
       </div>
     </div>
     <div class="form-group">
@@ -48,7 +49,7 @@
                 </a>
               </li>
             </ul>
-          </div>          
+          </div>
         </div>
       </div>
     </div>

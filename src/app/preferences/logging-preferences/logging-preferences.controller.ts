@@ -7,7 +7,7 @@ namespace Core {
 
     // Initialize tooltips
     (<any>$('[data-toggle="tooltip"]')).tooltip();
-    
+
     $scope.logBuffer = loggingPreferencesService.getLogBuffer();
     $scope.logLevel = loggingPreferencesService.getGlobalLogLevel();
     $scope.childLoggers = loggingPreferencesService.getChildLoggers();
@@ -15,7 +15,7 @@ namespace Core {
     $scope.availableLogLevels = [Logger.OFF, Logger.ERROR, Logger.WARN, Logger.INFO, Logger.DEBUG];
 
     $scope.onLogBufferChange = logBuffer => {
-      if (logBuffer) {
+      if (logBuffer !== null && logBuffer !== undefined) {
         loggingPreferencesService.setLogBuffer(logBuffer);
       }
     }
@@ -36,7 +36,7 @@ namespace Core {
       $scope.childLoggers = loggingPreferencesService.getChildLoggers();
       $scope.availableChildLoggers = loggingPreferencesService.getAvailableChildLoggers();
     };
-    
+
     $scope.onChildLoggersChange = childLoggers => {
       loggingPreferencesService.setChildLoggers(childLoggers);
       loggingPreferencesService.reconfigureLoggers();

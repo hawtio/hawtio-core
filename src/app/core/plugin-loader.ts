@@ -191,27 +191,18 @@ namespace Core {
      * It is invoked from HawtioCore's bootstrapping.
      */
     loadPlugins(callback: () => void): void {
-      log.info("Bootstrapping hawtio app...");
+      log.info("Bootstrapping Hawtio app...");
 
       let plugins: HawtioPlugins = {};
+      let counter = {
+        total: this.urls.length,
+        remain: this.urls.length
+      }
 
-      let urlsToLoad = this.urls.length;
-      let totalUrls = urlsToLoad;
-
-      if (urlsToLoad === 0) {
+      if (counter.total === 0) {
         this.loadScripts(plugins, callback);
         return;
       }
-
-      let urlLoaded = () => {
-        urlsToLoad = urlsToLoad - 1;
-        if (this.loaderCallback) {
-          this.loaderCallback.urlLoaderCallback(this.loaderCallback, totalUrls, urlsToLoad + 1);
-        }
-        if (urlsToLoad === 0) {
-          this.loadScripts(plugins, callback);
-        }
-      };
 
       let regex = new RegExp(/^jolokia:/);
 
@@ -232,7 +223,7 @@ namespace Core {
           } catch (Exception) {
             // ignore
           }
-          urlLoaded();
+          this.urlLoaded(plugins, counter, callback);
         } else {
           log.debug("Trying url:", url);
 
@@ -246,12 +237,22 @@ namespace Core {
               }
             }
             $.extend(plugins, data);
-          }).always(() => urlLoaded());
+          }).always(() => this.urlLoaded(plugins, counter, callback));
         }
       });
     }
 
-    private loadScripts(plugins: HawtioPlugins, callback: () => void) {
+    private urlLoaded(plugins: HawtioPlugins, counter: { total: number, remain: number }, callback: () => void): void {
+      counter.remain = counter.remain - 1;
+      if (this.loaderCallback) {
+        this.loaderCallback.urlLoaderCallback(this.loaderCallback, counter.total, counter.remain + 1);
+      }
+      if (counter.remain === 0) {
+        this.loadScripts(plugins, callback);
+      }
+    }
+
+    private loadScripts(plugins: HawtioPlugins, callback: () => void): void {
 
       // keep track of when scripts are loaded so we can execute the callback
       let loaded = 0;
@@ -294,7 +295,7 @@ namespace Core {
         $.ajaxSetup({ async: true });
         this.bootstrap(callback);
       }
-    };
+    }
 
     private bootstrap(callback: () => void): void {
       this.registerPreBootstrapTask(this.bootstrapTask);

@@ -9,7 +9,7 @@ namespace Section2 {
     .run(configureHelp)
     .run(configureLayout)
     .run(registerInitFunction)
-    .component('section2', section2omponent)
+    .component('section2', section2Component)
     .service('section2Service', Section2Service)
     .name;
 

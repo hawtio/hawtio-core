@@ -8,20 +8,20 @@ namespace Section2 {
       .when('/section2', {template: '<section2></section2>'});
   }
 
-  export function configureHelp(helpRegistry, $templateCache: ng.ITemplateCacheService) {
+  export function configureHelp(helpRegistry: Help.HelpRegistry, $templateCache: ng.ITemplateCacheService) {
     'ngInject';
     const key = 'help/section2.md';
     helpRegistry.addUserDoc('section2', key);
     $templateCache.put(key, '## Section 2\n\nTest documentation for Section 2\n');
   }
-  
+
   export function configureLayout(mainNavService: Nav.MainNavService, section2Service: Section2Service) {
     'ngInject';
     mainNavService.addItem({
       title: 'Section 2',
       href: '/section2',
       isValid: () => {
-        console.log('section2: ' + (section2Service.isValid() ? 'valid' : 'invalid'));
+        console.log('section2:', section2Service.isValid() ? 'valid' : 'invalid');
         return section2Service.isValid();
       },
       rank: 1
@@ -34,5 +34,5 @@ namespace Section2 {
       return section2Service.init();
     });
   }
-  
+
 }

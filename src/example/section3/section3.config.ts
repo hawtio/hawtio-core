@@ -8,20 +8,20 @@ namespace Section3 {
       .when('/section3', {template: '<section3></section3>'});
   }
 
-  export function configureHelp(helpRegistry, $templateCache: ng.ITemplateCacheService) {
+  export function configureHelp(helpRegistry: Help.HelpRegistry, $templateCache: ng.ITemplateCacheService) {
     'ngInject';
     const key = 'help/section3.md';
     helpRegistry.addUserDoc('section3', key);
     $templateCache.put(key, '## Section 3\n\nTest documentation for Section 3\n');
   }
-  
+
   export function configureLayout(mainNavService: Nav.MainNavService, section3Service: Section3Service) {
     'ngInject';
     mainNavService.addItem({
       title: 'Section 3',
       href: '/section3',
       isValid: () => {
-        console.log('section3: ' + (section3Service.isValid() ? 'valid' : 'invalid'));
+        console.log('section3:', section3Service.isValid() ? 'valid' : 'invalid');
         return section3Service.isValid();
       }
     });
@@ -33,5 +33,5 @@ namespace Section3 {
       return section3Service.init();
     });
   }
-  
+
 }

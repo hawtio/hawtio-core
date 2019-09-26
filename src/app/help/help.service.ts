@@ -36,17 +36,27 @@ namespace Help {
 
     getHelpContent(topic: HelpTopic): string {
       if (!angular.isDefined(topic)) {
-        return "Unable to display help data for " + topic.path;
+        return `
+          <h3 id="error">Error</h3>
+          <div class="alert alert-danger">
+            <span class="pficon pficon-error-circle-o"></span>
+            Help data is not defined for <code>${topic.path}</code>
+          </div>`;
       } else {
         let template = this.$templateCache.get(topic.path);
         if (template) {
           return marked(template);
         } else {
-          return "Unable to display help data for " + topic.path;
+          return `
+            <h3 id="error">Error</h3>
+            <div class="alert alert-danger">
+              <span class="pficon pficon-error-circle-o"></span>
+              Unable to display help data for <code>${topic.path}</code>
+            </div>`;
         }
       }
     }
-  
+
   }
 
 }

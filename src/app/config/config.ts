@@ -1,7 +1,11 @@
 namespace Core {
 
   export interface Config {
-    branding?: {[key: string]: string};
+    branding?: { [key: string]: string };
+    login?: {
+      description?: string,
+      links?: { url: string, text: string }[]
+    };
     about?: {
       title?: string,
       description?: string,

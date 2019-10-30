@@ -249,6 +249,7 @@
     "lodash.templatesettings": "4.1.0",
     "set-value": "2.0.0",
     "extsprintf": "1.4.0",
-    "node-sass": "4.12.0"
+    "node-sass": "4.12.0",
+    "jasmine-core": "3.5.0"
   }
 }

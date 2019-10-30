@@ -85,7 +85,7 @@ namespace Page {
       onItemClick: '&'
     },
     template: `
-      <nav class="pf-c-nav">
+      <nav class="pf-c-nav pf-m-dark">
         <ul class="pf-c-nav__list">
           <li class="pf-c-nav__item" ng-repeat="item in $ctrl.items">
             <a href="#" class="pf-c-nav__link" ng-class="{'pf-m-current': item === $ctrl.activeItem}"

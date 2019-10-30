@@ -82,7 +82,7 @@ namespace Page {
       </div>
       <div class="pf-c-page">
         <page-header role="banner" class="pf-c-page__header" on-nav-toggle="$ctrl.onNavToggle()"></page-header>
-        <page-sidebar class="pf-c-page__sidebar"
+        <page-sidebar class="pf-c-page__sidebar pf-m-dark"
           ng-class="{'pf-m-expanded': $ctrl.isNavOpen, 'pf-m-collapsed': !$ctrl.isNavOpen}"
           on-template-change="$ctrl.onTemplateChange(templateUrl)"
           on-item-click="$ctrl.onSidebarItemClick()"></page-sidebar>

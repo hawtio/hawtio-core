@@ -1,17 +1,30 @@
 namespace Core {
 
   export interface Config {
-    branding?: { [key: string]: string };
-    login?: {
-      description?: string,
-      links?: { url: string, text: string }[]
-    };
-    about?: {
-      title?: string,
-      description?: string,
-      productInfo?: AboutProductInfo[]
-    }
+    branding?: Branding;
+    login?: Login;
+    about?: About;
     disabledRoutes?: string[];
+  }
+
+  export interface Branding {
+    [key: string]: string;
+  }
+
+  export interface Login {
+    description?: string;
+    links?: LoginLink[];
+  }
+
+  export interface LoginLink {
+    url: string,
+    text: string
+  }
+
+  export interface About {
+    title?: string,
+    description?: string,
+    productInfo?: AboutProductInfo[]
   }
 
   export interface AboutProductInfo {

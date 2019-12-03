@@ -4,27 +4,43 @@ namespace Core {
 
   export class ConfigManager {
 
-    constructor(private config: Config) {
+    constructor(private _config: Config) {
+    }
+
+    get config(): Config {
+      return this._config;
+    }
+
+    set config(value: Config) {
+      this._config = value;
+    }
+
+    get branding(): Branding {
+      return this._config.branding;
+    }
+
+    get login(): Login {
+      return this._config.login;
     }
 
     getBrandingValue(key: string): string {
-      if (this.config && this.config.branding && this.config.branding[key]) {
-        return this.config.branding[key];
+      if (this._config && this._config.branding && this._config.branding[key]) {
+        return this._config.branding[key];
       } else {
         return '';
       }
     }
 
     getAboutValue(key: string): any {
-      if (this.config && this.config.about && this.config.about[key]) {
-        return this.config.about[key];
+      if (this._config && this._config.about && this._config.about[key]) {
+        return this._config.about[key];
       } else {
         return null;
       }
     }
 
     isRouteEnabled(path: string): boolean {
-      return !this.config || !this.config.disabledRoutes || this.config.disabledRoutes.indexOf(path) === -1;
+      return !this._config || !this._config.disabledRoutes || this._config.disabledRoutes.indexOf(path) === -1;
     }
   }
 

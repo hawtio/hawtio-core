@@ -512,8 +512,14 @@ namespace Core {
    * @param text
    * @returns {string}
    */
-  export function trimQuotes(text: string) {
-    return _.trim(text, ' \'"');
+  export function trimQuotes(text: string): string {
+    const quotes = '\'"';
+    let answer = _.trimStart(text, quotes);
+    if (text && answer.length < text.length) {
+      return _.trimEnd(answer, quotes);
+    } else {
+      return text;
+    }
   }
 
   /**

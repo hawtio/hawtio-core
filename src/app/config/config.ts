@@ -8,7 +8,11 @@ namespace Core {
   }
 
   export interface Branding {
-    [key: string]: string;
+    appName: string;
+    appLogoUrl: string;
+    companyLogoUrl?: string;
+    css?: string;
+    favicon?: string;
   }
 
   export interface Login {

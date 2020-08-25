@@ -4,7 +4,7 @@
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg",
     "css": "src/example/example.css",
-    "favicon": ""
+    "favicon": "img/favicon.ico"
   },
   "about": {
     "title": "Hawtio Management Console",

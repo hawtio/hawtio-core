@@ -27,6 +27,10 @@ namespace Core {
     if (!branding) {
       return;
     }
+    if (branding.appName) {
+      log.info('Updating title', '-', branding.appName);
+      document.title = branding.appName;
+    }
     if (branding.css) {
       updateHref('#branding', branding.css);
     }

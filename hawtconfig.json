@@ -15,5 +15,8 @@
     "copyright": "Trademark and copyright information here",
     "imgSrc": "img/hawtio-logo.svg"
   },
-  "disabledRoutes": []
+  "disabledRoutes": [],
+  "online": {
+    "projectSelector": null
+  }
 }

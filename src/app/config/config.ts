@@ -5,6 +5,7 @@ namespace Core {
     login?: Login;
     about?: About;
     disabledRoutes?: string[];
+    online?: Online;
   }
 
   export interface Branding {
@@ -36,4 +37,7 @@ namespace Core {
     value: string;
   }
 
+  export interface Online {
+    projectSelector?: string;
+  }
 }

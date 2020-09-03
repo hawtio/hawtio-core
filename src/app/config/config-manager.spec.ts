@@ -84,4 +84,42 @@ describe("ConfigService", function () {
 
   });
 
+  describe("online.namespaceSelector property", function () {
+
+    it("given no namespaceSelector property it should not fail", function () {
+      // given
+      configManager = new Core.ConfigManager({online: null});
+      // then
+      expect(configManager.config.online).toBe(null);
+    });
+
+    it("given a simple label name it should return the value", function () {
+      // given
+      configManager = new Core.ConfigManager({online: {namespaceSelector: { mylabel: "myvalue"} }});
+      // when
+      let value = configManager.config.online.namespaceSelector;
+      // then
+      expect(value.mylabel).toBe('myvalue');
+    });
+
+    it("given a complex label name it should return the value", function () {
+      // given
+      configManager = new Core.ConfigManager({online: {namespaceSelector: { "my.dom.ain/mylabel": "myvalue"} }});
+      // when
+      let value = configManager.config.online.namespaceSelector;
+      // then
+      expect(value['my.dom.ain/mylabel']).toBe('myvalue');
+    });
+
+    it("given an a null value it should retrun null", function () {
+      // given
+      configManager = new Core.ConfigManager({online: {namespaceSelector: { "nullvaluelabel": null} }});
+      // when
+      let value = configManager.config.online.namespaceSelector;
+      // then
+      expect(value['nullvaluelabel']).toBe(null);
+    });
+
+  });
+
 });

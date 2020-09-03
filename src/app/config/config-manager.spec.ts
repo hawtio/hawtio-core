@@ -84,4 +84,24 @@ describe("ConfigService", function () {
 
   });
 
+  describe("online.projectSelector property", function () {
+
+    it("given no projectSelector property it should not fail", function () {
+      // given
+      configManager = new Core.ConfigManager({online: null});
+      // then
+      expect(configManager.config.online).toBe(null);
+    });
+
+    it("should return the value", function () {
+      // given
+      configManager = new Core.ConfigManager({online: {projectSelector: "environment=dev,networkzone=internal" }});
+      // when
+      let value = configManager.config.online.projectSelector;
+      // then
+      expect(value).toBe('environment=dev,networkzone=internal');
+    });
+
+  });
+
 });

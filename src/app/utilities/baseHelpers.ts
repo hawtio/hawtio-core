@@ -123,29 +123,6 @@ namespace Core {
     return answer;
   }
 
-  /**
-   * Adds the specified CSS file to the document's head, handy
-   * for external plugins that might bring along their own CSS
-   *
-   * @param path
-   */
-  export function addCSS(path) {
-    if ('createStyleSheet' in document) {
-      // IE9
-      (<any>document).createStyleSheet(path);
-    } else {
-      // Everyone else
-      var link = (<JQueryStatic>$)("<link>");
-      (<JQueryStatic>$)("head").append(link);
-
-      link.attr({
-        rel: 'stylesheet',
-        type: 'text/css',
-        href: path
-      });
-    }
-  }
-
   var dummyStorage = {};
 
   /**
@@ -410,35 +387,6 @@ namespace Core {
     if (!phase) {
       $scope.$digest();
     }
-  }
-
-  /**
-   * Look up a list of child element names or lazily create them.
-   *
-   * Useful for example to get the <tbody> <tr> element from a <table> lazily creating one
-   * if not present.
-   *
-   * Usage: var trElement = getOrCreateElements(tableElement, ["tbody", "tr"])
-   * @method getOrCreateElements
-   * @for Core
-   * @static
-   * @param {Object} domElement
-   * @param {Array} arrayOfElementNames
-   * @return {Object}
-   */
-  export function getOrCreateElements(domElement, arrayOfElementNames: string[]) {
-    var element = domElement;
-    angular.forEach(arrayOfElementNames, name => {
-      if (element) {
-        var children = (<JQueryStatic>$)(element).children(name);
-        if (!children || !children.length) {
-          (<JQueryStatic>$)("<" + name + "></" + name + ">").appendTo(element);
-          children = (<JQueryStatic>$)(element).children(name);
-        }
-        element = children;
-      }
-    });
-    return element;
   }
 
   var _escapeHtmlChars = {

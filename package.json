@@ -28,7 +28,7 @@
     "angular-route": "^1.7.7",
     "jquery": "2.2.4",
     "js-logger": "1.4.1",
-    "lodash": "~4.17.0",
+    "lodash": "~4.17.21",
     "marked": "0.6.1",
     "typescript": "^3.0.3",
     "urijs": "1.19.0"
@@ -244,13 +244,14 @@
     "brace-expansion": "1.1.11",
     "rimraf": "2.6.3",
     "yargs": "13.3.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.21",
     "lodash.template": "4.4.0",
     "lodash.templatesettings": "4.1.0",
     "set-value": "2.0.0",
     "extsprintf": "1.4.0",
     "node-sass": "4.12.0",
     "jasmine-core": "3.5.0",
-    "graceful-fs": "4.2.4"
+    "graceful-fs": "4.2.4",
+    "has-symbols": "1.0.2"
   }
 }

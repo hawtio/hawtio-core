@@ -53,6 +53,11 @@ namespace Core {
     private modules: string[] = [];
 
     /**
+     * Holds all of the loaded plugins
+     */
+    private plugins: HawtioPlugins = {};
+
+     /**
      * Tasks to be run before bootstrapping, tasks can be async.
      * Supply a function that takes the next task to be
      * executed as an argument and be sure to call the passed
@@ -177,6 +182,13 @@ namespace Core {
     }
 
     /**
+     * Return the loaded plugins.
+     */
+    getPlugins(): HawtioPlugins {
+      return this.plugins;
+    }
+
+    /**
      * Set a callback to be notified as URLs are checked and plugin
      * scripts are downloaded
      */
@@ -193,14 +205,14 @@ namespace Core {
     loadPlugins(callback: () => void): void {
       log.info("Bootstrapping Hawtio app...");
 
-      let plugins: HawtioPlugins = {};
+      this.plugins = {};
       let counter = {
         total: this.urls.length,
         remain: this.urls.length
       }
 
       if (counter.total === 0) {
-        this.loadScripts(plugins, callback);
+        this.loadScripts(callback);
         return;
       }
 
@@ -219,11 +231,11 @@ namespace Core {
 
           try {
             let data = jolokia.getAttribute(attribute, null);
-            $.extend(plugins, data);
+            $.extend(this.plugins, data);
           } catch (Exception) {
             // ignore
           }
-          this.urlLoaded(plugins, counter, callback);
+          this.urlLoaded(counter, callback);
         } else {
           log.debug("Trying url:", url);
 
@@ -236,27 +248,27 @@ namespace Core {
                 return;
               }
             }
-            $.extend(plugins, data);
-          }).always(() => this.urlLoaded(plugins, counter, callback));
+            $.extend(this.plugins, data);
+          }).always(() => this.urlLoaded(counter, callback));
         }
       });
     }
 
-    private urlLoaded(plugins: HawtioPlugins, counter: { total: number, remain: number }, callback: () => void): void {
+    private urlLoaded(counter: { total: number, remain: number }, callback: () => void): void {
       counter.remain = counter.remain - 1;
       if (this.loaderCallback) {
         this.loaderCallback.urlLoaderCallback(this.loaderCallback, counter.total, counter.remain + 1);
       }
       if (counter.remain === 0) {
-        this.loadScripts(plugins, callback);
+        this.loadScripts(callback);
       }
     }
 
-    private loadScripts(plugins: HawtioPlugins, callback: () => void): void {
+    private loadScripts(callback: () => void): void {
 
       // keep track of when scripts are loaded so we can execute the callback
       let loaded = 0;
-      _.forOwn(plugins, (data, key) => {
+      _.forOwn(this.plugins, (data, key) => {
         loaded = loaded + data.Scripts.length;
       });
 
@@ -274,7 +286,7 @@ namespace Core {
       };
 
       if (loaded > 0) {
-        _.forOwn(plugins, (data, key) => {
+        _.forOwn(this.plugins, (data, key) => {
 
           data.Scripts.forEach((script) => {
             let scriptName = data.Context + "/" + script;

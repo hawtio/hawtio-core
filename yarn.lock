@@ -3267,7 +3267,7 @@ micromatch@3.1.10, micromatch@^2.3.7, micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-mime-db@1.31.0, mime-db@1.48.0, mime-db@~1.33.0:
+mime-db@1.31.0, mime-db@1.49.0, mime-db@~1.33.0:
   version "1.31.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.31.0.tgz#a49cd8f3ebf3ed1a482b60561d9105ad40ca74cb"
 

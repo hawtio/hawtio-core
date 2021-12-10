@@ -5,7 +5,7 @@ namespace Nav {
     readonly KEY_ARROW_UP = 38;
     readonly KEY_ESCAPE = 27;
     label: string;
-    items: ContextSelectorItem[];
+    items: ContextSelectorItem[] = [];
     filteredItems: ContextSelectorItem[];
     onChange: ({ item: string }) => void;
     isOpen = false;

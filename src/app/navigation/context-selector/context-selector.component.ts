@@ -51,7 +51,11 @@ namespace Nav {
     reset() {
       this.isOpen = false;
       this.searchText = '';
-      this.items.forEach(item => item.id = _.kebabCase(item.label));
+      this.items.forEach(item => {
+        if (item) {
+          item.id = _.kebabCase(item.label);
+        }
+      });
       this.filteredItems = this.items;
     }
 

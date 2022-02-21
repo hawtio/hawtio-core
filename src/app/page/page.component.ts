@@ -2,7 +2,7 @@ namespace Page {
 
   class PageController {
     readonly WIDTH_LIMIT = 768;
-    isNavOpen = false;
+    isNavOpen = true;
     previousWidth: number;
     templateUrl: string;
 

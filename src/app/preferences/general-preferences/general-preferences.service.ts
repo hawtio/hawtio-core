@@ -3,12 +3,14 @@ namespace Core {
         constructor(private $window: ng.IWindowService) {
             'ngInject';
           }
-          getVerticalnavstate(): number {
-            if (this.$window.localStorage.getItem('verticalnav') === "OFF") {
-              
-            return 0;
-          }
-          return 1;
-    }
+          getVerticalnavstate(): string {
+            return  this.$window.localStorage.getItem('current_state');
+          
+         }
+          setVerticalnavstate(current_state): void {
+
+            this.$window.localStorage.setItem('current_state', current_state);
+          } 
+
 }
 }

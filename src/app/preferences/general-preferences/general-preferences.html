@@ -1,10 +1,10 @@
-<div ng-controller = "GeneralPreferencesController">
+<div ng-controller = "PreferencesGeneralController">
     <form class="form-horizontal general-preferences-form">
     <div class="form-group">
         <label class="col-md-2 control-label" for="Enabling toggle">Hide vertical nav by default</label>
         <div class="col-md-6">
           <select id="vertical-nav" class="form-control" ng-model="verticalnav"
-                  ng-options="verticalnav.name for verticalnav in availableVerticalNavs track by verticalnav.name">
+                  ng-options=" o for o in availableVerticalNavs track by o" ng-change="onToggleChange(current_state)">
           </select>
         </div>
       </div>

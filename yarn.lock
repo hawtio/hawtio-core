@@ -869,7 +869,7 @@ buildmail@4.0.1:
     nodemailer-shared "1.1.0"
     punycode "1.4.1"
 
-bytes@1, bytes@2.1.0, bytes@2.2.0, bytes@2.4.0, bytes@3.0.0, bytes@3.1.0:
+bytes@1, bytes@2.1.0, bytes@2.2.0, bytes@2.4.0, bytes@3.0.0, bytes@3.1.2:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-2.1.0.tgz#ac93c410e2ffc9cc7cf4b464b38289067f5e47b4"
 
@@ -2367,7 +2367,7 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.4.tgz#44119abaf4bc64692a16ace34700fed9c03e2546"
   integrity sha512-pzXIvANXEFrc5oFFXRMkbLPQ2rXRoDERwDLyrcUxGhaZhgP54BBSl9Oheh7Vv0T090cszWBxPjkQQ5Sq1PbBRQ==
 
-http-errors@1.3.1, http-errors@1.6.2, http-errors@1.7.2, http-errors@1.7.3, http-errors@~1.3.1, http-errors@~1.6.2:
+http-errors@1.3.1, http-errors@1.6.2, http-errors@1.8.1, http-errors@~1.3.1, http-errors@~1.6.2:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.3.1.tgz#197e22cdebd4198585e8694ef6786197b91ed942"
   dependencies:
@@ -3267,11 +3267,11 @@ micromatch@3.1.10, micromatch@^2.3.7, micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-mime-db@1.31.0, mime-db@1.49.0, mime-db@~1.33.0:
+mime-db@1.31.0, mime-db@1.51.0, mime-db@~1.33.0:
   version "1.31.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.31.0.tgz#a49cd8f3ebf3ed1a482b60561d9105ad40ca74cb"
 
-mime-types@2.1.18, mime-types@^2.1.11, mime-types@^2.1.12, mime-types@~2.1.18, mime-types@~2.1.19, mime-types@~2.1.24, mime-types@~2.1.6, mime-types@~2.1.7:
+mime-types@2.1.18, mime-types@^2.1.11, mime-types@^2.1.12, mime-types@~2.1.18, mime-types@~2.1.19, mime-types@~2.1.24, mime-types@~2.1.34, mime-types@~2.1.6, mime-types@~2.1.7:
   version "2.1.18"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.18.tgz#6f323f60a83d11146f831ff11fd66e2fe5503bb8"
   dependencies:
@@ -3386,7 +3386,7 @@ needle@^2.2.1:
     iconv-lite "^0.4.4"
     sax "^1.2.4"
 
-negotiator@0.5.3, negotiator@0.6.1, negotiator@0.6.2:
+negotiator@0.5.3, negotiator@0.6.1, negotiator@0.6.3:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
   integrity sha1-KzJxhOiZIQEXeyhWP7XnECrNDKk=
@@ -4133,7 +4133,7 @@ qjobs@^1.1.4:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/qjobs/-/qjobs-1.1.5.tgz#659de9f2cf8dcc27a1481276f205377272382e73"
 
-qs@5.1.0, qs@5.2.0, qs@6.5.1, qs@6.7.0, qs@^6.4.0, qs@~6.2.0, qs@~6.4.0, qs@~6.5.2:
+qs@5.1.0, qs@5.2.0, qs@6.5.1, qs@6.9.7, qs@^6.4.0, qs@~6.2.0, qs@~6.4.0, qs@~6.5.2:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-5.1.0.tgz#4d932e5c7ea411cca76a312d39a606200fd50cd9"
 
@@ -4155,7 +4155,7 @@ range-parser@1.0.3, range-parser@^1.2.0, range-parser@~1.0.3, range-parser@~1.2.
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.0.3.tgz#6872823535c692e2c2a0103826afd82c2e0ff175"
 
-raw-body@2.1.7, raw-body@2.3.2, raw-body@2.4.0, raw-body@^2.2.0, raw-body@~1.1.0, raw-body@~2.1.5:
+raw-body@2.1.7, raw-body@2.3.2, raw-body@2.4.3, raw-body@^2.2.0, raw-body@~1.1.0, raw-body@~2.1.5:
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.1.7.tgz#adfeace2e4fb3098058014d08c072dcc59758774"
   dependencies:
@@ -4487,7 +4487,7 @@ set-value@2.0.0, set-value@^0.4.3, set-value@^2.0.0:
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
 
-setprototypeof@1.0.3, setprototypeof@1.1.0, setprototypeof@1.1.1:
+setprototypeof@1.0.3, setprototypeof@1.1.0, setprototypeof@1.2.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.0.3.tgz#66567e37043eeb4f04d91bd658c0cbefb55b8e04"
 
@@ -4957,10 +4957,10 @@ to-through@^2.0.0:
   dependencies:
     through2 "^2.0.3"
 
-toidentifier@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
-  integrity sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
+toidentifier@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.1.tgz#3be34321a88a820ed1bd80dfaa33e479fbb8dd35"
+  integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
 
 tough-cookie@2.4.3, tough-cookie@~2.3.0, tough-cookie@~2.4.3:
   version "2.4.3"
@@ -5010,7 +5010,7 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-type-is@1.6.16, type-is@~1.6.10, type-is@~1.6.15, type-is@~1.6.17:
+type-is@1.6.16, type-is@~1.6.10, type-is@~1.6.15, type-is@~1.6.18:
   version "1.6.16"
   resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.16.tgz#f89ce341541c672b25ee7ae3c73dee3b2be50194"
   dependencies:

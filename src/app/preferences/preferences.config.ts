@@ -41,6 +41,7 @@ namespace Core {
     'ngInject';
     preferencesRegistry.addTab("Console Logs", 'preferences/logging-preferences/logging-preferences.html');
     preferencesRegistry.addTab("Reset", 'preferences/reset-preferences/reset-preferences.html');
+    preferencesRegistry.addTab("General", 'preferences/general-preferences/general-preferences.html');
   }
 
 }

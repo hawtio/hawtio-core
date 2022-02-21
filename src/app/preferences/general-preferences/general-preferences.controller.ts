@@ -3,10 +3,16 @@ namespace Core{
     {
         'ngInject';
 
-        $scope.availableVerticalNavs = ["OFF","ON"];
-        $scope.current_state =  GeneralPreferencesService.getVerticalnavstate();
-        $scope.onToggleChange = current_state =>{
-            GeneralPreferencesService.setVerticalnavstate(current_state);
+        $scope.availableVerticalNavs = {
+            availableOptions: [
+              {id: '1', name: 'ON'},
+              {id: '0', name: 'OFF'},
+            ],
+            selectedOption: {id: '1', name: 'ON'} 
+            };
+            
+        $scope.onToggleChange = function(){
+          GeneralPreferencesService.setVerticalnavstate($scope.availableVerticalNavs.selectedOption.name);
         }
         
     }

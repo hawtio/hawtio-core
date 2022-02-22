@@ -3,11 +3,10 @@
 
 namespace Core {
 
-    export const genralPreferencesModule = angular
-      .module('hawtio-general-preferences', [])
-      .controller('PreferencesGeneralController', GeneralPreferencesController)
-      .service('GeneralPreferencesService',GeneralPreferencesService)
-      .name;
-  
-  }
-  
+  export const genralPreferencesModule = angular
+    .module('hawtio-general-preferences', [])
+    .controller('PreferencesGeneralController', GeneralPreferencesController)
+    .service('GeneralPreferencesService', GeneralPreferencesService)
+    .name;
+
+}

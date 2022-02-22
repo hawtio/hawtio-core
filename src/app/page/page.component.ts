@@ -25,10 +25,10 @@ namespace Page {
         });
       });
       var curr_state = window.localStorage.getItem('current_state');
-      if(curr_state === "ON")
-      this.isNavOpen = true;
+      if (curr_state === "ON")
+        this.isNavOpen = true;
       else
-      this.isNavOpen = false;
+        this.isNavOpen = false;
 
     }
 

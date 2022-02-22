@@ -2,7 +2,7 @@ namespace Page {
 
   class PageController {
     readonly WIDTH_LIMIT = 768;
-    isNavOpen = true;
+    isNavOpen: boolean;
     previousWidth: number;
     templateUrl: string;
 
@@ -25,6 +25,12 @@ namespace Page {
         });
       });
       this.$rootScope.$on(CLOSE_MAIN_NAV_EVENT, () => this.isNavOpen = false);
+      const defaultVerticalNavState = this.$window.localStorage.getItem('defaultVerticalNavState');
+      if (defaultVerticalNavState === "show") {
+        this.isNavOpen = true;
+      } else {
+        this.isNavOpen = false;
+      }
     }
 
     $onDestroy() {

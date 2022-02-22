@@ -39,8 +39,9 @@ namespace Core {
 
   export function configurePreferencesPages(preferencesRegistry: PreferencesRegistry) {
     'ngInject';
+    preferencesRegistry.addTab("General", 'preferences/general-preferences/general-preferences.html');
     preferencesRegistry.addTab("Console Logs", 'preferences/logging-preferences/logging-preferences.html');
     preferencesRegistry.addTab("Reset", 'preferences/reset-preferences/reset-preferences.html');
-  }
 
+  }
 }

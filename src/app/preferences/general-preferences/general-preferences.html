@@ -2,12 +2,8 @@
   <form class="form-horizontal general-preferences-form">
     <div class="form-group">
       <label class="col-md-2 control-label" for="Enabling toggle">Hide vertical nav by default</label>
-      <div class="col-md-6">
-        <select id="vertical-nav" class="form-control" ng-model="defaultVerticalNavState"
-          ng-options="defaultVerticalNavState for defaultVerticalNavState in availableVerticalNavs.availableOptions"
-          ng-change="onToggleChange(defaultVerticalNavState)">
-        </select>
-      </div>
+      <input type="checkbox" ng-change="onToggle()" ng-model="defaultVerticalNavState" ng-true-value="'show'"
+        ng-false-value="'hide'">
     </div>
   </form>
 </div>

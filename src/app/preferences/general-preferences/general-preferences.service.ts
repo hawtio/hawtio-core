@@ -5,10 +5,10 @@ namespace Core {
       'ngInject';
     }
     getDefaultVerticalNavState(): string {
-      if (this.$window.localStorage.getItem('defaultVerticalNavState') !== null) {
-        return this.$window.localStorage.getItem('defaultVerticalNavState');
-      } else {
+      if (_.isNull(this.$window.localStorage.getItem('defaultVerticalNavState'))) {
         return GeneralPreferencesService.DEFAULT_VERTICAL_NAV_STATE;
+      } else {
+        return this.$window.localStorage.getItem('defaultVerticalNavState');
       }
     }
     setDefaultVerticalNavState(defaultVerticalNavState: string): void {
@@ -18,4 +18,3 @@ namespace Core {
 
   }
 }
-

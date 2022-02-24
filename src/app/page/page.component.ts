@@ -25,7 +25,7 @@ namespace Page {
         });
       });
       this.$rootScope.$on(CLOSE_MAIN_NAV_EVENT, () => this.isNavOpen = false);
-      const defaultVerticalNavState = this.$window.localStorage.getItem('defaultVerticalNavState');
+      const defaultVerticalNavState = this.$window.localStorage.getItem('defaultVerticalNavState') || 'show';
       if (defaultVerticalNavState === "show") {
         this.isNavOpen = true;
       } else {

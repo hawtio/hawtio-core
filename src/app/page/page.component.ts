@@ -1,5 +1,8 @@
 namespace Page {
-
+  enum state {
+    show = "show",
+    hide = "hide"
+  }
   class PageController {
     readonly WIDTH_LIMIT = 768;
     isNavOpen: boolean;
@@ -25,8 +28,8 @@ namespace Page {
         });
       });
       this.$rootScope.$on(CLOSE_MAIN_NAV_EVENT, () => this.isNavOpen = false);
-      const defaultVerticalNavState = this.$window.localStorage.getItem('defaultVerticalNavState');
-      if (defaultVerticalNavState === "show") {
+      const defaultVerticalNavState = (<any>state)[this.$window.localStorage.getItem('defaultVerticalNavState')];
+      if (defaultVerticalNavState == state.show) {
         this.isNavOpen = true;
       } else {
         this.isNavOpen = false;

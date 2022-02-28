@@ -11,9 +11,8 @@ namespace Core {
     };
     $scope.defaultVerticalNavState = generalPreferencesService.getDefaultVerticalNavState();
     $scope.onToggleChange = defaultVerticalNavState => {
-      if (defaultVerticalNavState != null && defaultVerticalNavState != undefined) {
         generalPreferencesService.setDefaultVerticalNavState(defaultVerticalNavState);
-      }
+
     }
   }
 

@@ -1,9 +1,9 @@
 <div ng-controller="GeneralPreferencesController">
   <form class="form-horizontal general-preferences-form">
     <div class="form-group">
-      <label class="col-md-2 control-label" for="Enabling toggle">Hide vertical nav by default</label>
-      <input type="checkbox" ng-change="onToggle()" ng-model="defaultVerticalNavState" ng-true-value="'show'"
-        ng-false-value="'hide'">
+      <label class="col-md-2 control-label" for="Enabling toggle">Show vertical nav by default</label>
+      <input type="checkbox" ng-change="onToggle()" ng-model="defaultVerticalNavState" ng-true-value="2"
+        ng-false-value="1">
     </div>
   </form>
 </div>

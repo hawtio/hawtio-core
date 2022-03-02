@@ -1,6 +1,6 @@
 # Hawtio Core
 
-[![CircleCI](https://circleci.com/gh/hawtio/hawtio-core.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio-core)
+[![Test](https://github.com/hawtio/hawtio-core/actions/workflows/test.yml/badge.svg)](https://github.com/hawtio/hawtio-core/actions/workflows/test.yml)
 
 This package contains the core parts of the **[Hawtio](http://hawt.io)** web console.
 

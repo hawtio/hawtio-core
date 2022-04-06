@@ -1338,7 +1338,7 @@ deprecated@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/deprecated/-/deprecated-0.0.1.tgz#f9c9af5464afa1e7a971458a8bdef2aa94d5bb19"
 
-destroy@~1.0.4:
+destroy@1.2.0, destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
 
@@ -2367,7 +2367,7 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.4.tgz#44119abaf4bc64692a16ace34700fed9c03e2546"
   integrity sha512-pzXIvANXEFrc5oFFXRMkbLPQ2rXRoDERwDLyrcUxGhaZhgP54BBSl9Oheh7Vv0T090cszWBxPjkQQ5Sq1PbBRQ==
 
-http-errors@1.3.1, http-errors@1.6.2, http-errors@1.8.1, http-errors@2.0.0, http-errors@~1.3.1, http-errors@~1.6.2:
+http-errors@1.3.1, http-errors@1.6.2, http-errors@2.0.0, http-errors@~1.3.1, http-errors@~1.6.2:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.3.1.tgz#197e22cdebd4198585e8694ef6786197b91ed942"
   dependencies:
@@ -3267,7 +3267,7 @@ micromatch@3.1.10, micromatch@^2.3.7, micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-mime-db@1.31.0, mime-db@1.51.0, mime-db@~1.33.0:
+mime-db@1.31.0, mime-db@1.52.0, mime-db@~1.33.0:
   version "1.31.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.31.0.tgz#a49cd8f3ebf3ed1a482b60561d9105ad40ca74cb"
 
@@ -3673,7 +3673,7 @@ object.pick@^1.2.0, object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-on-finished@~2.3.0:
+on-finished@2.4.1, on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"
   dependencies:
@@ -4133,7 +4133,7 @@ qjobs@^1.1.4:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/qjobs/-/qjobs-1.1.5.tgz#659de9f2cf8dcc27a1481276f205377272382e73"
 
-qs@5.1.0, qs@5.2.0, qs@6.5.1, qs@6.9.7, qs@^6.4.0, qs@~6.2.0, qs@~6.4.0, qs@~6.5.2:
+qs@5.1.0, qs@5.2.0, qs@6.10.3, qs@6.5.1, qs@^6.4.0, qs@~6.2.0, qs@~6.4.0, qs@~6.5.2:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-5.1.0.tgz#4d932e5c7ea411cca76a312d39a606200fd50cd9"
 
@@ -4155,7 +4155,7 @@ range-parser@1.0.3, range-parser@^1.2.0, range-parser@~1.0.3, range-parser@~1.2.
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.0.3.tgz#6872823535c692e2c2a0103826afd82c2e0ff175"
 
-raw-body@2.1.7, raw-body@2.3.2, raw-body@2.4.3, raw-body@^2.2.0, raw-body@~1.1.0, raw-body@~2.1.5:
+raw-body@2.1.7, raw-body@2.3.2, raw-body@2.5.1, raw-body@^2.2.0, raw-body@~1.1.0, raw-body@~2.1.5:
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/raw-body/-/raw-body-2.1.7.tgz#adfeace2e4fb3098058014d08c072dcc59758774"
   dependencies:
@@ -4740,7 +4740,7 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-statuses@1, statuses@1.4.0, statuses@2.0.1, "statuses@>= 1.3.1 < 2", "statuses@>= 1.4.0 < 2", "statuses@>= 1.5.0 < 2", statuses@~1.2.1, statuses@~1.3.1, statuses@~1.5.0:
+statuses@1, statuses@1.4.0, statuses@2.0.1, "statuses@>= 1.3.1 < 2", "statuses@>= 1.4.0 < 2", statuses@~1.2.1, statuses@~1.3.1, statuses@~1.5.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
 

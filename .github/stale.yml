@@ -13,7 +13,6 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         days-before-stale: 365
         days-before-close: 14
-        operations-per-run: 10
         stale-issue-label: status/stale
         exempt-issue-labels: status/never-stale
         stale-issue-message: |

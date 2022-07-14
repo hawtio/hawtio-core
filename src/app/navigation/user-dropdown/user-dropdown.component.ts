@@ -28,7 +28,7 @@ namespace Nav {
         <button id="userDropdownMenu" class="pf-c-dropdown__toggle pf-m-plain" ng-click="$ctrl.toggle()"
           ng-blur="$ctrl.close()">{{$ctrl.userName}}</button>
         <ul class="pf-c-dropdown__menu pf-m-align-right" ng-show="$ctrl.isOpen">
-          <li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="$ctrl.onPreferencesClicked()">Preferences</a></li>
+          <li><a class="pf-c-dropdown__menu-item" href="#" ng-mousedown="$ctrl.onPreferencesClicked()">Preferences</a></li>
           <span hawtio-extension name="hawtio-logout"></span>
         </ul>
       </div>

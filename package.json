@@ -31,7 +31,7 @@
     "lodash": "~4.17.21",
     "marked": "0.6.1",
     "typescript": "^3.0.3",
-    "urijs": "1.19.0"
+    "urijs": "1.19.9"
   },
   "devDependencies": {
     "@hawtio/node-backend": "~3.0.0",

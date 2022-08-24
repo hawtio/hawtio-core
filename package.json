@@ -27,14 +27,14 @@
     "angular-patternfly": "^5.0.0",
     "angular-route": "^1.7.7",
     "jquery": "2.2.4",
-    "js-logger": "1.4.1",
+    "js-logger": "^1.6.0",
     "lodash": "~4.17.21",
     "marked": "0.6.1",
     "typescript": "^3.0.3",
-    "urijs": "1.19.9"
+    "urijs": "^1.19.9"
   },
   "devDependencies": {
-    "@hawtio/node-backend": "~3.0.0",
+    "@hawtio/node-backend": "^4.1.4",
     "del": "^2.0.0",
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
@@ -254,6 +254,8 @@
     "graceful-fs": "4.2.4",
     "has-symbols": "1.0.2",
     "on-finished": "2.3.0",
-    "destroy": "1.0.4"
+    "destroy": "1.0.4",
+    "http-proxy": "1.18.1",
+    "follow-redirects": "1.15.1"
   }
 }

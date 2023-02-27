@@ -256,6 +256,7 @@
     "on-finished": "2.3.0",
     "destroy": "1.0.4",
     "http-proxy": "1.18.1",
-    "follow-redirects": "1.15.1"
+    "follow-redirects": "1.15.1",
+    "content-type": "1.0.5"
   }
 }

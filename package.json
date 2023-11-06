@@ -257,6 +257,7 @@
     "destroy": "1.0.4",
     "http-proxy": "1.18.1",
     "follow-redirects": "1.15.1",
-    "content-type": "1.0.5"
+    "content-type": "1.0.5",
+    "function-bind": "1.1.2"
   }
 }
